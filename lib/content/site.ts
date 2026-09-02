@@ -22,6 +22,18 @@ export const hero = {
     'Um cérebro humano abstrato, desenhado por milhares de partículas de luz que percorrem seus sulcos e respiram lentamente no escuro.',
 } as const;
 
+export const anxiety = {
+  id: 'ansiedade',
+  eyebrow: 'Ansiedade',
+  headline: ['Nem todo ruído', 'precisa virar alarme.'],
+  body:
+    'A ansiedade não é um defeito — é um sistema de proteção funcionando em excesso. ' +
+    'No processo terapêutico, aprendemos a reconhecer o padrão, entender o que ele tenta ' +
+    'proteger e devolver ao corpo a possibilidade de escolha.',
+  canvasDescription:
+    'Linhas de luz atravessam a tela. Começam desencontradas e trêmulas e, conforme a página avança, desaceleram até se alinharem em um feixe único e calmo.',
+} as const;
+
 export const nav = {
   links: [
     { id: 'sobre', label: 'Sobre', href: '#sobre' },
@@ -48,7 +60,7 @@ export type SceneId = (typeof scenes)[number]['id'];
  * A navegação só oferece o que já existe — nenhuma âncora morta chega ao usuário.
  * Ao entregar uma cena, basta acrescentar o id aqui.
  */
-export const implementedScenes: readonly SceneId[] = ['inicio'];
+export const implementedScenes: readonly SceneId[] = ['inicio', 'ansiedade'];
 
 export const isImplemented = (id: SceneId) => implementedScenes.includes(id);
 

@@ -137,7 +137,7 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 
 ---
 
-### CENA 2 — ANSIEDADE · "Sincronizar"
+### CENA 2 — ANSIEDADE · "Sincronizar" — *implementada*
 - **[V]** Fundo preto. 14 linhas luminosas horizontais atravessam a tela, com espessura variável e um único traço em `--accent`. No início: fora de fase, ruidosas, trêmulas. No fim: um feixe alinhado, calmo, que recua para 25% de opacidade.
 - **[M]** Scrub em trilho de 250svh: caos (0–0.35) → desaceleração (0.35–0.70) → sincronia (0.70–0.85) → copy (0.85–1.0).
 - **[C]** *Ansiedade* / **Nem todo ruído precisa virar alarme.** / parágrafo.

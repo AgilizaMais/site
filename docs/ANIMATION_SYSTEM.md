@@ -122,15 +122,33 @@ Entrada percebida: **~2,4s**, com a headline pintada em ~1,3s.
 Skip: qualquer scroll, clique ou tecla durante a entrada avança a timeline para o fim
 (inclusive a formação das partículas, via `lib/motion/introBus.ts`).
 
-### Cena 2 — Ansiedade (scrub)
-Trilho de 250svh. `scrub: 1` (suavizado).
+### Cena 2 — Ansiedade (scrub) — *implementado*
+Trilho de 250svh, objeto preso por `position: sticky`. `scrub: 1`.
+
+**Duas curvas, não uma.** Desaceleração e sincronização são etapas distintas —
+primeiro o movimento perde energia, só depois as linhas se alinham. Com uma
+curva única as duas coisas acontecem juntas e o meio do caminho desaparece.
+
 ```
-progress 0.00–0.35  linhas caóticas: ruído alto, frequências dessincronizadas, jitter
-progress 0.35–0.70  desaceleração: amplitude e ruído caem, frequências convergem
-progress 0.70–0.85  sincronização: linhas alinham em feixe único; um traço vira accent
-progress 0.85–1.00  copy entra (RevealLines + FadeUp); linhas recuam para o fundo a 25% de opacidade
+decel = smoothstep(0.30, 0.72, p)   → amplitude, velocidade e tremor caem
+sync  = smoothstep(0.60, 0.86, p)   → dispersão, frequência e fase convergem
+
+progress 0.00–0.30  caos: 14 linhas dessincronizadas, com tremor de alta frequência
+progress 0.30–0.72  desaceleração
+progress 0.60–0.86  sincronização: feixe único, assentado abaixo do centro
+progress 0.86–1.00  copy entra; o feixe recua para 58% do brilho
 ```
-Nenhum flash. Variação de luminância limitada a 30% por segundo (segurança fotossensível).
+
+O valor lido pelo shader ainda passa por um `damp` de 6/s: a roda do mouse
+entrega saltos, e um pulo na sincronização diria o oposto do que a cena narra.
+
+Nenhum flash. Nenhum termo pisca; a luminância de cada linha varia devagar e o
+somatório é estável ao longo do scrub (segurança fotossensível).
+
+**Retrato tem composição própria.** Com o domínio horizontal multiplicado pelo
+aspecto, cada linha mostraria meia onda e o campo viraria três curvas soltas.
+Em retrato o domínio é mantido próximo do quadrado, a dispersão vertical se
+abre e a amplitude cai pela metade.
 
 ### Cena 3 — Autoestima (pointer-driven)
 Painel translúcido fixo. `uMouse` com lerp 0.08.

@@ -46,6 +46,8 @@ app/
 
 components/
   scenes/
+    02-anxiety/              // Anxiety.tsx AnxietyCanvas.tsx AnxietyScene.tsx
+                             // AnxietyLines.tsx shaders/lines.vert.ts .frag.ts
     01-hero/                 // Hero.tsx HeroCanvas.tsx HeroScene.tsx HeroParticles.tsx
                              // imageCloud.ts      (amostragem da imagem-fonte)
                              // cloud.worker.ts useBrainCloud.ts
@@ -166,7 +168,12 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
    pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
    deslocamento.
-15. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+15. **`position: sticky` no lugar do `pin` do ScrollTrigger.** Sticky não cria
+   pin-spacer, não recalcula layout a cada refresh e convive com o Lenis sem
+   ajuste. O ScrollTrigger passa a fazer só uma coisa: escrever o progresso.
+   No modo reduzido o trilho é desmontado por CSS (`u-scroll-track`), porque
+   250svh sem animação é apenas tela vazia.
+16. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -276,7 +283,7 @@ CI (GitHub Actions)
 |---|---|---|
 | 0 | Migração Next 15, tokens, providers (Lenis/GSAP/reduced-motion), navbar e cursor base | ✅ entregue |
 | 1 | **Cena 1 — Hero** completo | ✅ entregue |
-| 2 | Cena 2 — Ansiedade | aprovação |
+| 2 | **Cena 2 — Ansiedade** | ✅ entregue |
 | 3 | Cena 3 — Autoestima | aprovação |
 | 4 | Cena 4 — Flexibilidade | aprovação |
 | 5 | Cena 5 — Aceitação | aprovação |

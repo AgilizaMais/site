@@ -212,6 +212,17 @@ canvas {
   }
 }
 
+/* Sem movimento, um trilho de scroll é só tela vazia: a cena vira uma seção
+   comum, de uma tela, com o conteúdo já visível. */
+[data-motion='reduced'] .u-scroll-track {
+  height: auto !important;
+}
+
+[data-motion='reduced'] .u-scroll-sticky {
+  position: static !important;
+  min-height: 100svh;
+}
+
 [data-motion='reduced'] *,
 [data-motion='reduced'] *::before,
 [data-motion='reduced'] *::after {
