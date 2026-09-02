@@ -1,0 +1,84 @@
+'use client';
+
+import { m } from 'framer-motion';
+import { hero, nextSceneHref, professional } from '@/lib/content/site';
+import { RevealLines } from '@/components/typography/RevealLines';
+import { MagneticButton } from '@/components/ui/MagneticButton';
+import { useMotionPreference } from '@/lib/motion/MotionPreferenceProvider';
+import { HeroCanvas } from './HeroCanvas';
+import { HeroIntro } from './HeroIntro';
+import { ScrollHint } from './ScrollHint';
+
+/**
+ * CENA 1 — HERO · "Presença"
+ * A copy vive no DOM e é legível sem WebGL e sem JS de animação.
+ * Coreografia da entrada em docs/ANIMATION_SYSTEM.md §5.
+ */
+export function Hero() {
+  const { reduced } = useMotionPreference();
+  const d = (seconds: number) => (reduced ? 0 : seconds);
+
+  return (
+    <section
+      id={hero.id}
+      aria-labelledby="hero-title"
+      className="relative flex min-h-[100svh] flex-col overflow-hidden"
+    >
+      <HeroIntro />
+
+      <p className="sr-only">{hero.canvasDescription}</p>
+
+      {/* Objeto: acima do texto no mobile, à direita no desktop. */}
+      <m.div
+        className="absolute inset-x-0 top-0 h-[46svh] md:inset-y-0 md:left-[34%] md:h-auto"
+        initial={{ opacity: 0, scale: 1.06 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: d(1.4), delay: d(0.7), ease: [0.65, 0, 0.35, 1] }}
+      >
+        <HeroCanvas />
+      </m.div>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-content flex-1 items-end pt-[44svh] u-margin-x md:items-center md:pt-0">
+        <div className="u-veil relative w-full max-w-[40rem]">
+          <RevealLines
+            id="hero-title"
+            as="h1"
+            lines={hero.headline}
+            delay={d(1.05)}
+            className="font-display text-display-xl text-text"
+          />
+
+          <m.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: d(0.8), delay: d(1.35), ease: [0.16, 1, 0.3, 1] }}
+            className="u-measure mt-7 text-body-l text-muted"
+          >
+            {hero.subheadline}
+          </m.p>
+
+          <m.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: d(0.8), delay: d(1.55), ease: [0.16, 1, 0.3, 1] }}
+            className="mt-11"
+          >
+            <MagneticButton href={nextSceneHref('inicio')}>{hero.cta.label}</MagneticButton>
+          </m.div>
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto flex w-full max-w-content shrink-0 items-end justify-between pb-8 pt-12 u-margin-x md:pt-8">
+        <ScrollHint />
+        <m.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: d(0.8), delay: d(1.8) }}
+          className="u-tabular hidden font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted md:block"
+        >
+          {professional.role} · {professional.crp}
+        </m.p>
+      </div>
+    </section>
+  );
+}
