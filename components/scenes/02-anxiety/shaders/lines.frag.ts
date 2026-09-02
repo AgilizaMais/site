@@ -38,8 +38,11 @@ void main() {
   // Duas etapas, como a cena narra: primeiro o movimento DESACELERA, só depois
   // as linhas se ALINHAM. Uma curva única faria as duas coisas ao mesmo tempo,
   // e a passagem do caos ao equilíbrio perderia o meio do caminho.
-  float decel = smoothstep(0.30, 0.72, uProgress);
-  float sync = smoothstep(0.60, 0.86, uProgress);
+  //
+  // As faixas são longas de propósito: a travessia do caos ao equilíbrio é a
+  // cena inteira, não uma transição entre dois estados.
+  float decel = smoothstep(0.26, 0.78, uProgress);
+  float sync = smoothstep(0.56, 0.92, uProgress);
   float chaos = 1.0 - decel;
 
   vec3 color = vec3(0.0);
@@ -76,6 +79,13 @@ void main() {
     // Tremor de alta frequência, que existe só enquanto há caos.
     wave += 0.004 * chaos * sin(x * 46.0 + uTime * 3.1 + fi);
 
+    // Limitador suave: a linha nunca alcança a borda do quadro, então nunca é
+    // cortada no meio do traço. Um clamp duro achataria o topo da onda e
+    // entregaria o limite; esta curva comprime as excursões grandes e deixa as
+    // pequenas intactas.
+    float limit = 0.44;
+    wave = wave / sqrt(1.0 + (wave * wave) / (limit * limit));
+
     float d = abs(y - wave);
     float thickness = (0.0013 + r3 * 0.0011) * mix(1.0, 0.86, sync);
     float glow = thickness / (d + thickness * 0.85);
@@ -92,11 +102,14 @@ void main() {
 
   // Depois da sincronia, o feixe recua para o fundo: a partir daqui quem
   // conduz é o texto.
-  color *= mix(1.0, 0.58, smoothstep(0.86, 1.0, uProgress));
+  color *= mix(1.0, 0.58, smoothstep(0.90, 1.0, uProgress));
 
-  // Vinheta lateral: as linhas nascem e morrem fora da tela, sem corte seco.
-  float edge = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
-  color *= edge;
+  // Vinheta nos quatro lados: as linhas nascem e morrem dissolvendo, sem corte
+  // seco. A vertical importa enquanto a seção entra em cena — ali a borda do
+  // quadro está no meio da tela, e sem ela o traço termina no vazio.
+  float edgeX = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
+  float edgeY = smoothstep(0.0, 0.09, vUv.y) * smoothstep(1.0, 0.91, vUv.y);
+  color *= edgeX * edgeY;
 
   float a = clamp(max(max(color.r, color.g), color.b), 0.0, 1.0) * uOpacity;
   gl_FragColor = vec4(color * uOpacity, a);

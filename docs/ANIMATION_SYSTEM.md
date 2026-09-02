@@ -123,27 +123,38 @@ Skip: qualquer scroll, clique ou tecla durante a entrada avança a timeline para
 (inclusive a formação das partículas, via `lib/motion/introBus.ts`).
 
 ### Cena 2 — Ansiedade (scrub) — *implementado*
-Trilho de 250svh, objeto preso por `position: sticky`. `scrub: 1`.
+Trilho de 380svh, objeto preso por `position: sticky`. `scrub: 1`.
 
 **Duas curvas, não uma.** Desaceleração e sincronização são etapas distintas —
 primeiro o movimento perde energia, só depois as linhas se alinham. Com uma
 curva única as duas coisas acontecem juntas e o meio do caminho desaparece.
 
 ```
-decel = smoothstep(0.30, 0.72, p)   → amplitude, velocidade e tremor caem
-sync  = smoothstep(0.60, 0.86, p)   → dispersão, frequência e fase convergem
+decel = smoothstep(0.26, 0.78, p)   → amplitude, velocidade e tremor caem
+sync  = smoothstep(0.56, 0.92, p)   → dispersão, frequência e fase convergem
 
-progress 0.00–0.30  caos: 14 linhas dessincronizadas, com tremor de alta frequência
-progress 0.30–0.72  desaceleração
-progress 0.60–0.86  sincronização: feixe único, assentado abaixo do centro
-progress 0.86–1.00  copy entra; o feixe recua para 58% do brilho
+progress 0.00–0.26  caos: 14 linhas dessincronizadas, com tremor de alta frequência
+progress 0.26–0.78  desaceleração
+progress 0.56–0.92  sincronização: feixe único, assentado abaixo do centro
+progress 0.90–1.00  copy entra; o feixe recua para 58% do brilho
 ```
+
+As faixas se sobrepõem e são longas de propósito: a travessia É a cena. Em
+250svh com faixas curtas, o caos virava equilíbrio rápido demais para o
+visitante sentir o percurso.
 
 O valor lido pelo shader ainda passa por um `damp` de 6/s: a roda do mouse
 entrega saltos, e um pulo na sincronização diria o oposto do que a cena narra.
 
 Nenhum flash. Nenhum termo pisca; a luminância de cada linha varia devagar e o
 somatório é estável ao longo do scrub (segurança fotossensível).
+
+**Nenhuma linha toca a borda.** Duas defesas, porque as causas são diferentes:
+um limitador suave (`w / sqrt(1 + w²/limite²)`) impede que a excursão alcance o
+topo ou a base do quadro — um clamp duro achataria a onda e entregaria o
+limite; e uma vinheta nos quatro lados dissolve o traço em vez de cortá-lo. A
+vertical importa enquanto a seção entra em cena: ali a borda do quadro está no
+meio da tela, e sem ela a linha termina seca no vazio.
 
 **Retrato tem composição própria.** Com o domínio horizontal multiplicado pelo
 aspecto, cada linha mostraria meia onda e o campo viraria três curvas soltas.

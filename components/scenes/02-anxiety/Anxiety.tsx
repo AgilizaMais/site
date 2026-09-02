@@ -57,7 +57,7 @@ export function Anxiety() {
       });
 
       // Caos → desaceleração → sincronia. O shader lê este valor.
-      tl.to(progress.current, { value: 1, duration: 0.86, ease: 'none' }, 0);
+      tl.to(progress.current, { value: 1, duration: 1, ease: 'none' }, 0);
 
       // A copy só existe depois que as linhas encontram o equilíbrio.
       tl.to(
@@ -66,13 +66,13 @@ export function Anxiety() {
           clipPath: 'inset(0 0 0% 0)',
           yPercent: 0,
           opacity: 1,
-          duration: 0.1,
+          duration: 0.09,
           stagger: 0.03,
           ease: 'power2.out',
         },
-        0.86,
+        0.9,
       );
-      tl.to(rest, { opacity: 1, y: 0, duration: 0.09, stagger: 0.02, ease: 'power2.out' }, 0.9);
+      tl.to(rest, { opacity: 1, y: 0, duration: 0.08, stagger: 0.02, ease: 'power2.out' }, 0.93);
     }, trackEl);
 
     ScrollTrigger.refresh();
@@ -83,7 +83,7 @@ export function Anxiety() {
     <section id={anxiety.id} aria-labelledby="anxiety-title" className="relative">
       <p className="sr-only">{anxiety.canvasDescription}</p>
 
-      <div ref={track} className="u-scroll-track h-[250svh]">
+      <div ref={track} className="u-scroll-track h-[380svh]">
         <div className="u-scroll-sticky sticky top-0 flex h-[100svh] items-center overflow-hidden">
           <AnxietyCanvas progress={progress.current} />
 
