@@ -146,8 +146,15 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 
 ---
 
-### CENA 3 — AUTOESTIMA · "Reencontrar"
-- **[V]** Um painel translúcido vertical (proporção 3:4) flutua ligeiramente fora do centro. Atrás dele, o texto da cena — parcialmente refratado, sempre legível fora da área do painel.
+### CENA 3 — AUTOESTIMA · "Reencontrar" — *implementada*
+- **[V]** Um painel translúcido vertical flutua fora do centro, sobre um campo de luz estriado. O que atravessa o vidro chega deslocado, desfocado e com as cores levemente separadas.
+
+> **Ajuste de escopo.** O storyboard previa o texto da cena atrás do painel,
+> parcialmente refratado. Na implementação, o que o vidro refrata é o **campo de
+> luz**, e o texto fica ao lado: refratar tipografia exigiria redesenhá-la dentro
+> do WebGL, o que a tiraria do DOM e do alcance de leitores de tela. O desfoque
+> físico sobre conteúdo DOM continua existindo — é `backdrop-filter` de verdade —
+> e a metáfora se mantém: o painel não devolve a imagem, ele a filtra.
 - **[M]** Refração, blur físico e dispersão cromática (≤1.5px) crescem com a proximidade do cursor. Parado por 700ms, tudo retorna ao equilíbrio em 1.4s.
 - **[C]** *Autoestima* / **A imagem que você tem de si também é aprendida.** / parágrafo.
 - **[I]** Desktop: cursor. Touch: a velocidade do scroll alimenta a distorção.

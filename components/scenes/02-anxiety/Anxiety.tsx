@@ -25,12 +25,12 @@ export function Anxiety() {
   const track = useRef<HTMLDivElement>(null);
   const copy = useRef<HTMLDivElement>(null);
   const progress = useRef({ value: 0 });
-  const { reduced } = useMotionPreference();
+  const { reduced, resolved } = useMotionPreference();
 
   useLayoutEffect(() => {
     const trackEl = track.current;
     const copyEl = copy.current;
-    if (!trackEl || !copyEl) return;
+    if (!trackEl || !copyEl || !resolved) return;
 
     registerGsap();
 
@@ -77,7 +77,7 @@ export function Anxiety() {
 
     ScrollTrigger.refresh();
     return () => ctx.revert();
-  }, [reduced]);
+  }, [reduced, resolved]);
 
   return (
     <section id={anxiety.id} aria-labelledby="anxiety-title" className="relative">

@@ -43,7 +43,8 @@ Construção por etapas, uma cena por vez.
 - ✅ Fase 0 — fundação (tokens, providers, navbar, cursor, reduced-motion)
 - ✅ Fase 1 — **Cena 1: Hero**
 - ✅ Fase 2 — **Cena 2: Ansiedade**
-- ⬜ Fases 3–8 — Cenas 3 a 8
+- ✅ Fase 3 — **Cena 3: Autoestima**
+- ⬜ Fases 4–8 — Cenas 4 a 8
 - ⬜ Fase 9 — polimento global, SEO, LGPD, QA e deploy
 
 A navegação só oferece âncoras de cenas já implementadas

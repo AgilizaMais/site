@@ -46,6 +46,8 @@ app/
 
 components/
   scenes/
+    03-selfesteem/           // SelfEsteem.tsx SelfEsteemCanvas.tsx SelfEsteemScene.tsx
+                             // GlassPanel.tsx shaders/glass.frag.ts
     02-anxiety/              // Anxiety.tsx AnxietyCanvas.tsx AnxietyScene.tsx
                              // AnxietyLines.tsx shaders/lines.vert.ts .frag.ts
     01-hero/                 // Hero.tsx HeroCanvas.tsx HeroScene.tsx HeroParticles.tsx
@@ -173,7 +175,19 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    ajuste. O ScrollTrigger passa a fazer só uma coisa: escrever o progresso.
    No modo reduzido o trilho é desmontado por CSS (`u-scroll-track`), porque
    250svh sem animação é apenas tela vazia.
-16. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+16. **Nenhuma animação começa antes de a preferência de movimento ser
+   conhecida.** O provider expõe `resolved`, falso nos primeiros quadros. Sem
+   essa trava, quem pede movimento reduzido vê o reveal começar e ser cancelado
+   — o efeito roda por ~800ms antes de o `matchMedia` ser lido.
+17. **Duas armadilhas de GLSL embutido em TypeScript.** `half` é palavra
+   reservada em GLSL e falha a compilação do shader (o erro só aparece no
+   console do navegador, não no build). E uma crase dentro do comentário GLSL
+   encerra o template literal do TypeScript — o erro que aparece é
+   "Expected a semicolon", a dezenas de linhas do problema real.
+18. **Vidro que desfoca DOM é DOM.** O `backdrop-filter` do painel atinge de
+   fato o texto atrás dele, coisa que o WebGL não alcança. O shader cuida do
+   que só ele sabe fazer: deslocamento, dispersão cromática e a aresta de luz.
+19. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -284,7 +298,7 @@ CI (GitHub Actions)
 | 0 | Migração Next 15, tokens, providers (Lenis/GSAP/reduced-motion), navbar e cursor base | ✅ entregue |
 | 1 | **Cena 1 — Hero** completo | ✅ entregue |
 | 2 | **Cena 2 — Ansiedade** | ✅ entregue |
-| 3 | Cena 3 — Autoestima | aprovação |
+| 3 | **Cena 3 — Autoestima** | ✅ entregue |
 | 4 | Cena 4 — Flexibilidade | aprovação |
 | 5 | Cena 5 — Aceitação | aprovação |
 | 6 | Cena 6 — Credibilidade | aprovação |

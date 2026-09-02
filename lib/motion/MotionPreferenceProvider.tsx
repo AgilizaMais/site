@@ -7,11 +7,22 @@ type MotionPreference = {
   reduced: boolean;
   /** null = seguindo o sistema. */
   override: boolean | null;
+  /**
+   * false durante os primeiros quadros, enquanto a preferência ainda não foi
+   * lida do sistema. Nenhuma animação pode começar antes disto: sem essa
+   * trava, quem pede movimento reduzido vê o reveal começar e ser cancelado.
+   */
+  resolved: boolean;
   toggle: () => void;
 };
 
 const STORAGE_KEY = 'jb:motion';
-const Ctx = createContext<MotionPreference>({ reduced: false, override: null, toggle: () => {} });
+const Ctx = createContext<MotionPreference>({
+  reduced: false,
+  override: null,
+  resolved: false,
+  toggle: () => {},
+});
 
 /**
  * Script inline aplicado antes da pintura, evitando flash de animação
@@ -26,6 +37,7 @@ if(m)document.documentElement.setAttribute('data-motion','reduced');
 export function MotionPreferenceProvider({ children }: { children: React.ReactNode }) {
   const [systemReduced, setSystemReduced] = useState(false);
   const [override, setOverride] = useState<boolean | null>(null);
+  const [resolved, setResolved] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -37,6 +49,7 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
     if (stored === 'reduced') setOverride(true);
     else if (stored === 'full') setOverride(false);
 
+    setResolved(true);
     return () => mq.removeEventListener('change', onChange);
   }, []);
 
@@ -56,7 +69,10 @@ export function MotionPreferenceProvider({ children }: { children: React.ReactNo
     });
   }, [systemReduced]);
 
-  const value = useMemo(() => ({ reduced, override, toggle }), [reduced, override, toggle]);
+  const value = useMemo(
+    () => ({ reduced, override, resolved, toggle }),
+    [reduced, override, resolved, toggle],
+  );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 

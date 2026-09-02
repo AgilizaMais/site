@@ -32,10 +32,10 @@ export function RevealLines({
   id,
 }: Props) {
   const root = useRef<HTMLElement>(null);
-  const { reduced } = useMotionPreference();
+  const { reduced, resolved } = useMotionPreference();
 
   useLayoutEffect(() => {
-    if (!play) return;
+    if (!play || !resolved) return;
     const el = root.current;
     if (!el) return;
 
@@ -62,7 +62,7 @@ export function RevealLines({
     }, el);
 
     return () => ctx.revert();
-  }, [play, delay, reduced]);
+  }, [play, delay, reduced, resolved]);
 
   return (
     <Tag id={id} ref={root as never} className={className}>

@@ -34,6 +34,17 @@ export const anxiety = {
     'Linhas de luz atravessam a tela. Começam desencontradas e trêmulas e, conforme a página avança, desaceleram até se alinharem em um feixe único e calmo.',
 } as const;
 
+export const selfEsteem = {
+  id: 'autoestima',
+  eyebrow: 'Autoestima',
+  headline: ['A imagem que você tem', 'de si também é aprendida.'],
+  body:
+    'Autoestima não é gostar de tudo em si o tempo todo. É construir uma relação mais justa ' +
+    'com a própria história — reconhecendo distorções sem se reduzir a elas.',
+  canvasDescription:
+    'Um painel translúcido flutua sobre um campo de luz. O que se vê através dele chega deslocado e desfocado; quando o movimento cessa, a imagem volta ao lugar.',
+} as const;
+
 export const nav = {
   links: [
     { id: 'sobre', label: 'Sobre', href: '#sobre' },
@@ -60,7 +71,7 @@ export type SceneId = (typeof scenes)[number]['id'];
  * A navegação só oferece o que já existe — nenhuma âncora morta chega ao usuário.
  * Ao entregar uma cena, basta acrescentar o id aqui.
  */
-export const implementedScenes: readonly SceneId[] = ['inicio', 'ansiedade'];
+export const implementedScenes: readonly SceneId[] = ['inicio', 'ansiedade', 'autoestima'];
 
 export const isImplemented = (id: SceneId) => implementedScenes.includes(id);
 

@@ -161,11 +161,26 @@ aspecto, cada linha mostraria meia onda e o campo viraria três curvas soltas.
 Em retrato o domínio é mantido próximo do quadrado, a dispersão vertical se
 abre e a amplitude cai pela metade.
 
-### Cena 3 — Autoestima (pointer-driven)
-Painel translúcido fixo. `uMouse` com lerp 0.08.
-- Refração e blur físico proporcionais à distância do cursor; dispersão cromática máx. 1.5px.
-- Ao parar o cursor por 700ms: retorno ao equilíbrio em `cine` / `easeInQuiet`.
-- **Touch:** o painel responde à inclinação do scroll (velocidade → distorção) em vez do cursor.
+### Cena 3 — Autoestima (pointer-driven) — *implementado*
+Painel translúcido sobre um campo de luz estriado. O ponteiro é suavizado com
+`damp(5)`: o painel acompanha, não persegue — o atraso é o que dá massa ao vidro.
+
+**Amortecimento assimétrico.** A distorção sobe com `damp(7)` e desce com
+`damp(1.7)`: responde na hora e se desfaz devagar. Simétrico ficaria nervoso, e
+a cena fala de retorno ao equilíbrio, não de reflexo.
+
+- 700ms de cursor parado e a imagem começa a voltar ao lugar.
+- Deslocamento com curvatura de lente (cresce em direção às bordas), dispersão
+  cromática abaixo de 1.5px na escala da tela, e blur por amostragem cruzada.
+- **Touch:** sem cursor, quem perturba a imagem é a velocidade do próprio
+  scroll. A leitura é a mesma — o movimento distorce, a pausa devolve.
+- O retângulo do painel é medido no DOM e enviado ao shader: o layout é a fonte
+  da verdade, então o vidro nunca sai do lugar em nenhum viewport.
+
+> **O campo precisa ter estrutura fina.** É o deslocamento das estriações que
+> torna a refração visível. Um campo liso atravessa o vidro sem revelar nada e o
+> painel vira uma placa colorida — foi o que aconteceu nas duas primeiras
+> tentativas.
 
 ### Cena 4 — Flexibilidade (scrub + física)
 Trilho de 300svh. Fita com deformação por ruído curl.

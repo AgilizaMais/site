@@ -15,8 +15,11 @@ import { ScrollHint } from './ScrollHint';
  * Coreografia da entrada em docs/ANIMATION_SYSTEM.md §5.
  */
 export function Hero() {
-  const { reduced } = useMotionPreference();
+  const { reduced, resolved } = useMotionPreference();
   const d = (seconds: number) => (reduced ? 0 : seconds);
+  // A entrada aguarda um quadro: sem isso, quem pediu movimento reduzido vê a
+  // animação começar antes de a preferência ser lida.
+  const enter = resolved ? { opacity: 1, scale: 1, y: 0 } : undefined;
 
   return (
     <section
@@ -32,7 +35,7 @@ export function Hero() {
       <m.div
         className="absolute inset-0"
         initial={{ opacity: 0, scale: 1.08 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={enter}
         transition={{ duration: d(1.6), delay: d(0.7), ease: [0.65, 0, 0.35, 1] }}
       >
         <HeroCanvas />
@@ -50,7 +53,7 @@ export function Hero() {
 
           <m.p
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            animate={enter}
             transition={{ duration: d(0.8), delay: d(1.35), ease: [0.16, 1, 0.3, 1] }}
             className="u-measure mt-7 text-body-l text-muted"
           >
@@ -59,7 +62,7 @@ export function Hero() {
 
           <m.div
             initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={enter}
             transition={{ duration: d(0.8), delay: d(1.55), ease: [0.16, 1, 0.3, 1] }}
             className="mt-11"
           >
@@ -72,7 +75,7 @@ export function Hero() {
         <ScrollHint />
         <m.p
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          animate={enter}
           transition={{ duration: d(0.8), delay: d(1.8) }}
           className="u-tabular hidden font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-muted md:block"
         >
