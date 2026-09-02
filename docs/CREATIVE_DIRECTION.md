@@ -78,13 +78,19 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 > aditivo) e não é ilustrativo (nenhum contorno, nenhuma "rede neural"). Ocupa o
 > fundo da cena e passa por trás do texto, em vez de posar como retrato.
 
-- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 42–72k partículas concentradas nos sulcos — as dobras se desenham como linhas de luz. Key light quente vinda de cima-frente; rim de acento nas cristas. Vinheta forte. Grão 3%.
+- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 22–95k partículas. A leitura é anatômica e deliberada: perfil alongado, fissura de Sylvius esculpida separando o lobo temporal, cerebelo como massa própria com textura mais fina, tronco encefálico descendo. Key light quente de cima-frente; brasa contornando a silhueta. Vinheta forte. Grão 3%.
 - **[M]** Loader (linha de luz) → canvas entra em `scale 1.08→1` → partículas se formam da dispersão (2.4s) → headline em clip-path (stagger 90ms) → sub → CTA. Em loop, três movimentos somados: deriva tangencial contínua (cada partícula com fase própria), respiração de 4s a 2.2%, e uma onda lenta de luz atravessando a forma de trás para a frente.
 - **[C]** *A mudança acontece em movimento.* / Sub / **Iniciar jornada** / assinatura "Júlia Beatriz · Psicóloga Clínica · CRP 15/8791".
 - **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
 
-> **Regra descoberta na implementação:** a amplitude da deriva precisa ficar
+> **Segunda regra descoberta:** para a forma ser *inconfundível*, silhueta não
+> basta — são os marcos que identificam. Um cérebro só é reconhecido de perfil,
+> e precisa de fissura de Sylvius, cerebelo destacado e tronco visíveis. Além
+> disso, com blending aditivo não há oclusão: sem um back-face cull suave, a
+> superfície de trás lava o padrão de dobras da da frente.
+
+> **Primeira regra descoberta:** a amplitude da deriva precisa ficar
 > **abaixo da espessura da casca** (0.016 contra 0.02). Acima disso o movimento
 > apaga os sulcos e a forma vira névoa. Por isso o movimento é carregado
 > sobretudo pela luz — cintilação por partícula e a onda — e não pelo

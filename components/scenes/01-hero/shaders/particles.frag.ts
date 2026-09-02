@@ -12,6 +12,8 @@ varying float vRim;
 varying float vSeed;
 varying float vDepth;
 varying float vShell;
+varying float vEdge;
+varying float vCrown;
 varying float vPulse;
 varying float vTwinkle;
 
@@ -26,8 +28,9 @@ void main() {
 
   // O rim soma luz em vez de tingir: o branco continua branco e a borda
   // quente aparece como brasa, não como ruído vermelho.
-  vec3 color = uColorLight * (0.10 + vKey * 1.15);
-  color += uColorAccent * vRim * vShell * 0.9;
+  vec3 color = uColorLight * (0.07 + vKey * 1.35);
+  // O acento vive na borda da silhueta: brasa contornando a forma.
+  color += uColorAccent * vRim * vEdge * 1.15;
   // A onda acende o acento por onde passa.
   color += uColorAccent * vPulse * 0.75;
 
@@ -35,9 +38,9 @@ void main() {
   float depthFade = mix(1.0, 0.3, vDepth);
 
   // A luz constrói o volume: o lado iluminado também é mais denso.
-  float a = alpha * uOpacity * depthFade * vTwinkle
-          * (0.42 + vShell * 0.58)
-          * (0.4 + vKey * 0.9 + vRim * 0.5 + vPulse * 0.6);
+  float a = alpha * uOpacity * depthFade * vTwinkle * vShell
+          * mix(0.12, 1.0, vCrown)
+          * (0.42 + vKey * 0.95 + vPulse * 0.55);
   a = dither8x8(gl_FragCoord.xy, a);
 
   gl_FragColor = vec4(color, a);

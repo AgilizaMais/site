@@ -26,7 +26,7 @@ const BASE_YAW = THREE.MathUtils.degToRad(-84);
 const BASE_PITCH = THREE.MathUtils.degToRad(8);
 
 /** Opacidade final baixa: o objeto é fundo, o texto é primeiro plano. */
-const PEAK_OPACITY = 0.72;
+const PEAK_OPACITY = 0.95;
 
 export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   const points = useRef<THREE.Points>(null);
@@ -52,7 +52,7 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uFormation: { value: reduced ? 1 : 0 },
       uBreath: { value: reduced ? 0 : 0.022 },
       uDrift: { value: reduced ? 0 : 0.016 },
-      uSize: { value: tier === 'low' ? 3.2 : 2.7 },
+      uSize: { value: tier === 'low' ? 3.4 : 2.9 },
       uPixelRatio: { value: 1 },
       uKeyDir: { value: KEY_DIR },
       uRimDir: { value: RIM_DIR },
@@ -138,14 +138,14 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
    */
   const narrow = viewport.width < 3.4;
   const scale = THREE.MathUtils.clamp(
-    Math.min(viewport.width / 2.4, viewport.height / 2.35),
-    0.5,
-    1.26,
+    Math.min(viewport.width / 2.6, viewport.height / 2.4),
+    0.45,
+    1.24,
   );
 
   // No desktop o objeto sai do centro: o texto ocupa a esquerda e cruza a borda
   // dele. No mobile fica centralizado e acima do texto.
-  const objectX = narrow ? 0 : viewport.width * 0.11;
+  const objectX = narrow ? 0 : viewport.width * 0.06;
   const objectY = narrow ? viewport.height * 0.17 : 0.1;
 
   return (

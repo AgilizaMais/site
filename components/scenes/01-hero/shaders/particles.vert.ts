@@ -13,7 +13,7 @@ export const particlesVert = /* glsl */ `
 precision mediump float;
 
 attribute vec3 aNormal;
-attribute vec4 aSeed;   // x: semente · y: tamanho · z: fase de cintilação · w: fase de deriva
+attribute vec4 aSeed;   // x: semente · y: tamanho · z: campo de dobras · w: fase
 
 uniform float uTime;
 uniform float uFormation;   // 0 = pó disperso · 1 = forma completa
@@ -29,6 +29,8 @@ varying float vRim;
 varying float vSeed;
 varying float vDepth;
 varying float vShell;
+varying float vEdge;
+varying float vCrown;
 varying float vPulse;
 varying float vTwinkle;
 
@@ -75,15 +77,22 @@ void main() {
   vec4 mvPosition = viewMatrix * worldPosition;
   gl_Position = projectionMatrix * mvPosition;
 
-  // Casca luminosa: partículas de frente quase somem, as de raspão acendem.
-  // É isso que impede a forma de virar uma silhueta preenchida.
   vec3 viewDir = normalize(cameraPosition - worldPosition.xyz);
   vec3 worldNormal = normalize(mat3(modelMatrix) * aNormal);
-  float facing = abs(dot(worldNormal, viewDir));
-  vShell = pow(1.0 - facing, 1.15);
+
+  // Back-face cull suave. Com blending aditivo não há oclusão: sem isto, a
+  // superfície de trás soma sobre a da frente e apaga o padrão de dobras.
+  // A face voltada para a câmera é que desenha; a borda ganha um realce fino.
+  float front = max(0.0, dot(worldNormal, viewDir));
+  vEdge = pow(1.0 - front, 3.0);
+  vShell = front * 0.95 + vEdge * 0.45;
 
   // A base dissolve: a forma emerge do escuro, não termina nele.
-  vShell *= smoothstep(-1.05, -0.62, position.y);
+  vShell *= smoothstep(-1.28, -0.92, position.y);
+
+  // Cristas acesas, sulcos apagados: o padrão de bandas que o olho reconhece
+  // como cérebro. O valor vem da geração da nuvem, não é recalculado por frame.
+  vCrown = smoothstep(0.18, 0.72, aSeed.z);
 
   // --- 3. Onda de luz percorrendo a forma, de trás para a frente.
   float wave = fract(uTime * 0.075 - position.z * 0.26 - position.y * 0.08);
@@ -92,7 +101,7 @@ void main() {
   // Cintilação: cada partícula acende e apaga no seu próprio tempo. Com a
   // deriva mantida pequena para não borrar os sulcos, é a luz que carrega o
   // movimento — e ela não custa nada em legibilidade da forma.
-  vTwinkle = 0.55 + 0.45 * sin(uTime * 1.15 + aSeed.z * 6.2831853);
+  vTwinkle = 0.62 + 0.38 * sin(uTime * 1.15 + aSeed.w * 6.2831853);
 
   // Uma key light e um rim. Contraste alto: no escuro, meio-tom é ruído.
   vKey = pow(clamp(dot(worldNormal, uKeyDir), 0.0, 1.0), 0.75);

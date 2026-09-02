@@ -106,10 +106,14 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    devolve os buffers como transferíveis (sem cópia), e a formação começa assim
    que a nuvem chega — se o worker demorou mais que o atraso previsto, o atraso
    é descontado em vez de somado.
-8. **Densidade onde há estrutura.** Espalhar pontos uniformemente pela casca
-   produz névoa. As partículas são enviesadas para os sulcos (93% da chance de
-   aceitação vem do campo de dobras), então as dobras se desenham como linhas —
-   forma legível com menos partículas.
+8. **Back-face cull suave, e o contraste vem da luz.** Com blending aditivo não
+   há oclusão: a superfície de trás soma sobre a da frente e apaga o padrão de
+   dobras. As partículas voltadas para longe da câmera são atenuadas
+   (`max(0, dot(n, view))`), com um realce fino na borda da silhueta.
+   O valor do campo de dobras viaja com a partícula (`aSeed.z`) e acende as
+   cristas enquanto apaga os sulcos — bandas claras e escuras, que é o que o
+   olho reconhece como cérebro. Enviesar a *densidade* para os sulcos foi
+   tentado antes e desenhava só os vales: a forma sumia.
 9. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
    casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
    pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
@@ -139,9 +143,9 @@ Responsabilidades:
 ### Tiers de dispositivo (`useDeviceTier`)
 | Tier | Detecção | Partículas (Hero) | DPR máx | Pós-processamento |
 |---|---|---|---|---|
-| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 72k | 2.0 | bloom leve |
-| `mid` | default | 42k | 1.5 | nenhum |
-| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 16k | 1.0 | nenhum |
+| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 95k | 2.0 | bloom leve |
+| `mid` | default | 58k | 1.5 | nenhum |
+| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 22k | 1.0 | nenhum |
 | `none` | sem WebGL2 / reduced-motion | — | — | fallback estático |
 
 **Degradação adaptativa:** média móvel de FPS em janela de 60 frames; abaixo de 50 FPS por 2s,
