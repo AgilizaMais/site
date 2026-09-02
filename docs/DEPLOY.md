@@ -35,11 +35,18 @@ out/
    mostram por padrão. Sem ele, o GitHub Pages ignora a pasta `_next/` inteira (o Jekyll
    descarta diretórios iniciados por `_`) e o site carrega sem estilo e sem JavaScript.
    Ative a exibição de arquivos ocultos antes de enviar.
-2. **Subpasta.** O build assume que o site fica na **raiz** do domínio. Para servir em
-   `https://dominio.com/site/`, gere assim:
+2. **Subpasta — a causa nº 1 de "o site abre sem estilo".** Por padrão o build assume
+   que o site fica na **raiz** do domínio e grava os caminhos dos assets como
+   `/_next/...`. Servido em `https://dominio.com/pasta/`, esses caminhos apontam para
+   `https://dominio.com/_next/...` — que não existe. O HTML carrega, todo o resto dá 404,
+   e a página aparece como texto cru com links roxos.
+
+   O caminho precisa entrar no build; não há como corrigir depois:
    ```bash
-   BASE_PATH=/site npm run build:static
+   BASE_PATH=/pasta npm run build:static
    ```
+   Um build feito para a raiz **não funciona** em subpasta, e vice-versa. Ao mudar o
+   endereço do site, refaça o build.
 3. **Permissões.** Se o 403 continuar mesmo com `index.html` presente, é permissão de
    arquivo: pastas em `755`, arquivos em `644`.
 
