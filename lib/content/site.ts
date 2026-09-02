@@ -19,7 +19,7 @@ export const hero = {
   scrollHint: 'Role para começar',
   /** Descrição da cena WebGL para leitores de tela (o canvas é aria-hidden). */
   canvasDescription:
-    'Uma forma humana abstrata composta por milhares de partículas de luz, que respira lentamente no escuro.',
+    'Um cérebro humano abstrato, desenhado por milhares de partículas de luz que percorrem seus sulcos e respiram lentamente no escuro.',
 } as const;
 
 export const nav = {

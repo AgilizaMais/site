@@ -138,15 +138,31 @@ canvas {
   .u-veil::before {
     content: '';
     position: absolute;
-    inset: -10% -20%;
+    inset: -18% -28% -18% -60%;
     z-index: -1;
     pointer-events: none;
     background: radial-gradient(
-      70% 60% at 30% 50%,
-      rgb(9 9 11 / 0.92) 0%,
-      rgb(9 9 11 / 0.75) 45%,
+      62% 58% at 22% 50%,
+      rgb(9 9 11 / 0.93) 0%,
+      rgb(9 9 11 / 0.78) 40%,
+      rgb(9 9 11 / 0.34) 72%,
       rgb(9 9 11 / 0) 100%
     );
+  }
+
+  /* No mobile o texto fica embaixo do objeto, não ao lado: o véu vira uma
+     faixa a partir da base. */
+  @media (max-width: 767px) {
+    .u-veil::before {
+      inset: -14% -30% -30% -30%;
+      background: linear-gradient(
+        to bottom,
+        rgb(9 9 11 / 0) 0%,
+        rgb(9 9 11 / 0.82) 22%,
+        rgb(9 9 11 / 0.95) 45%,
+        rgb(9 9 11 / 0.95) 100%
+      );
+    }
   }
 
   .sr-only {

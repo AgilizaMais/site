@@ -28,17 +28,17 @@ export function Hero() {
 
       <p className="sr-only">{hero.canvasDescription}</p>
 
-      {/* Objeto: acima do texto no mobile, à direita no desktop. */}
+      {/* O objeto ocupa a cena inteira e passa por trás do texto. */}
       <m.div
-        className="absolute inset-x-0 top-0 h-[46svh] md:inset-y-0 md:left-[34%] md:h-auto"
-        initial={{ opacity: 0, scale: 1.06 }}
+        className="absolute inset-0"
+        initial={{ opacity: 0, scale: 1.08 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: d(1.4), delay: d(0.7), ease: [0.65, 0, 0.35, 1] }}
+        transition={{ duration: d(1.6), delay: d(0.7), ease: [0.65, 0, 0.35, 1] }}
       >
         <HeroCanvas />
       </m.div>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-content flex-1 items-end pt-[44svh] u-margin-x md:items-center md:pt-0">
+      <div className="relative z-10 mx-auto flex w-full max-w-content flex-1 items-end pt-[46svh] u-margin-x md:items-center md:pt-0">
         <div className="u-veil relative w-full max-w-[40rem]">
           <RevealLines
             id="hero-title"

@@ -46,7 +46,9 @@ app/
 
 components/
   scenes/
-    01-hero/                 // Hero.tsx  HeroCanvas.tsx  particles.vert/.frag  useHeroParticles.ts
+    01-hero/                 // Hero.tsx HeroCanvas.tsx HeroScene.tsx HeroParticles.tsx
+                             // brainPointCloud.ts cloud.worker.ts useBrainCloud.ts
+                             // shaders/particles.vert.ts .frag.ts
     02-anxiety/
     03-selfesteem/
     04-flexibility/
@@ -99,7 +101,20 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
 5. **GLSL ES 1.00 não tem `%` para inteiros.** O dither usa aritmética em float.
 6. **`LazyMotion` + `m` no lugar de `motion`.** Reduziu o first-load de 195 KB para
    **175 KB gz** — dentro do orçamento de 180 KB.
-7. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+7. **A nuvem de pontos é gerada num Web Worker.** A amostragem do SDF do cérebro
+   custa 0,7–1,5s; na main thread isso engasgava a entrada inteira. O worker
+   devolve os buffers como transferíveis (sem cópia), e a formação começa assim
+   que a nuvem chega — se o worker demorou mais que o atraso previsto, o atraso
+   é descontado em vez de somado.
+8. **Densidade onde há estrutura.** Espalhar pontos uniformemente pela casca
+   produz névoa. As partículas são enviesadas para os sulcos (93% da chance de
+   aceitação vem do campo de dobras), então as dobras se desenham como linhas —
+   forma legível com menos partículas.
+9. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
+   casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
+   pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
+   deslocamento.
+10. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -124,9 +139,9 @@ Responsabilidades:
 ### Tiers de dispositivo (`useDeviceTier`)
 | Tier | Detecção | Partículas (Hero) | DPR máx | Pós-processamento |
 |---|---|---|---|---|
-| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 120k | 2.0 | bloom leve |
-| `mid` | default | 45k | 1.5 | nenhum |
-| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 18k | 1.0 | nenhum |
+| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 72k | 2.0 | bloom leve |
+| `mid` | default | 42k | 1.5 | nenhum |
+| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 16k | 1.0 | nenhum |
 | `none` | sem WebGL2 / reduced-motion | — | — | fallback estático |
 
 **Degradação adaptativa:** média móvel de FPS em janela de 60 frames; abaixo de 50 FPS por 2s,

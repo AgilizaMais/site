@@ -106,7 +106,11 @@ t=1.05  headline RevealLines (clip-path, stagger 90ms)
 t=1.35  subheadline FadeUp
 t=1.55  CTA: scale 0.96→1
 t=1.80  hint de scroll + assinatura
-loop    respiração: amplitude 1.5% em ciclo de 4s; parallax de cursor ±1.2° (lerp 0.06)
+loop    três movimentos somados, em escalas de tempo diferentes:
+        · deriva tangencial contínua (campo de ruído; fase própria por partícula)
+        · respiração global, amplitude 2.2% em ciclo de 4s
+        · onda de luz atravessando a forma, de trás para a frente
+        + parallax de cursor ±2.2° (lerp 0.045)
 ```
 Entrada percebida: **~2,4s**, com a headline pintada em ~1,3s.
 

@@ -92,7 +92,7 @@ Cada cena é um **estado da matéria mental**:
 
 | Cena | Conceito | Matéria visual | Verbo |
 |---|---|---|---|
-| 1 | Presença | busto de partículas | respirar |
+| 1 | Presença | cérebro de partículas | respirar |
 | 2 | Ansiedade | linhas luminosas | sincronizar |
 | 3 | Autoestima | painel translúcido | reencontrar |
 | 4 | Flexibilidade | fita/tecido | dobrar sem romper |

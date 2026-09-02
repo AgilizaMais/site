@@ -69,11 +69,26 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 ---
 
 ### CENA 1 — HERO · "Presença"
-- **[V]** Preto absoluto. No centro-direita, um busto humano abstrato composto por ~120k partículas: reconhecível como presença, nunca como retrato. Key light quente vinda de cima-frente; rim de acento à direita. Vinheta forte. Grão 3%.
-- **[M]** Loader (linha de luz) → canvas entra em `scale 1.06→1` → partículas se formam da dispersão (2.2s) → headline em clip-path (stagger 90ms) → sub → CTA. Loop: respiração de 4s, amplitude 1.5%.
+
+> **Revisão pós-implementação.** O busto de partículas foi substituído por um
+> **cérebro** em partículas, a pedido do cliente. O briefing veta "cérebro azul
+> girando" — então a peça foi construída negando cada elemento desse clichê:
+> não é azul (branco quente + brasa), não gira (o eixo é fixo; o movimento é
+> de superfície e de luz), não é sólido (casca fina, opacidade 0.72 em blending
+> aditivo) e não é ilustrativo (nenhum contorno, nenhuma "rede neural"). Ocupa o
+> fundo da cena e passa por trás do texto, em vez de posar como retrato.
+
+- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 42–72k partículas concentradas nos sulcos — as dobras se desenham como linhas de luz. Key light quente vinda de cima-frente; rim de acento nas cristas. Vinheta forte. Grão 3%.
+- **[M]** Loader (linha de luz) → canvas entra em `scale 1.08→1` → partículas se formam da dispersão (2.4s) → headline em clip-path (stagger 90ms) → sub → CTA. Em loop, três movimentos somados: deriva tangencial contínua (cada partícula com fase própria), respiração de 4s a 2.2%, e uma onda lenta de luz atravessando a forma de trás para a frente.
 - **[C]** *A mudança acontece em movimento.* / Sub / **Iniciar jornada** / assinatura "Júlia Beatriz · Psicóloga Clínica · CRP 15/8791".
-- **[I]** Parallax de cursor ±1.2° (lerp 0.06). CTA magnético. Scroll hint discreto após 4s de inatividade.
-- **[R]** Frame estático da formação concluída + texto. Sem loop.
+- **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
+- **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
+
+> **Regra descoberta na implementação:** a amplitude da deriva precisa ficar
+> **abaixo da espessura da casca** (0.016 contra 0.02). Acima disso o movimento
+> apaga os sulcos e a forma vira névoa. Por isso o movimento é carregado
+> sobretudo pela luz — cintilação por partícula e a onda — e não pelo
+> deslocamento. Vale para todas as cenas com estrutura fina.
 
 ---
 

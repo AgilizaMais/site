@@ -12,6 +12,8 @@ varying float vRim;
 varying float vSeed;
 varying float vDepth;
 varying float vShell;
+varying float vPulse;
+varying float vTwinkle;
 
 ${dither}
 
@@ -22,20 +24,20 @@ void main() {
   float alpha = smoothstep(0.25, 0.0, d);
   if (alpha < 0.01) discard;
 
-  // Iluminação: branco quente na key, laranja apenas na borda.
   // O rim soma luz em vez de tingir: o branco continua branco e a borda
   // quente aparece como brasa, não como ruído vermelho.
   vec3 color = uColorLight * (0.10 + vKey * 1.15);
   color += uColorAccent * vRim * vShell * 0.9;
+  // A onda acende o acento por onde passa.
+  color += uColorAccent * vPulse * 0.75;
 
   // Profundidade: o que está atrás recua, o que está à frente respira.
-  float depthFade = mix(1.0, 0.32, vDepth);
-  float twinkle = 0.85 + 0.15 * vSeed;
+  float depthFade = mix(1.0, 0.3, vDepth);
 
-  // O lado iluminado também é mais denso: a luz constrói o volume.
-  float a = alpha * uOpacity * depthFade * twinkle
-          * (0.06 + vShell * 0.94)
-          * (0.45 + vKey * 0.85 + vRim * 0.5);
+  // A luz constrói o volume: o lado iluminado também é mais denso.
+  float a = alpha * uOpacity * depthFade * vTwinkle
+          * (0.42 + vShell * 0.58)
+          * (0.4 + vKey * 0.9 + vRim * 0.5 + vPulse * 0.6);
   a = dither8x8(gl_FragCoord.xy, a);
 
   gl_FragColor = vec4(color, a);
