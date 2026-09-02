@@ -78,7 +78,7 @@ Peso total do pacote tipográfico: **≤ 90 KB**.
 
 > **Estado atual:** os arquivos das fontes ainda não estão no repositório — o ambiente de
 > build não tem acesso de rede à Fontshare. A stack de fallback do sistema está ativa e
-> mantém as métricas próximas. Instruções de ativação em `public/fonts/README.md`.
+> mantém as métricas próximas. Instruções de ativação em `docs/FONTS.md`.
 > Ao adicionar os `woff2`, a escala e o tracking desta seção continuam válidos.
 
 ### Escala (fluid, `clamp`)

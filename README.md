@@ -16,7 +16,11 @@ npm run dev        # http://localhost:3000
 npm run build      # build de produção
 npm run typecheck
 npm run lint
+
+npm run build:static  # gera out/ com index.html para hospedagem comum
 ```
+
+Para publicar, veja [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Documentação
 
@@ -29,6 +33,8 @@ Os documentos em `docs/` são a fonte da verdade do projeto — leia antes de me
 | [`docs/ANIMATION_SYSTEM.md`](docs/ANIMATION_SYSTEM.md) | Leis de movimento, tokens, coreografia por cena, reduced-motion |
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Estrutura, camada WebGL, performance, acessibilidade, fases |
 | [`docs/CREATIVE_DIRECTION.md`](docs/CREATIVE_DIRECTION.md) | Moodboard, storyboard, wireframes, fluxo |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Como publicar (estático ou Vercel) |
+| [`docs/FONTS.md`](docs/FONTS.md) | Ativação das fontes General Sans e Satoshi |
 
 ## Estado
 

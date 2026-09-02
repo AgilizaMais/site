@@ -11,7 +11,7 @@ estão versionados. Enquanto isso, a stack de fallback do sistema mantém as mé
 
 1. Baixe em https://www.fontshare.com/fonts/general-sans e https://www.fontshare.com/fonts/satoshi
    (escolha os arquivos **variable**, formato `woff2`).
-2. Coloque aqui:
+2. Crie a pasta `public/fonts/` e coloque os arquivos ali:
    - `GeneralSans-Variable.woff2`
    - `Satoshi-Variable.woff2`
 3. Troque a stack em `app/globals.css` por `next/font/local` em `app/fonts.ts`:

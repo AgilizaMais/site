@@ -21,7 +21,7 @@
   --glass-edge: rgba(255, 248, 241, 0.1);
 
   /* Tipografia
-     General Sans / Satoshi ainda não estão no repositório (ver public/fonts/README.md).
+     General Sans / Satoshi ainda não estão no repositório (ver docs/FONTS.md).
      Enquanto isso, a stack de sistema mantém as métricas próximas: geométrica,
      x-height alta, tracking negativo aplicado via escala tipográfica. */
   --font-display: 'General Sans', 'Satoshi', 'Neue Montreal', ui-sans-serif, -apple-system,
