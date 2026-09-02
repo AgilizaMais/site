@@ -78,11 +78,16 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 > aditivo) e não é ilustrativo (nenhum contorno, nenhuma "rede neural"). Ocupa o
 > fundo da cena e passa por trás do texto, em vez de posar como retrato.
 
-- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 22–95k partículas. A leitura é anatômica e deliberada: perfil alongado, fissura de Sylvius esculpida separando o lobo temporal, cerebelo como massa própria com textura mais fina, tronco encefálico descendo. Key light quente de cima-frente; brasa contornando a silhueta. Vinheta forte. Grão 3%.
+- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 12–95k partículas, conforme a área ocupada na tela. A leitura é anatômica e deliberada: perfil alongado, fissura de Sylvius esculpida separando o lobo temporal, cerebelo como massa própria com textura mais fina, tronco encefálico descendo. Key light quente de cima-frente; brasa contornando a silhueta. Vinheta forte. Grão 3%.
 - **[M]** Loader (linha de luz) → canvas entra em `scale 1.08→1` → partículas se formam da dispersão (2.4s) → headline em clip-path (stagger 90ms) → sub → CTA. Em loop, três movimentos somados: deriva tangencial contínua (cada partícula com fase própria), respiração de 4s a 2.2%, e uma onda lenta de luz atravessando a forma de trás para a frente.
 - **[C]** *A mudança acontece em movimento.* / Sub / **Iniciar jornada** / assinatura "Júlia Beatriz · Psicóloga Clínica · CRP 15/8791".
 - **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
+
+> **Terceira regra descoberta:** aparência de partícula é medida em pixels
+> CSS, nunca em pixels de dispositivo — e a contagem tem de acompanhar a área
+> ocupada na tela. Fixar as duas coisas fazia o mobile virar um borrão
+> brilhante enquanto o desktop ficava correto.
 
 > **Segunda regra descoberta:** para a forma ser *inconfundível*, silhueta não
 > basta — são os marcos que identificam. Um cérebro só é reconhecido de perfil,

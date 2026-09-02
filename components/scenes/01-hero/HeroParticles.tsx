@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap } from '@/lib/motion/gsap';
 import { onSkipIntro } from '@/lib/motion/introBus';
-import { PARTICLES_BY_TIER } from './brainPointCloud';
+import { PARTICLES_BY_TIER, particleCountFor } from './brainPointCloud';
 import { useBrainCloud } from './useBrainCloud';
 import { particlesVert } from './shaders/particles.vert';
 import { particlesFrag } from './shaders/particles.frag';
@@ -32,8 +32,20 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   const points = useRef<THREE.Points>(null);
   const invalidate = useThree((s) => s.invalidate);
   const viewport = useThree((s) => s.viewport);
+  const size = useThree((s) => s.size);
 
-  const cloud = useBrainCloud(PARTICLES_BY_TIER[tier]);
+  // Enquadramento e contagem dependem do viewport, então são calculados antes
+  // de pedir a nuvem ao worker.
+  const narrow = viewport.width < 3.4;
+  // Em retrato o objeto precisa de mais folga lateral: a silhueta é o que
+  // identifica a forma, e cortá-la nas bordas destrói a leitura.
+  const scale = THREE.MathUtils.clamp(
+    Math.min(viewport.width / (narrow ? 3.2 : 2.6), viewport.height / 2.4),
+    0.4,
+    1.24,
+  );
+  const objectWidthPx = (scale * 2.2 * size.width) / viewport.width;
+  const cloud = useBrainCloud(particleCountFor(PARTICLES_BY_TIER[tier], objectWidthPx ** 2));
   const mountedAt = useRef(typeof performance === 'undefined' ? 0 : performance.now());
 
   const geometry = useMemo(() => {
@@ -52,7 +64,7 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uFormation: { value: reduced ? 1 : 0 },
       uBreath: { value: reduced ? 0 : 0.022 },
       uDrift: { value: reduced ? 0 : 0.016 },
-      uSize: { value: tier === 'low' ? 3.4 : 2.9 },
+      uSize: { value: tier === 'low' ? 3.6 : 3.3 },
       uPixelRatio: { value: 1 },
       uKeyDir: { value: KEY_DIR },
       uRimDir: { value: RIM_DIR },
@@ -128,25 +140,10 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
 
   if (!geometry) return null;
 
-  /**
-   * Enquadramento responsivo. A escala segue a MENOR dimensão do viewport:
-   * em retrato é a largura que limita, e usar a altura recortava o objeto.
-   *
-   * Grande o bastante para atravessar a composição e passar por trás do texto,
-   * pequeno o bastante para a nuvem manter densidade por pixel — espalhar as
-   * mesmas partículas por uma área maior transforma a forma em névoa.
-   */
-  const narrow = viewport.width < 3.4;
-  const scale = THREE.MathUtils.clamp(
-    Math.min(viewport.width / 2.6, viewport.height / 2.4),
-    0.45,
-    1.24,
-  );
-
   // No desktop o objeto sai do centro: o texto ocupa a esquerda e cruza a borda
   // dele. No mobile fica centralizado e acima do texto.
   const objectX = narrow ? 0 : viewport.width * 0.06;
-  const objectY = narrow ? viewport.height * 0.17 : 0.1;
+  const objectY = narrow ? viewport.height * 0.19 : 0.1;
 
   return (
     <points

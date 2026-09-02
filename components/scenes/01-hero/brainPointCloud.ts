@@ -75,10 +75,16 @@ function smin(a: number, b: number, k: number) {
  * dobras, e não manchas aleatórias.
  */
 function gyriField(x: number, y: number, z: number): number {
-  const w = fbm3(x * 1.55 + 4.3, y * 1.55 + 1.7, z * 1.55 + 9.1, 3);
-  // Frequência baixa e amplitude alta: poucas dobras largas e sinuosas, como
-  // num cérebro real. Ruído fino lê como textura, não como giro.
-  return Math.abs(Math.sin(w * 17 + y * 2.2 + z * 1.1));
+  // Os giros irradiam em arcos ao redor da fissura de Sylvius — não são faixas
+  // paralelas (que leem como listras) nem ruído isotrópico (que lê como
+  // textura). O ângulo no plano sagital dá os arcos; o fbm dá a sinuosidade;
+  // o raio evita que todos convirjam num ponto.
+  const ax = z - 0.04;
+  const ay = y + 0.08;
+  const ang = Math.atan2(ay, ax);
+  const rad = Math.sqrt(ax * ax + ay * ay);
+  const w = fbm3(x * 1.4 + 4.3, y * 1.4 + 1.7, z * 1.4 + 9.1, 3);
+  return Math.abs(Math.sin(ang * 5.0 + rad * 8.5 + w * 11.0));
 }
 
 /**
@@ -127,7 +133,7 @@ export function brainSDF(x: number, y: number, z: number): number {
   d = smin(d, sdEllipsoid(x + TEMPORAL_C[0], y, z, [0, TEMPORAL_C[1], TEMPORAL_C[2]], TEMPORAL_R), K_TEMPORAL);
 
   // Giros e sulcos, mais largos e mais fundos.
-  d += (gyriField(x, y, z) - 0.5) * 0.062;
+  d += (gyriField(x, y, z) - 0.5) * 0.085;
 
   // Fissura de Sylvius: o sulco profundo que separa o lobo temporal do resto.
   // É um dos marcos que tornam o perfil inconfundível, então é esculpido —
@@ -245,13 +251,32 @@ export function createBrainCloud(count: number, seed = 20260902): PointCloud {
 }
 
 /**
- * A contagem sustenta a leitura das dobras: com o back-face cull, só a metade
- * voltada para a câmera desenha, então metade das partículas é o que aparece.
- * Abaixo disso o padrão de giros se dissolve em poeira.
+ * Teto de partículas por tier. É um limite de custo, não a contagem final:
+ * quem decide é a área que o objeto ocupa na tela (ver `particleCountFor`).
  */
 export const PARTICLES_BY_TIER = {
   high: 95_000,
   mid: 58_000,
-  low: 22_000,
+  low: 30_000,
   none: 58_000,
 } as const;
+
+/** Área do objeto, em px CSS², na composição de referência (1440×900). */
+const REFERENCE_AREA = 820 * 820;
+
+/**
+ * A contagem acompanha a área ocupada na tela.
+ *
+ * Manter a contagem fixa era o que borrava o mobile: as mesmas dezenas de
+ * milhares de partículas espremidas em ~16% da área do desktop saturavam o
+ * blending aditivo e viravam um borrão brilhante. O expoente 0.7 mantém o
+ * mobile um pouco mais denso que a proporção exata — telas pequenas são vistas
+ * de perto — sem chegar perto da saturação.
+ *
+ * O valor é quantizado para não regenerar a nuvem a cada pixel de resize.
+ */
+export function particleCountFor(tierMax: number, objectAreaPx: number): number {
+  const ratio = Math.min(1, objectAreaPx / REFERENCE_AREA) ** 0.7;
+  const raw = Math.max(12_000, Math.round(tierMax * ratio));
+  return Math.min(tierMax, Math.round(raw / 4_000) * 4_000);
+}

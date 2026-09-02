@@ -20,10 +20,12 @@ varying float vTwinkle;
 ${dither}
 
 void main() {
-  // Ponto redondo com queda suave — sem textura, sem fetch.
+  // Disco de núcleo sólido com uma borda fina de antisserrilhado — e não um
+  // gradiente até o centro. A queda suave transformava cada partícula num
+  // pequeno halo, e o somatório desses halos era o aspecto "brilhoso".
   vec2 uv = gl_PointCoord - 0.5;
   float d = dot(uv, uv);
-  float alpha = smoothstep(0.25, 0.0, d);
+  float alpha = 1.0 - smoothstep(0.12, 0.25, d);
   if (alpha < 0.01) discard;
 
   // O rim soma luz em vez de tingir: o branco continua branco e a borda

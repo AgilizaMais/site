@@ -114,11 +114,18 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    cristas enquanto apaga os sulcos — bandas claras e escuras, que é o que o
    olho reconhece como cérebro. Enviesar a *densidade* para os sulcos foi
    tentado antes e desenhava só os vales: a forma sumia.
-9. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
+9. **Aparência independente de DPR.** O `gl_PointSize` era limitado *depois* de
+   multiplicar pelo `devicePixelRatio`, então em telas 2x/3x a partícula virava
+   um ponto sub-pixel e o conjunto lia como borrão. O limite passou a ser em
+   pixels CSS, e o DPR entra depois. O sprite também deixou de ser um gradiente
+   até o centro (cada partícula era um pequeno halo, e a soma dos halos era o
+   aspecto "brilhoso"): agora é um disco de núcleo sólido com borda fina de
+   antisserrilhado.
+10. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
    casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
    pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
    deslocamento.
-10. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+11. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -143,9 +150,14 @@ Responsabilidades:
 ### Tiers de dispositivo (`useDeviceTier`)
 | Tier | Detecção | Partículas (Hero) | DPR máx | Pós-processamento |
 |---|---|---|---|---|
-| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 95k | 2.0 | bloom leve |
-| `mid` | default | 58k | 1.5 | nenhum |
-| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 22k | 1.0 | nenhum |
+| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 95k* | 2.0 | bloom leve |
+| `mid` | default | 58k* | 1.5 | nenhum |
+| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 30k* | 1.0 | nenhum |
+
+\* Teto, não contagem final: a contagem real acompanha a área que o objeto
+ocupa na tela (`particleCountFor`). Contagem fixa era o que borrava o mobile —
+as mesmas dezenas de milhares de partículas em ~16% da área do desktop
+saturavam o blending aditivo.
 | `none` | sem WebGL2 / reduced-motion | — | — | fallback estático |
 
 **Degradação adaptativa:** média móvel de FPS em janela de 60 frames; abaixo de 50 FPS por 2s,

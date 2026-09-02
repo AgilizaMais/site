@@ -101,7 +101,7 @@ void main() {
   // Cintilação: cada partícula acende e apaga no seu próprio tempo. Com a
   // deriva mantida pequena para não borrar os sulcos, é a luz que carrega o
   // movimento — e ela não custa nada em legibilidade da forma.
-  vTwinkle = 0.62 + 0.38 * sin(uTime * 1.15 + aSeed.w * 6.2831853);
+  vTwinkle = 0.74 + 0.26 * sin(uTime * 1.15 + aSeed.w * 6.2831853);
 
   // Uma key light e um rim. Contraste alto: no escuro, meio-tom é ruído.
   vKey = pow(clamp(dot(worldNormal, uKeyDir), 0.0, 1.0), 0.75);
@@ -109,7 +109,11 @@ void main() {
   vSeed = aSeed.x;
   vDepth = clamp((-mvPosition.z - 2.5) / 5.0, 0.0, 1.0);
 
+  // O tamanho é fixado em PIXELS CSS e só então multiplicado pelo DPR. Fazer o
+  // clamp depois do DPR (como antes) encolhia a partícula em telas 2x/3x: no
+  // celular ela virava um ponto sub-pixel e o conjunto lia como borrão.
   float size = uSize * aSeed.y * mix(0.5, 1.0, t);
-  gl_PointSize = clamp(size * uPixelRatio * (6.5 / -mvPosition.z), 0.55, 3.4);
+  float cssSize = clamp(size * (6.5 / -mvPosition.z), 1.0, 3.0);
+  gl_PointSize = cssSize * uPixelRatio;
 }
 `;
