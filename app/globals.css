@@ -158,9 +158,9 @@ canvas {
       background: linear-gradient(
         to bottom,
         rgb(9 9 11 / 0) 0%,
-        rgb(9 9 11 / 0.82) 22%,
-        rgb(9 9 11 / 0.95) 45%,
-        rgb(9 9 11 / 0.95) 100%
+        rgb(9 9 11 / 0.9) 20%,
+        rgb(9 9 11 / 0.97) 42%,
+        rgb(9 9 11 / 0.97) 100%
       );
     }
   }

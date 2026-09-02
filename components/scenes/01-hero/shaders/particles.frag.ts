@@ -46,7 +46,7 @@ void main() {
   // sobre as cristas), então o brilho não precisa mais carregar o contraste
   // sozinho — modulação mais suave, para as linhas não sumirem na penumbra.
   float a = alpha * uOpacity * depthFade * vTwinkle * vShell
-          * mix(0.4, 1.0, vCrown)
+          * clamp(vCrown, 0.0, 1.4)
           * (0.34 + vKey * 1.05 + vPulse * 0.5);
   a = dither8x8(gl_FragCoord.xy, a);
 

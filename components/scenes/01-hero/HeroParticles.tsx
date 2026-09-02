@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap } from '@/lib/motion/gsap';
 import { onSkipIntro } from '@/lib/motion/introBus';
-import { PARTICLES_BY_TIER, particleCountFor } from './brainPointCloud';
+import { qualityFor } from './brainFilaments';
 import { useBrainCloud } from './useBrainCloud';
 import { particlesVert } from './shaders/particles.vert';
 import { particlesFrag } from './shaders/particles.frag';
@@ -26,7 +26,7 @@ const BASE_YAW = THREE.MathUtils.degToRad(-84);
 const BASE_PITCH = THREE.MathUtils.degToRad(8);
 
 /** Opacidade final baixa: o objeto é fundo, o texto é primeiro plano. */
-const PEAK_OPACITY = 0.5;
+const PEAK_OPACITY = 0.45;
 
 export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   const points = useRef<THREE.Points>(null);
@@ -44,8 +44,8 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
     0.4,
     1.24,
   );
-  const objectWidthPx = (scale * 2.2 * size.width) / viewport.width;
-  const cloud = useBrainCloud(particleCountFor(PARTICLES_BY_TIER[tier], objectWidthPx ** 2));
+  const objectWidthPx = (scale * 2.1 * size.width) / viewport.width;
+  const cloud = useBrainCloud(qualityFor(tier, objectWidthPx ** 2));
   const mountedAt = useRef(typeof performance === 'undefined' ? 0 : performance.now());
 
   const geometry = useMemo(() => {
@@ -63,8 +63,8 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uTime: { value: 0 },
       uFormation: { value: reduced ? 1 : 0 },
       uBreath: { value: reduced ? 0 : 0.022 },
-      uDrift: { value: reduced ? 0 : 0.016 },
-      uSize: { value: tier === 'low' ? 3.6 : 3.3 },
+      uDrift: { value: reduced ? 0 : 0.006 },
+      uSize: { value: tier === 'low' ? 3.0 : 2.6 },
       uPixelRatio: { value: 1 },
       uKeyDir: { value: KEY_DIR },
       uRimDir: { value: RIM_DIR },

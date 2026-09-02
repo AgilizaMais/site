@@ -47,7 +47,9 @@ app/
 components/
   scenes/
     01-hero/                 // Hero.tsx HeroCanvas.tsx HeroScene.tsx HeroParticles.tsx
-                             // brainPointCloud.ts cloud.worker.ts useBrainCloud.ts
+                             // brainGeometry.ts   (forma e campos de dobras)
+                             // brainFilaments.ts  (traçado das curvas)
+                             // cloud.worker.ts useBrainCloud.ts
                              // shaders/particles.vert.ts .frag.ts
     02-anxiety/
     03-selfesteem/
@@ -106,14 +108,35 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    devolve os buffers como transferíveis (sem cópia), e a formação começa assim
    que a nuvem chega — se o worker demorou mais que o atraso previsto, o atraso
    é descontado em vez de somado.
-8. **Custo da amostragem.** Três otimizações que tiraram a geração de ~4,3s
+8. **Filamentos traçados, não pontos filtrados.** Amostrar a superfície e
+   filtrar por densidade produz poeira que *sugere* dobras. Para obter cordões
+   contínuos, as curvas são **seguidas**: para cada semente caminha-se ao longo
+   da linha de nível do campo de fase — que é, por construção, a crista de um
+   giro — corrigindo a cada passo o desvio na superfície e na fase
+   (predictor–corrector). Três armadilhas custaram caro:
+   · o gradiente por diferenças centrais precisa ser dividido por `2e`; sem
+     isso o passo de Newton sai ~1/(2e) vezes maior e o traçado diverge na
+     primeira iteração (para a normal isso é invisível, pois ela é normalizada);
+   · a fase salta um período inteiro ao cruzar para o filamento vizinho, e o
+     desvio precisa ser envolvido nesse período, senão o corretor tenta desfazer
+     o salto;
+   · com o passo menor que a célula do hash espacial, um filamento se detecta
+     como sobreposição de si mesmo — a célula precisa guardar a identidade do
+     filamento, não uma contagem.
+9. **O contorno é declarado, não ajustado.** Nenhuma combinação de elipsoides
+   produz a silhueta de um cérebro: produz cúpulas e cogumelos. O perfil lateral
+   é uma curva fechada explícita no plano (z, y) — polo frontal, margem
+   superior, polo occipital, face inferior e lobo temporal — extrudada em
+   largura variável. Fissuras de Sylvius, longitudinal e transversa são
+   escavadas como cápsulas subtraídas.
+10. **Custo da amostragem.** Três otimizações que tiraram a geração de ~4,3s
    para ~2,3s (100k pontos), todas no laço quente: normais calculadas a partir
    da forma **lisa** (seis avaliações do SDF completo por partícula custavam
    mais que todo o resto somado, e as dobras hoje vêm da densidade, não do
    sombreamento); forma base e campo de dobras calculados **uma vez** por
    amostra e repassados ao detalhe; e duas octaves no *domain warp*, que
    desloca coordenadas e não desenha detalhe.
-9. **Back-face cull suave, e o contraste vem da luz.** Com blending aditivo não
+11. **Back-face cull suave, e o contraste vem da luz.** Com blending aditivo não
    há oclusão: a superfície de trás soma sobre a da frente e apaga o padrão de
    dobras. As partículas voltadas para longe da câmera são atenuadas
    (`max(0, dot(n, view))`), com um realce fino na borda da silhueta.
@@ -121,18 +144,18 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    cristas enquanto apaga os sulcos — bandas claras e escuras, que é o que o
    olho reconhece como cérebro. Enviesar a *densidade* para os sulcos foi
    tentado antes e desenhava só os vales: a forma sumia.
-10. **Aparência independente de DPR.** O `gl_PointSize` era limitado *depois* de
+12. **Aparência independente de DPR.** O `gl_PointSize` era limitado *depois* de
    multiplicar pelo `devicePixelRatio`, então em telas 2x/3x a partícula virava
    um ponto sub-pixel e o conjunto lia como borrão. O limite passou a ser em
    pixels CSS, e o DPR entra depois. O sprite também deixou de ser um gradiente
    até o centro (cada partícula era um pequeno halo, e a soma dos halos era o
    aspecto "brilhoso"): agora é um disco de núcleo sólido com borda fina de
    antisserrilhado.
-11. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
+13. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
    casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
    pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
    deslocamento.
-12. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+14. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -157,14 +180,14 @@ Responsabilidades:
 ### Tiers de dispositivo (`useDeviceTier`)
 | Tier | Detecção | Partículas (Hero) | DPR máx | Pós-processamento |
 |---|---|---|---|---|
-| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 100k* | 2.0 | bloom leve |
-| `mid` | default | 65k* | 1.5 | nenhum |
-| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 30k* | 1.0 | nenhum |
+| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | ~420k* | 2.0 | bloom leve |
+| `mid` | default | ~235k* | 1.5 | nenhum |
+| `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | ~115k* | 1.0 | nenhum |
 
-\* Teto, não contagem final: a contagem real acompanha a área que o objeto
-ocupa na tela (`particleCountFor`). Contagem fixa era o que borrava o mobile —
-as mesmas dezenas de milhares de partículas em ~16% da área do desktop
-saturavam o blending aditivo.
+\* A contagem não é um parâmetro: ela emerge do traçado dos filamentos. O que
+o tier controla é o número de sementes, o passo e o comprimento máximo das
+curvas (`qualityFor`), e a densidade ainda acompanha a área que o objeto ocupa
+na tela — contagem fixa era o que saturava o mobile.
 | `none` | sem WebGL2 / reduced-motion | — | — | fallback estático |
 
 **Degradação adaptativa:** média móvel de FPS em janela de 60 frames; abaixo de 50 FPS por 2s,

@@ -84,6 +84,13 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 - **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
 
+> **Quinta regra descoberta:** partícula não desenha forma — **curva** desenha
+> forma. Enquanto as partículas eram amostradas e filtradas, o resultado sempre
+> *sugeria* as dobras. Seguindo as linhas de nível do campo sobre a superfície,
+> cada filamento vira um cordão contínuo, e o desenho passa a existir. E o
+> contorno precisa ser declarado ponto a ponto: nenhuma combinação de
+> elipsoides produz a silhueta de um cérebro.
+
 > **Quarta regra descoberta:** o que faz uma nuvem de partículas ler como
 > objeto desenhado não é o sombreamento da superfície — é a **densidade seguindo
 > a estrutura**. Com as partículas caindo sobre as cristas dos giros, elas formam

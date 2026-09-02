@@ -13,7 +13,7 @@ export const particlesVert = /* glsl */ `
 precision mediump float;
 
 attribute vec3 aNormal;
-attribute vec4 aSeed;   // x: semente · y: tamanho · z: campo de dobras · w: fase
+attribute vec4 aSeed;   // x: semente · y: tamanho · z: brilho do filamento · w: posição ao longo dele
 
 uniform float uTime;
 uniform float uFormation;   // 0 = pó disperso · 1 = forma completa
@@ -90,9 +90,9 @@ void main() {
   // A base dissolve: a forma emerge do escuro, não termina nele.
   vShell *= smoothstep(-1.28, -0.92, position.y);
 
-  // Cristas acesas, sulcos apagados: o padrão de bandas que o olho reconhece
-  // como cérebro. O valor vem da geração da nuvem, não é recalculado por frame.
-  vCrown = smoothstep(0.18, 0.72, aSeed.z);
+  // Brilho próprio do filamento, definido na geração: os sulcos primários são
+  // mais fortes que os giros secundários.
+  vCrown = aSeed.z;
 
   // --- 3. Onda de luz percorrendo a forma, de trás para a frente.
   float wave = fract(uTime * 0.075 - position.z * 0.26 - position.y * 0.08);
@@ -101,7 +101,9 @@ void main() {
   // Cintilação: cada partícula acende e apaga no seu próprio tempo. Com a
   // deriva mantida pequena para não borrar os sulcos, é a luz que carrega o
   // movimento — e ela não custa nada em legibilidade da forma.
-  vTwinkle = 0.74 + 0.26 * sin(uTime * 1.15 + aSeed.w * 6.2831853);
+  // A cintilação corre AO LONGO do filamento: como aSeed.w é a posição na
+  // curva, a onda viaja pelo cordão em vez de piscar ponto a ponto.
+  vTwinkle = 0.78 + 0.22 * sin(uTime * 1.6 - aSeed.w * 34.0 + aSeed.x * 3.0);
 
   // Uma key light e um rim. Contraste alto: no escuro, meio-tom é ruído.
   vKey = pow(clamp(dot(worldNormal, uKeyDir), 0.0, 1.0), 0.75);
