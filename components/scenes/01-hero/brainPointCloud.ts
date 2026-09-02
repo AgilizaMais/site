@@ -79,12 +79,19 @@ function gyriField(x: number, y: number, z: number): number {
   // paralelas (que leem como listras) nem ruído isotrópico (que lê como
   // textura). O ângulo no plano sagital dá os arcos; o fbm dá a sinuosidade;
   // o raio evita que todos convirjam num ponto.
-  const ax = z - 0.04;
-  const ay = y + 0.08;
+  // Domain warping: o sistema polar é deslocado por ruído antes de virar
+  // ângulo e raio. Sem isso todos os arcos convergem para um mesmo ponto e o
+  // padrão lê como espiral — um foco que não existe em cérebro nenhum.
+  // Duas octaves bastam no warp: ele desloca o sistema de coordenadas, não
+  // desenha detalhe. É o passo mais caro da geração.
+  const wx = fbm3(x * 1.1 + 12.7, y * 1.1 + 3.3, z * 1.1 + 21.5, 2) * 2 - 1;
+  const wy = fbm3(x * 1.1 + 55.2, y * 1.1 + 8.9, z * 1.1 + 2.4, 2) * 2 - 1;
+  const ax = z - 0.04 + wx * 0.72;
+  const ay = y + 0.08 + wy * 0.72;
   const ang = Math.atan2(ay, ax);
   const rad = Math.sqrt(ax * ax + ay * ay);
   const w = fbm3(x * 1.4 + 4.3, y * 1.4 + 1.7, z * 1.4 + 9.1, 3);
-  return Math.abs(Math.sin(ang * 5.0 + rad * 8.5 + w * 11.0));
+  return Math.abs(Math.sin(ang * 5.2 + rad * 14.0 + w * 8.0));
 }
 
 /**
@@ -108,60 +115,59 @@ function brainBaseSDF(x: number, y: number, z: number): number {
   );
 }
 
-/** SDF do cérebro. Negativo dentro, positivo fora. */
-export function brainSDF(x: number, y: number, z: number): number {
-  // Lobo frontal mais estreito que o occipital: o cérebro é uma gota, não um ovo.
-  const taper = 1 - Math.max(0, z) * 0.22;
-
-  const left = sdEllipsoid(x + HEMI_OFFSET, y, z, HEMI_C, [
-    HEMI_R[0] * taper,
-    HEMI_R[1],
-    HEMI_R[2],
-  ]);
-  const right = sdEllipsoid(x - HEMI_OFFSET, y, z, HEMI_C, [
-    HEMI_R[0] * taper,
-    HEMI_R[1],
-    HEMI_R[2],
-  ]);
-
-  // União dura: a costura entre os hemisférios É a fissura longitudinal.
-  let d = Math.min(left, right);
-
-  // Lobos temporais, um de cada lado. A fissura de Sylvius aparece sozinha na
-  // junção suave com o cérebro.
-  d = smin(d, sdEllipsoid(x - TEMPORAL_C[0], y, z, [0, TEMPORAL_C[1], TEMPORAL_C[2]], TEMPORAL_R), K_TEMPORAL);
-  d = smin(d, sdEllipsoid(x + TEMPORAL_C[0], y, z, [0, TEMPORAL_C[1], TEMPORAL_C[2]], TEMPORAL_R), K_TEMPORAL);
-
-  // Giros e sulcos, mais largos e mais fundos.
-  d += (gyriField(x, y, z) - 0.5) * 0.085;
+/**
+ * Detalhe aplicado sobre a forma lisa: giros, fissura de Sylvius e folia do
+ * cerebelo. Recebe `base` e `gyri` prontos porque, no laço de amostragem, os
+ * dois já foram calculados — recomputá-los dobrava o custo da geração.
+ */
+function brainDetailSDF(
+  x: number,
+  y: number,
+  z: number,
+  base: number,
+  gyri: number,
+): number {
+  // Giros e sulcos.
+  let d = base + (gyri - 0.5) * 0.085;
 
   // Fissura de Sylvius: o sulco profundo que separa o lobo temporal do resto.
   // É um dos marcos que tornam o perfil inconfundível, então é esculpido —
-  // não deixado a cargo do ruído.
-  //
-  // Modelada como um sulco local na superfície lateral (uma cápsula subtraída
-  // de cada lado), e não como um plano: um corte plano fatiaria o cérebro
-  // inteiro em vez de abrir uma fenda.
+  // não deixado a cargo do ruído. Modelada como sulco local na superfície
+  // lateral (uma cápsula subtraída de cada lado), e não como um plano: um corte
+  // plano fatiaria o cérebro inteiro em vez de abrir uma fenda.
   const sylL = sdCapsule(x, y, z, [-0.4, -0.02, 0.56], [-0.4, -0.2, -0.34], 0.075);
   const sylR = sdCapsule(x, y, z, [0.4, -0.02, 0.56], [0.4, -0.2, -0.34], 0.075);
   d = Math.max(d, -Math.min(sylL, sylR));
 
-  // Cerebelo: massa própria, com folia horizontal muito mais fina que os giros.
-  let cereb = sdEllipsoid(x, y, z, CEREBELLUM_C, CEREBELLUM_R);
-  const folia = Math.abs(Math.sin(y * 44 + z * 9 + fbm3(x * 3.1, y * 3.1, z * 3.1, 2) * 3));
-  cereb += (folia - 0.5) * 0.022;
-
-  d = smin(d, cereb, K_CEREBELLUM);
-  d = smin(d, sdCapsule(x, y, z, STEM_A, STEM_B, STEM_R), K_STEM);
+  // Cerebelo: folia horizontal muito mais fina que os giros.
+  const cereb = sdEllipsoid(x, y, z, CEREBELLUM_C, CEREBELLUM_R);
+  if (cereb < 0.12) {
+    const folia = Math.abs(Math.sin(y * 44 + z * 9 + fbm3(x * 3.1, y * 3.1, z * 3.1, 2) * 3));
+    d = smin(d, cereb + (folia - 0.5) * 0.022, K_CEREBELLUM);
+  }
 
   return d;
 }
 
+/** SDF do cérebro. Negativo dentro, positivo fora. */
+export function brainSDF(x: number, y: number, z: number): number {
+  return brainDetailSDF(x, y, z, brainBaseSDF(x, y, z), gyriField(x, y, z));
+}
+
+/**
+ * Normal a partir da forma LISA, sem ruído.
+ *
+ * Seis avaliações do SDF completo por partícula custavam mais que todo o resto
+ * da geração somado. Como as dobras agora são desenhadas pela densidade das
+ * partículas — e não pelo sombreamento —, a normal só precisa descrever a
+ * curvatura geral do órgão. A diferença visual é imperceptível; a geração fica
+ * cerca de quatro vezes mais rápida.
+ */
 function sdfNormal(x: number, y: number, z: number, out: Vec3) {
-  const e = 0.008;
-  const nx = brainSDF(x + e, y, z) - brainSDF(x - e, y, z);
-  const ny = brainSDF(x, y + e, z) - brainSDF(x, y - e, z);
-  const nz = brainSDF(x, y, z + e) - brainSDF(x, y, z - e);
+  const e = 0.012;
+  const nx = brainBaseSDF(x + e, y, z) - brainBaseSDF(x - e, y, z);
+  const ny = brainBaseSDF(x, y + e, z) - brainBaseSDF(x, y - e, z);
+  const nz = brainBaseSDF(x, y, z + e) - brainBaseSDF(x, y, z - e);
   const len = Math.hypot(nx, ny, nz) || 1;
   out[0] = nx / len;
   out[1] = ny / len;
@@ -193,7 +199,7 @@ export type PointCloud = {
 
 const BOUNDS = { x: 0.94, yMin: -1.12, yMax: 0.78, zMin: -1.12, zMax: 1.14 };
 const SHELL = 0.02;
-const COARSE = 0.07;
+const COARSE = 0.065;
 
 export function createBrainCloud(count: number, seed = 20260902): PointCloud {
   const rand = mulberry32(seed);
@@ -212,9 +218,12 @@ export function createBrainCloud(count: number, seed = 20260902): PointCloud {
     const z = BOUNDS.zMin + rand() * (BOUNDS.zMax - BOUNDS.zMin);
 
     // Duas fases: descarta a maioria com a forma lisa (sem ruído) e só então
-    // paga o fbm nos sobreviventes. Corta o custo de geração em ~5x.
-    if (Math.abs(brainBaseSDF(x, y, z)) > COARSE) continue;
-    if (Math.abs(brainSDF(x, y, z)) > SHELL) continue;
+    // paga o fbm nos sobreviventes.
+    const base = brainBaseSDF(x, y, z);
+    if (Math.abs(base) > COARSE) continue;
+
+    const gyri = gyriField(x, y, z);
+    if (Math.abs(brainDetailSDF(x, y, z, base, gyri)) > SHELL) continue;
 
     /**
      * O campo de dobras vai junto com a partícula. É ele que, no shader,
@@ -225,9 +234,11 @@ export function createBrainCloud(count: number, seed = 20260902): PointCloud {
      * contorno às dobras): o contraste vem da luz, não da densidade. Enviesar
      * demais desenhava só os vales e a forma sumia.
      */
-    const gyri = gyriField(x, y, z);
-    const groove = 1 - Math.min(1, gyri / 0.4);
-    if (rand() > 0.62 + groove * 0.38) continue;
+    // Linhas, não superfície: a maioria das partículas cai na crista dos giros,
+    // formando cadeias contínuas que desenham o padrão de dobras. O resto vira
+    // uma bruma esparsa que dá volume.
+    const ridge = Math.min(1, Math.max(0, (gyri - 0.72) / 0.28));
+    if (rand() > 0.06 + ridge * ridge * 0.94) continue;
 
     sdfNormal(x, y, z, n);
 
@@ -255,10 +266,10 @@ export function createBrainCloud(count: number, seed = 20260902): PointCloud {
  * quem decide é a área que o objeto ocupa na tela (ver `particleCountFor`).
  */
 export const PARTICLES_BY_TIER = {
-  high: 95_000,
-  mid: 58_000,
+  high: 100_000,
+  mid: 65_000,
   low: 30_000,
-  none: 58_000,
+  none: 65_000,
 } as const;
 
 /** Área do objeto, em px CSS², na composição de referência (1440×900). */

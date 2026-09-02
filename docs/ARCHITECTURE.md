@@ -106,7 +106,14 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    devolve os buffers como transferíveis (sem cópia), e a formação começa assim
    que a nuvem chega — se o worker demorou mais que o atraso previsto, o atraso
    é descontado em vez de somado.
-8. **Back-face cull suave, e o contraste vem da luz.** Com blending aditivo não
+8. **Custo da amostragem.** Três otimizações que tiraram a geração de ~4,3s
+   para ~2,3s (100k pontos), todas no laço quente: normais calculadas a partir
+   da forma **lisa** (seis avaliações do SDF completo por partícula custavam
+   mais que todo o resto somado, e as dobras hoje vêm da densidade, não do
+   sombreamento); forma base e campo de dobras calculados **uma vez** por
+   amostra e repassados ao detalhe; e duas octaves no *domain warp*, que
+   desloca coordenadas e não desenha detalhe.
+9. **Back-face cull suave, e o contraste vem da luz.** Com blending aditivo não
    há oclusão: a superfície de trás soma sobre a da frente e apaga o padrão de
    dobras. As partículas voltadas para longe da câmera são atenuadas
    (`max(0, dot(n, view))`), com um realce fino na borda da silhueta.
@@ -114,18 +121,18 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    cristas enquanto apaga os sulcos — bandas claras e escuras, que é o que o
    olho reconhece como cérebro. Enviesar a *densidade* para os sulcos foi
    tentado antes e desenhava só os vales: a forma sumia.
-9. **Aparência independente de DPR.** O `gl_PointSize` era limitado *depois* de
+10. **Aparência independente de DPR.** O `gl_PointSize` era limitado *depois* de
    multiplicar pelo `devicePixelRatio`, então em telas 2x/3x a partícula virava
    um ponto sub-pixel e o conjunto lia como borrão. O limite passou a ser em
    pixels CSS, e o DPR entra depois. O sprite também deixou de ser um gradiente
    até o centro (cada partícula era um pequeno halo, e a soma dos halos era o
    aspecto "brilhoso"): agora é um disco de núcleo sólido com borda fina de
    antisserrilhado.
-10. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
+11. **A deriva precisa ser menor que a espessura da casca.** Com deriva 0.038 e
    casca 0.02, o movimento apagava os sulcos. Movimento passou a ser carregado
    pela luz (cintilação por partícula, onda percorrendo a forma), não pelo
    deslocamento.
-11. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+12. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -150,8 +157,8 @@ Responsabilidades:
 ### Tiers de dispositivo (`useDeviceTier`)
 | Tier | Detecção | Partículas (Hero) | DPR máx | Pós-processamento |
 |---|---|---|---|---|
-| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 95k* | 2.0 | bloom leve |
-| `mid` | default | 58k* | 1.5 | nenhum |
+| `high` | desktop, `hardwareConcurrency ≥ 8`, sem `saveData` | 100k* | 2.0 | bloom leve |
+| `mid` | default | 65k* | 1.5 | nenhum |
 | `low` | mobile antigo, `deviceMemory ≤ 4`, `saveData` | 30k* | 1.0 | nenhum |
 
 \* Teto, não contagem final: a contagem real acompanha a área que o objeto

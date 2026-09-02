@@ -84,6 +84,16 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 - **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
 
+> **Quarta regra descoberta:** o que faz uma nuvem de partículas ler como
+> objeto desenhado não é o sombreamento da superfície — é a **densidade seguindo
+> a estrutura**. Com as partículas caindo sobre as cristas dos giros, elas formam
+> cadeias contínuas que desenham o padrão de dobras como linhas. Espalhadas
+> uniformemente pela superfície, o mesmo número de partículas lê como textura.
+>
+> Para quebrar a regularidade dos arcos foi preciso *domain warping*: o sistema
+> polar é deslocado por ruído antes de virar ângulo e raio. Sem isso todos os
+> arcos convergem num foco visível e o padrão lê como espiral.
+
 > **Terceira regra descoberta:** aparência de partícula é medida em pixels
 > CSS, nunca em pixels de dispositivo — e a contagem tem de acompanhar a área
 > ocupada na tela. Fixar as duas coisas fazia o mobile virar um borrão

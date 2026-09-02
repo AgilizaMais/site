@@ -11,6 +11,10 @@
 2. **Uma fonte de luz por cena.** Direção e temperatura definidas antes de qualquer geometria.
 3. **Espaço negativo é conteúdo.** Mínimo de 40% da tela vazia em qualquer cena.
 4. **O laranja é assinatura, não paleta.** Máximo ~5% da área visível. Ele aponta, nunca preenche.
+   **Exceção aprovada pelo cliente — objeto WebGL da Cena 1:** o cérebro usa o âmbar
+   como matéria, não como acento, esquentando até o branco onde a key light bate.
+   A exceção vale só para o objeto de partículas do Hero; UI, tipografia e todas as
+   demais cenas seguem a regra dos 5%.
 5. **Nada é literal.** Se a metáfora precisa de legenda, ela falhou.
 6. **Silêncio antes do texto.** A imagem chega primeiro; a copy entra depois, sempre.
 

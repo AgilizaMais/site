@@ -26,7 +26,7 @@ const BASE_YAW = THREE.MathUtils.degToRad(-84);
 const BASE_PITCH = THREE.MathUtils.degToRad(8);
 
 /** Opacidade final baixa: o objeto é fundo, o texto é primeiro plano. */
-const PEAK_OPACITY = 0.95;
+const PEAK_OPACITY = 0.5;
 
 export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   const points = useRef<THREE.Points>(null);
