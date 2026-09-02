@@ -23,11 +23,11 @@ Ambos os caminhos são compatíveis com a implementação descrita aqui.
 
 | Camada | Tecnologia |
 |---|---|
-| Framework | Next.js 15 · App Router · React 19 · TypeScript 5 (strict) |
+| Framework | Next.js 15.5 · App Router · React 19 · TypeScript 5.7 (strict, `noUncheckedIndexedAccess`) |
 | Estilo | Tailwind CSS 3.4 + CSS custom properties (tokens) |
-| 3D | Three.js + React Three Fiber + @react-three/drei (import seletivo) |
-| Shaders | GLSL puro em `.glsl` via loader; sem glslify |
-| Motion | GSAP 3 + ScrollTrigger (+ CustomEase) · Framer Motion (UI) · Lenis |
+| 3D | Three.js 0.170 + React Three Fiber **9** (drei ainda não instalado — entra quando alguma cena precisar) |
+| Shaders | GLSL puro em módulos `.ts` que exportam template strings (sem loader de webpack/turbopack); chunks compartilhados em `lib/gl/` |
+| Motion | GSAP 3 + ScrollTrigger (+ CustomEase) · Framer Motion via `LazyMotion`/`domAnimation` (UI) · Lenis |
 | Spline | Somente se uma cena exigir asset autoral que não valha reimplementar; carregado lazy e isolado |
 | Qualidade | ESLint (flat) · Prettier · TypeScript strict · Vitest (unidade) · Playwright (smoke + a11y) |
 | Analytics | Vercel Analytics ou Plausible — sem cookies |
@@ -82,6 +82,25 @@ public/
 
 docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE, CREATIVE_DIRECTION
 ```
+
+### Decisões de implementação registradas na Fase 1
+
+1. **React 19 + R3F v9.** React 18 com R3F v8 quebra o App Router do Next 15
+   (`ReactCurrentBatchConfig` indefinido no prerender). A dupla compatível é R3F 9 + React 19.
+2. **O canvas nunca entra no bundle de servidor.** `HeroScene` é carregado por
+   `next/dynamic({ ssr: false })`; three + R3F ficam num chunk próprio, fora do first-load.
+3. **Uniforms pertencem ao material, não à prop.** O R3F clona o objeto passado em
+   `<shaderMaterial uniforms={...}>`, o que faz as tweens do GSAP animarem uma cópia órfã
+   (bug silencioso: a cena renderiza, mas nada anima). O material é construído com
+   `new THREE.ShaderMaterial({ uniforms })`, que guarda a referência.
+4. **`CustomEase.create` exige caminho SVG com comando `C`.** Sem ele a curva é aceita e
+   devolve 1 para qualquer entrada — todo easing vira um salto. Formato correto em
+   `lib/motion/gsap.ts`.
+5. **GLSL ES 1.00 não tem `%` para inteiros.** O dither usa aritmética em float.
+6. **`LazyMotion` + `m` no lugar de `motion`.** Reduziu o first-load de 195 KB para
+   **175 KB gz** — dentro do orçamento de 180 KB.
+7. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+   âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
 - Server Components por padrão; `"use client"` **apenas** em componentes com estado/animação.
@@ -183,8 +202,8 @@ CI (GitHub Actions)
 
 | Fase | Entrega | Gate |
 |---|---|---|
-| 0 | Migração Next 15, tokens, fontes, providers (Lenis/GSAP/reduced-motion), navbar e cursor base | aprovação |
-| 1 | **Cena 1 — Hero** completo | aprovação |
+| 0 | Migração Next 15, tokens, providers (Lenis/GSAP/reduced-motion), navbar e cursor base | ✅ entregue |
+| 1 | **Cena 1 — Hero** completo | ✅ entregue |
 | 2 | Cena 2 — Ansiedade | aprovação |
 | 3 | Cena 3 — Autoestima | aprovação |
 | 4 | Cena 4 — Flexibilidade | aprovação |

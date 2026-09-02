@@ -96,18 +96,27 @@ lib/motion/
 
 ## 5. Coreografia por cena
 
-### Cena 1 — Hero (entrada)
+### Cena 1 — Hero (entrada) — *implementado*
 ```
-t=0.00  loader: barra de luz 1px expande da esquerda (cine)
-t=0.90  loader dissolve; canvas entra com opacity 0→1 + scale 1.06→1 (cine, easeInOutCine)
-t=1.20  partículas: dispersão inicial → formação do busto (2.2s, easeOutExpo, no shader)
-t=1.90  headline RevealLines (stagger 90ms)
-t=2.30  subheadline FadeUp
-t=2.55  CTA: scale 0.96→1 + halo pulsa uma vez
-t=2.80  navbar fade-in a 60%; indicador de scroll aparece
-loop    respiração: amplitude 1.5% em 4s (breathe); parallax de cursor ±1.2° com lerp 0.06
+t=0.00  loader: linha de luz 1px expande do centro (0.7s, outExpo)
+t=0.70  loader dissolve (0.6s, cine); canvas entra opacity 0→1 + scale 1.06→1 (1.4s, cine)
+t=0.85  partículas: dispersão → formação do busto (2.2s, easeOutQuart no shader,
+        com atraso por partícula de até 0.45 — cada uma chega no seu tempo)
+t=1.05  headline RevealLines (clip-path, stagger 90ms)
+t=1.35  subheadline FadeUp
+t=1.55  CTA: scale 0.96→1
+t=1.80  hint de scroll + assinatura
+loop    respiração: amplitude 1.5% em ciclo de 4s; parallax de cursor ±1.2° (lerp 0.06)
 ```
-Entrada total percebida: **< 3s**. Skip: qualquer scroll/click/tecla avança a timeline para o fim.
+Entrada percebida: **~2,4s**, com a headline pintada em ~1,3s.
+
+> **Por que mais rápido do que o previsto originalmente (1.9s para a headline):**
+> a headline é o elemento de LCP. Atrasá-la até 1.9s empurrava o LCP para perto
+> de 2.5s. A compressão preserva a ordem narrativa — a imagem ainda começa antes
+> do texto — sem pagar a métrica. O ritmo continua lento; o *início* é que chegou antes.
+
+Skip: qualquer scroll, clique ou tecla durante a entrada avança a timeline para o fim
+(inclusive a formação das partículas, via `lib/motion/introBus.ts`).
 
 ### Cena 2 — Ansiedade (scrub)
 Trilho de 250svh. `scrub: 1` (suavizado).

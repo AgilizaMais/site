@@ -76,10 +76,15 @@ Gradientes multicoloridos · azul "cérebro" · verde "saúde" · pastel · qual
 Self-hosted via `next/font/local`, formato `woff2` variável, `font-display: swap`, subset latin+latin-ext.
 Peso total do pacote tipográfico: **≤ 90 KB**.
 
+> **Estado atual:** os arquivos das fontes ainda não estão no repositório — o ambiente de
+> build não tem acesso de rede à Fontshare. A stack de fallback do sistema está ativa e
+> mantém as métricas próximas. Instruções de ativação em `public/fonts/README.md`.
+> Ao adicionar os `woff2`, a escala e o tracking desta seção continuam válidos.
+
 ### Escala (fluid, `clamp`)
 | Token | Tamanho | Line-height | Tracking | Peso |
 |---|---|---|---|---|
-| `display-xl` | `clamp(3.25rem, 9.5vw, 10rem)` | 0.92 | −0.035em | 500 |
+| `display-xl` | `clamp(3rem, 7.2vw, 6.75rem)` | 0.92 | −0.035em | 500 |
 | `display-l` | `clamp(2.5rem, 6.5vw, 6rem)` | 0.96 | −0.03em | 500 |
 | `display-m` | `clamp(2rem, 4.5vw, 3.75rem)` | 1.02 | −0.025em | 500 |
 | `body-l` | `clamp(1.0625rem, 1.35vw, 1.375rem)` | 1.6 | −0.005em | 400 |
