@@ -84,6 +84,23 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 - **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
 
+> **Decisão do cliente — imagem como fonte de posições.** Depois de cinco
+> rodadas de geometria procedural, o cliente forneceu uma imagem de referência
+> e pediu que ela fosse usada. A imagem **não** é exibida: ela é lida para
+> decidir onde cada partícula fica (amostragem por rejeição ponderada pelo
+> brilho, com a cor de cada pixel definindo o calor da partícula). O que vai
+> para a tela continua sendo geometria de pontos, que respira, deriva, cintila
+> e se forma a partir da dispersão.
+>
+> **Pendência de direitos:** a imagem-fonte foi fornecida pelo cliente e
+> aparenta ser gerada por IA ou de banco. Antes da publicação definitiva é
+> preciso confirmar a titularidade ou a licença de uso comercial. O arquivo
+> vive em `components/scenes/01-hero/assets/brain-source.jpg` e é substituível
+> sem tocar no código — trocar o arquivo troca o desenho.
+>
+> As regras abaixo foram descobertas na tentativa procedural. Elas continuam
+> valendo para as cenas seguintes, que são todas procedurais.
+
 > **Quinta regra descoberta:** partícula não desenha forma — **curva** desenha
 > forma. Enquanto as partículas eram amostradas e filtradas, o resultado sempre
 > *sugeria* as dobras. Seguindo as linhas de nível do campo sobre a superfície,
