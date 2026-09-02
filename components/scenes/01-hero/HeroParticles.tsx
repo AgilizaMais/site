@@ -5,6 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap } from '@/lib/motion/gsap';
 import { onSkipIntro } from '@/lib/motion/introBus';
+import { GL_PALETTE, useTheme } from '@/lib/theme/ThemeProvider';
 import { countFor, useBrainCloud } from './useBrainCloud';
 import { particlesVert } from './shaders/particles.vert';
 import { particlesFrag } from './shaders/particles.frag';
@@ -26,6 +27,8 @@ const PEAK_OPACITY = 0.92;
 const SOURCE_ASPECT = 900 / 817;
 
 export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
+  const { theme } = useTheme();
+  const palette = GL_PALETTE[theme];
   const points = useRef<THREE.Points>(null);
   const invalidate = useThree((s) => s.invalidate);
   const viewport = useThree((s) => s.viewport);
@@ -66,11 +69,13 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uDrift: { value: reduced ? 0 : 0.004 },
       uSize: { value: tier === 'low' ? 2.4 : 2.0 },
       uPixelRatio: { value: 1 },
-      uColorLight: { value: new THREE.Color('#fff8f1') },
-      uColorAccent: { value: new THREE.Color('#f97316') },
+      uColorLight: { value: new THREE.Color(palette.light) },
+      uColorAccent: { value: new THREE.Color(palette.accent) },
+      uGain: { value: palette.gain },
       uOpacity: { value: reduced ? PEAK_OPACITY : 0 },
     }),
-    [reduced, tier],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reduced, tier, theme],
   );
 
   /**
@@ -85,10 +90,15 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
         fragmentShader: particlesFrag,
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        /**
+         * No escuro o desenho é luz somada sobre o preto. No claro é tinta
+         * depositada sobre o papel — aditivo sobre branco não escurece nada e
+         * a cena simplesmente desapareceria.
+         */
+        blending: palette.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
         uniforms,
       }),
-    [uniforms],
+    [uniforms, palette.additive],
   );
 
   // Formação: dispersão → desenho. Começa quando a nuvem fica pronta.

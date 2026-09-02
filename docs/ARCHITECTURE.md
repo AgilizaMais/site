@@ -187,7 +187,22 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
 18. **Vidro que desfoca DOM é DOM.** O `backdrop-filter` do painel atinge de
    fato o texto atrás dele, coisa que o WebGL não alcança. O shader cuida do
    que só ele sabe fazer: deslocamento, dispersão cromática e a aresta de luz.
-19. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+19. **Tema claro não é troca de tokens.** As três cenas desenham com blending
+   **aditivo**, que só existe sobre preto: sobre papel, somar luz não escurece
+   nada e o site ficaria em branco. O tema alterna três coisas ao mesmo tempo —
+   a paleta CSS, o modo de composição do material (aditivo ↔ normal) e a
+   paleta do WebGL (luz clara ↔ tinta escura).
+   Duas consequências que exigiram refatorar os shaders:
+   · **cobertura e cor precisam ser grandezas separadas.** Derivar o alpha da
+     luminância funciona enquanto o desenho é claro; com tinta escura a
+     luminância é baixa por definição e o desenho sumiria. As Cenas 2 e 3
+     passaram a acumular `cov` (densidade) e `color` (tinta) em separado.
+   · **a curva de contraste é por tema.** No aditivo a cor também crescia com
+     a densidade, então a resposta era quase quadrática — é dela que vinham os
+     cruzamentos quentes e o fundo bem escuro. Separar cor de cobertura tornou
+     tudo linear e clareou as cenas inteiras; o expoente `uCurve` (1.9 no
+     escuro, 1.2 no claro) devolve o contraste original.
+20. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

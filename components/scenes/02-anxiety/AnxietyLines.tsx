@@ -6,6 +6,7 @@ import * as THREE from 'three';
 import { ScreenQuad } from '@/components/canvas/ScreenQuad';
 import { linesVert } from './shaders/lines.vert';
 import { linesFrag } from './shaders/lines.frag';
+import { GL_PALETTE, useTheme } from '@/lib/theme/ThemeProvider';
 
 type Props = {
   reduced: boolean;
@@ -14,6 +15,8 @@ type Props = {
 };
 
 export function AnxietyLines({ reduced, progress }: Props) {
+  const { theme } = useTheme();
+  const palette = GL_PALETTE[theme];
   const invalidate = useThree((s) => s.invalidate);
   const size = useThree((s) => s.size);
   const smoothed = useRef(reduced ? 1 : 0);
@@ -24,10 +27,13 @@ export function AnxietyLines({ reduced, progress }: Props) {
       uProgress: { value: reduced ? 1 : 0 },
       uAspect: { value: 1 },
       uOpacity: { value: 0 },
-      uColorLight: { value: new THREE.Color('#fff8f1') },
-      uColorAccent: { value: new THREE.Color('#f97316') },
+      uColorLight: { value: new THREE.Color(palette.light) },
+      uColorAccent: { value: new THREE.Color(palette.accent) },
+      uGain: { value: palette.gain },
+      uCurve: { value: palette.curve },
     }),
-    [reduced],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [reduced, theme],
   );
 
   const material = useMemo(
@@ -37,10 +43,11 @@ export function AnxietyLines({ reduced, progress }: Props) {
         fragmentShader: linesFrag,
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
+        // Luz somada no escuro, tinta depositada no claro.
+        blending: palette.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
         uniforms,
       }),
-    [uniforms],
+    [uniforms, palette.additive],
   );
 
   useEffect(() => () => material.dispose(), [material]);

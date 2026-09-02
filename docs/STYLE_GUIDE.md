@@ -53,6 +53,33 @@
 > **Regra:** texto sobre WebGL sempre recebe um véu (`radial-gradient` de `--bg` a 0→70%) atrás,
 > garantindo ≥ 7:1 mesmo no frame mais claro da animação. Verificado por captura do frame mais luminoso.
 
+### Paleta clara — *em teste*
+
+Não é uma inversão da escura: é uma paleta própria. O papel é quente e o acento
+**escurece** — o mesmo `#F97316` sobre creme dá 2.4:1 em texto e reprova.
+
+| Token | Hex | Uso |
+|---|---|---|
+| `--bg` | `#FAF7F2` | Papel quente. |
+| `--surface` | `#FFFFFF` | Cards e superfícies elevadas. |
+| `--text` | `#17150F` | Preto quente. |
+| `--muted` | `#6B6459` | Texto secundário. |
+| `--accent` | `#B3400D` | Assinatura. Mesma função, outro valor. |
+
+| Par | Ratio | Status |
+|---|---|---|
+| `#17150F` sobre `#FAF7F2` | 17.1:1 | AAA |
+| `#6B6459` sobre `#FAF7F2` | 5.5:1 | AA |
+| `#B3400D` sobre `#FAF7F2` | 5.4:1 | AA |
+| `#FFF8F1` sobre `#B3400D` (botão) | 5.5:1 | AA |
+| `#6B6459` sobre `#FFFFFF` | 5.9:1 | AA |
+
+> **O WebGL não segue os tokens de CSS.** No escuro o desenho é luz somada
+> sobre o preto; no claro é tinta depositada sobre o papel. Trocar só as cores
+> deixaria as três cenas invisíveis — aditivo sobre branco não escurece nada.
+> A paleta do WebGL vive em `lib/theme/ThemeProvider.ts` (`GL_PALETTE`), com
+> cor, modo de composição, ganho e curva de contraste por tema.
+
 ### Temperatura de luz por cena (WebGL)
 | Cena | Key light | Rim / accent | Sensação |
 |---|---|---|---|

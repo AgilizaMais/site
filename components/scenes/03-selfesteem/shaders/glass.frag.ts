@@ -21,6 +21,9 @@ uniform vec2  uPanelHalf;   // em UV
 uniform float uRadius;      // canto arredondado, em UV de altura
 uniform vec3  uColorLight;
 uniform vec3  uColorAccent;
+uniform float uGain;      // compensa a troca de blending entre os temas
+uniform float uCurve;     // expoente da cobertura: contraste da cena
+uniform float uGlassBody; // >1 adensa (luz), <1 clareia (tinta sobre papel)
 
 varying vec2 vUv;
 
@@ -31,7 +34,7 @@ varying vec2 vUv;
  * estriações que torna a refração visível. Um campo liso atravessa o vidro
  * sem revelar nada, e o painel vira uma placa colorida.
  */
-vec3 field(vec2 uv) {
+vec4 field(vec2 uv) {
   vec2 p = vec2((uv.x - 0.5) * uAspect, uv.y - 0.5);
 
   // Estriações verticais, onduladas devagar.
@@ -53,8 +56,12 @@ vec3 field(vec2 uv) {
   float intensity = (0.02 + stripes * 0.20 + swell * 0.045) * (0.085 + glow * 2.2);
 
   // Branco quente domina; o âmbar entra como temperatura, não como cor.
-  vec3 color = mix(uColorLight, uColorAccent, 0.1 + stripes * 0.2);
-  return color * intensity;
+  //
+  // Devolve a TINTA e a INTENSIDADE separadas: derivar o alpha da luminância
+  // funciona enquanto o desenho é luz sobre o preto, mas com tinta escura
+  // sobre papel a luminância é baixa por definição e o campo sumiria.
+  vec3 tint = mix(uColorLight, uColorAccent, 0.1 + stripes * 0.2);
+  return vec4(tint, intensity);
 }
 
 /**
@@ -78,7 +85,9 @@ void main() {
   float aa = fwidth(d) * 1.5 + 0.0008;
   float inside = 1.0 - smoothstep(-aa, aa, d);
 
-  vec3 color = field(uv);
+  vec4 base = field(uv);
+  vec3 color = base.rgb;
+  float cov = base.a;
 
   if (inside > 0.001) {
     // Curvatura de lente: o deslocamento cresce em direção às bordas, como
@@ -95,40 +104,49 @@ void main() {
     // Dispersão cromática: os canais atravessam o vidro por caminhos
     // ligeiramente diferentes. Mantida abaixo de 1.5px na escala da tela.
     float spread = 0.008 * uStrength;
-    vec3 refracted;
-    refracted.r = field(uv + disp * (1.0 + spread)).r;
-    refracted.g = field(uv + disp).g;
-    refracted.b = field(uv + disp * (1.0 - spread)).b;
+    vec4 fr = field(uv + disp * (1.0 + spread));
+    vec4 fg = field(uv + disp);
+    vec4 fb = field(uv + disp * (1.0 - spread));
+
+    // A dispersão separa os canais da COMPOSIÇÃO (tinta × intensidade), que é
+    // o que o olho enxerga atravessando o vidro.
+    vec3 refracted = vec3(fr.r * fr.a, fg.g * fg.a, fb.b * fb.a);
+    float refractedCov = (fr.a + fg.a + fb.a) / 3.0;
+    vec3 refractedTint = fg.rgb;
 
     // Blur físico por amostragem cruzada — quatro toques bastam num campo
     // desta suavidade, e o custo por pixel continua trivial.
     float blur = 0.0045 * uStrength;
-    vec3 soft = refracted;
-    soft += field(uv + disp + vec2(blur, 0.0));
-    soft += field(uv + disp + vec2(-blur, 0.0));
-    soft += field(uv + disp + vec2(0.0, blur));
-    soft += field(uv + disp + vec2(0.0, -blur));
-    soft /= 5.0;
+    vec4 b1 = field(uv + disp + vec2(blur, 0.0));
+    vec4 b2 = field(uv + disp + vec2(-blur, 0.0));
+    vec4 b3 = field(uv + disp + vec2(0.0, blur));
+    vec4 b4 = field(uv + disp + vec2(0.0, -blur));
 
-    vec3 glass = mix(refracted, soft, 0.75);
+    float softCov = (refractedCov + b1.a + b2.a + b3.a + b4.a) / 5.0;
+    float glassCov = mix(refractedCov, softCov, 0.75);
 
-    // O vidro tem corpo: clareia um pouco o que passa por ele.
-    glass = glass * 1.22 + uColorLight * 0.014;
+    // O vidro tem corpo. No escuro isso adensa a luz que atravessa; no claro,
+    // vidro fosco sobre papel espalha e CLAREIA — adensar deixaria o painel
+    // como uma placa preta.
+    glassCov *= uGlassBody;
 
-    color = mix(color, glass, inside);
+    cov = mix(cov, glassCov, inside);
+    color = mix(color, refractedTint, inside);
   }
 
   // Aresta do painel: uma linha fina de luz, mais viva onde o cursor está.
   float rim = exp(-abs(d) * 420.0);
   float pointerBias = 1.0 - clamp(length((uv - uPointer) * vec2(uAspect, 1.0)) * 1.8, 0.0, 0.85);
-  color += mix(uColorLight, uColorAccent, 0.45) * rim * (0.10 + 0.22 * pointerBias);
+  float rimCov = rim * (0.5 + 1.1 * pointerBias);
+  color = mix(color, mix(uColorLight, uColorAccent, 0.45), clamp(rimCov, 0.0, 1.0));
+  cov += rimCov * 0.22;
 
   // Vinheta: o campo nasce e morre sem corte.
   float edgeX = smoothstep(0.0, 0.14, uv.x) * smoothstep(1.0, 0.86, uv.x);
   float edgeY = smoothstep(0.0, 0.1, uv.y) * smoothstep(1.0, 0.9, uv.y);
-  color *= edgeX * edgeY;
+  cov *= edgeX * edgeY;
 
-  float a = clamp(max(max(color.r, color.g), color.b) * 1.9, 0.0, 1.0) * uOpacity;
-  gl_FragColor = vec4(color * uOpacity, a);
+  float a = clamp(pow(clamp(cov * 1.9, 0.0, 1.6), uCurve) * uGain, 0.0, 1.0) * uOpacity;
+  gl_FragColor = vec4(color, a);
 }
 `;

@@ -20,6 +20,8 @@ uniform float uAspect;
 uniform float uOpacity;
 uniform vec3  uColorLight;
 uniform vec3  uColorAccent;
+uniform float uGain;   // compensa a troca de blending entre os temas
+uniform float uCurve;  // expoente da cobertura: contraste da cena
 
 varying vec2 vUv;
 
@@ -45,7 +47,11 @@ void main() {
   float sync = smoothstep(0.56, 0.92, uProgress);
   float chaos = 1.0 - decel;
 
-  vec3 color = vec3(0.0);
+  // Cor e COBERTURA são acumuladas em separado. Derivar o alpha da luminância
+  // funciona enquanto o desenho é luz sobre o preto; com tinta escura sobre
+  // papel, a luminância é baixa por definição e as linhas sumiriam.
+  vec3 tinted = vec3(0.0);
+  float cov = 0.0;
 
   for (int i = 0; i < LINES; i++) {
     float fi = float(i);
@@ -95,23 +101,27 @@ void main() {
     vec3 tint = (i == 9) ? uColorAccent : uColorLight;
     float weight = mix(0.72 + r1 * 0.28, 0.95, sync);
 
-    color += tint * glow * weight;
+    float g = glow * weight;
+    cov += g;
+    tinted += tint * g;
   }
 
-  color *= mix(0.55, 0.72, portrait);
+  vec3 color = tinted / max(cov, 0.0001);
+
+  cov *= mix(0.55, 0.72, portrait);
 
   // Depois da sincronia, o feixe recua para o fundo: a partir daqui quem
   // conduz é o texto.
-  color *= mix(1.0, 0.58, smoothstep(0.90, 1.0, uProgress));
+  cov *= mix(1.0, 0.58, smoothstep(0.90, 1.0, uProgress));
 
   // Vinheta nos quatro lados: as linhas nascem e morrem dissolvendo, sem corte
   // seco. A vertical importa enquanto a seção entra em cena — ali a borda do
   // quadro está no meio da tela, e sem ela o traço termina no vazio.
   float edgeX = smoothstep(0.0, 0.16, vUv.x) * smoothstep(1.0, 0.84, vUv.x);
   float edgeY = smoothstep(0.0, 0.09, vUv.y) * smoothstep(1.0, 0.91, vUv.y);
-  color *= edgeX * edgeY;
+  cov *= edgeX * edgeY;
 
-  float a = clamp(max(max(color.r, color.g), color.b), 0.0, 1.0) * uOpacity;
-  gl_FragColor = vec4(color * uOpacity, a);
+  float a = clamp(pow(clamp(cov, 0.0, 1.6), uCurve) * uGain, 0.0, 1.0) * uOpacity;
+  gl_FragColor = vec4(color, a);
 }
 `;

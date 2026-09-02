@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { m, useMotionValueEvent, useScroll } from 'framer-motion';
 import { isImplemented, nav, professional } from '@/lib/content/site';
 import { MotionToggle } from './MotionToggle';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * Quase invisível no topo; ganha vidro e hairline ao rolar.
@@ -67,6 +68,9 @@ export function Navbar() {
               ))}
               <li>
                 <MotionToggle />
+              </li>
+              <li>
+                <ThemeToggle />
               </li>
             </ul>
             {isImplemented(nav.cta.id) && (

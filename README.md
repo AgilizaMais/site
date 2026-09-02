@@ -49,3 +49,14 @@ Construção por etapas, uma cena por vez.
 
 A navegação só oferece âncoras de cenas já implementadas
 (`implementedScenes` em `lib/content/site.ts`).
+
+## Tema claro (em teste)
+
+Há uma versão de fundo claro para avaliação, alternável pelo controle
+**tema** na navbar. Não é uma inversão de cores: o WebGL troca de blending
+aditivo (luz sobre o preto) para composição normal (tinta sobre o papel), com
+paleta, ganho e curva de contraste próprios — ver `lib/theme/ThemeProvider.ts`
+e `docs/STYLE_GUIDE.md`.
+
+O alternador é instrumento de avaliação, não parte do produto: sai quando a
+direção de arte decidir entre claro e escuro.

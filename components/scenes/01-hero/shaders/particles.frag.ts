@@ -6,6 +6,7 @@ precision mediump float;
 uniform vec3  uColorLight;
 uniform vec3  uColorAccent;
 uniform float uOpacity;
+uniform float uGain;   // compensa a troca de blending entre os temas
 
 varying float vBrightness;
 varying float vWarmth;
