@@ -187,15 +187,51 @@ a cena fala de retorno ao equilíbrio, não de reflexo.
 > painel vira uma placa colorida — foi o que aconteceu nas duas primeiras
 > tentativas.
 
-### Cena 4 — Flexibilidade (scrub + física)
-Trilho de 300svh. Fita com deformação por ruído curl.
+### Cena 4 — Flexibilidade (scrub) — *implementado*
+Trilho de 300svh, objeto preso por `sticky`, `data-snap="end"`. O ScrollTrigger
+escreve `progress.current.value`; o componente amortece com `damp(5)` antes de
+passar ao shader — a roda do mouse entrega saltos, e um salto aqui leria como
+ruptura, o oposto do que a cena diz.
+
 ```
-0.00–0.30  fita plana, luz rasante
-0.30–0.60  torção: rotação no eixo Y + dobra (o shader nunca rompe a malha)
-0.60–0.85  a fita absorve o movimento e retoma continuidade
-0.85–1.00  copy entra
+0.00–0.18  torção de repouso: a fita já entra com forma
+0.18–0.66  a dobra cresce e a torção entra
+0.60–0.94  a agitação é absorvida; a forma assumida permanece
+0.68–0.82  copy entra
 ```
-Amortecimento crítico (sem oscilação residual): `damping 0.85`.
+
+**A malha é um plano; toda a forma vem do vertex shader.** A construção é a de
+um tubo achatado: uma curva-guia dá o eixo, e uma seção transversal gira em
+torno dele. Torcer é girar a seção; dobrar é curvar a guia. Como a superfície é
+sempre gerada a partir de uma curva contínua, ela **não tem como se partir** —
+que é exatamente o que a cena afirma. Não há simulação nem amortecimento de
+mola: o que existe é uma família de formas contínuas indexada pelo progresso.
+
+Regras descobertas aqui:
+
+- **A seção em repouso é a normal do quadro, não o binormal.** Começar pelo
+  binormal apresenta a fita de perfil — e uma fita de perfil é uma linha.
+- **A torção é função de `t` normalizado, nunca da coordenada de mundo.** Assim
+  o número de voltas é o mesmo em qualquer viewport: numa tela larga a fita
+  fica mais longa, não mais retorcida.
+- **Uma torção de repouso, sempre presente.** Sem ela a fita entra na cena como
+  uma placa chapada de frente para a câmera — larga, clara e sem forma.
+- **A troca face/avesso é amortecida perto da rasância.** Um degrau seco em
+  `gl_FrontFacing` deixa um risco preto atravessando a fita.
+- **A dobra acende em laranja** (fresnel onde a superfície fica de perfil). É o
+  único lugar do site onde o acento aparece em área — e sem ele a dobra vira um
+  risco escuro.
+- **Fill fraca do lado oposto à key.** Existem orientações em que a fita some
+  por completo; no retrato, onde só um trecho curto aparece, era justamente
+  esse trecho que caía no preto.
+- **Retrato tem enquadramento próprio:** fita mais curta, ondulação reduzida na
+  mesma proporção (senão sai pelo topo), faixa deslocada para cima (embaixo
+  fica o texto), corrida na diagonal e key light mais frontal.
+- **No modo reduzido `uTime` não fica em zero:** ali a fita passa por si mesma
+  quase no mesmo plano e a interseção abre cunhas escuras no quadro parado.
+
+Contraste medido sob a copy, do início da entrada ao fim do trilho: **pior caso
+7.1:1** (`u-veil-right`, o véu espelhado para blocos alinhados à direita).
 
 ### Cena 5 — Aceitação (autônomo)
 Esfera pulsa em ciclo de **4s** (1.6s expansão · 0.4s sustentação · 2.0s retração), `breathe`.

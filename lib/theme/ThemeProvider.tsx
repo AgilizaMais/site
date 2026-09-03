@@ -76,6 +76,9 @@ export const GL_PALETTE = {
     curve: 1.9,
     gain: 1.15,
     additive: true,
+    /** Superfícies sólidas (Cena 4): sombra e luz do material. */
+    surfaceShadow: '#0b0a09',
+    surfaceLight: '#fff8f1',
   },
   light: {
     light: '#1c1a15',
@@ -84,5 +87,8 @@ export const GL_PALETTE = {
     curve: 1.2,
     gain: 0.9,
     additive: false,
+    // Sobre papel, um objeto iluminado continua mais escuro que o fundo.
+    surfaceShadow: '#211d17',
+    surfaceLight: '#b9b1a4',
   },
 } as const;

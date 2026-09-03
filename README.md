@@ -44,7 +44,8 @@ Construção por etapas, uma cena por vez.
 - ✅ Fase 1 — **Cena 1: Hero**
 - ✅ Fase 2 — **Cena 2: Ansiedade**
 - ✅ Fase 3 — **Cena 3: Autoestima**
-- ⬜ Fases 4–8 — Cenas 4 a 8
+- ✅ Fase 4 — **Cena 4: Flexibilidade**
+- ⬜ Fases 5–8 — Cenas 5 a 8
 - ⬜ Fase 9 — polimento global, SEO, LGPD, QA e deploy
 
 A navegação só oferece âncoras de cenas já implementadas

@@ -45,6 +45,17 @@ export const selfEsteem = {
     'Um painel translúcido flutua sobre um campo de luz. O que se vê através dele chega deslocado e desfocado; quando o movimento cessa, a imagem volta ao lugar.',
 } as const;
 
+export const flexibility = {
+  id: 'flexibilidade',
+  eyebrow: 'Flexibilidade psicológica',
+  headline: ['Dobrar', 'não é romper.'],
+  body:
+    'Flexibilidade é a capacidade de permanecer em contato com o que é difícil e ainda assim ' +
+    'agir na direção do que importa para você.',
+  canvasDescription:
+    'Uma fita larga atravessa a tela. Conforme a página avança ela se torce e se dobra sobre si mesma, absorve o movimento e volta a correr contínua — em nenhum momento se parte.',
+} as const;
+
 export const nav = {
   links: [
     { id: 'sobre', label: 'Sobre', href: '#sobre' },
@@ -71,7 +82,12 @@ export type SceneId = (typeof scenes)[number]['id'];
  * A navegação só oferece o que já existe — nenhuma âncora morta chega ao usuário.
  * Ao entregar uma cena, basta acrescentar o id aqui.
  */
-export const implementedScenes: readonly SceneId[] = ['inicio', 'ansiedade', 'autoestima'];
+export const implementedScenes: readonly SceneId[] = [
+  'inicio',
+  'ansiedade',
+  'autoestima',
+  'flexibilidade',
+];
 
 export const isImplemented = (id: SceneId) => implementedScenes.includes(id);
 

@@ -46,6 +46,9 @@ app/
 
 components/
   scenes/
+    04-flexibility/          // Flexibility.tsx FlexibilityCanvas.tsx
+                             // FlexibilityScene.tsx Ribbon.tsx
+                             // shaders/ribbon.vert.ts .frag.ts
     03-selfesteem/           // SelfEsteem.tsx SelfEsteemCanvas.tsx SelfEsteemScene.tsx
                              // GlassPanel.tsx shaders/glass.frag.ts
     02-anxiety/              // Anxiety.tsx AnxietyCanvas.tsx AnxietyScene.tsx
@@ -328,7 +331,7 @@ CI (GitHub Actions)
 | 1 | **Cena 1 — Hero** completo | ✅ entregue |
 | 2 | **Cena 2 — Ansiedade** | ✅ entregue |
 | 3 | **Cena 3 — Autoestima** | ✅ entregue |
-| 4 | Cena 4 — Flexibilidade | aprovação |
+| 4 | **Cena 4 — Flexibilidade** | ✅ entregue |
 | 5 | Cena 5 — Aceitação | aprovação |
 | 6 | Cena 6 — Credibilidade | aprovação |
 | 7 | Cena 7 — Processo | aprovação |

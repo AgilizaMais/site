@@ -174,10 +174,24 @@ canvas {
     );
   }
 
+  /* Bloco de texto alinhado à direita: o véu espelha, senão a borda dura do
+     gradiente aparece como um retângulo sobre a cena. */
+  .u-veil-right::before {
+    inset: -22% -70% -22% -26%;
+    background: radial-gradient(
+      68% 62% at 70% 50%,
+      rgb(9 9 11 / 0.98) 0%,
+      rgb(9 9 11 / 0.94) 44%,
+      rgb(9 9 11 / 0.46) 76%,
+      rgb(9 9 11 / 0) 100%
+    );
+  }
+
   /* No mobile o texto fica embaixo do objeto, não ao lado: o véu vira uma
      faixa a partir da base. */
   @media (max-width: 767px) {
-    .u-veil::before {
+    .u-veil::before,
+    .u-veil-right::before {
       inset: -14% -30% -30% -30%;
       background: linear-gradient(
         to bottom,
@@ -287,4 +301,14 @@ canvas {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
+}
+
+:root[data-theme='light'] .u-veil-right::before {
+  background: radial-gradient(
+    68% 62% at 70% 50%,
+    rgb(250 247 242 / 0.97) 0%,
+    rgb(250 247 242 / 0.92) 42%,
+    rgb(250 247 242 / 0.46) 74%,
+    rgb(250 247 242 / 0) 100%
+  );
 }

@@ -263,19 +263,39 @@ progress 0.15 (caos)          progress 0.55 (desacelera)      progress 0.90 (sin
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.4 Desktop — Cena 4 (Flexibilidade)
+### 4.4 Desktop — Cena 4 (Flexibilidade) — *como construído*
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                                              ╱▓▓▓▓▓╲                         │
-│                                       ╱▓▓▓▓▓╱       ╲▓▓▓╲                    │
-│                              ╱▓▓▓▓▓▓▓╱                   ╲▓▓▓▓╲              │
-│                     ╱▓▓▓▓▓▓▓╱          fita / tecido           ╲▓▓▓▓╲        │
-│              ▓▓▓▓▓▓╱                  (dobra, torce,                ╲▓▓▓     │
-│                                        nunca rompe)                          │
-│   FLEXIBILIDADE PSICOLÓGICA                                                  │
-│   Dobrar não é romper.                                                       │
-│   parágrafo (62ch)                                                           │
+│                                                                              │
+│      ▓▓▓▓▓▓▓▓▓▓▓▄▄▄                                    ▄▄▓▓▓▓▓▓▓▓▓▓▓         │
+│   ▓▓▓░░░░░░░░░░░░░░▀▀▓▓▄▄                        ▄▄▓▓▀▀░░░░░░░░░░░░░▓▓▓      │
+│  ░░░░░░░░░░░░░░░░░░░░░░░░▀▓▓▄▄            ▄▄▓▓▀▀░░░░░░  FLEXIBILIDADE PSI.   │
+│   ▓▓░░░░░░░░░░░░░░░░▄▄▓▓▀▀    ●●●●    ▀▀▓▓▄▄░░░░░░░░                         │
+│      ▓▓▓▓▓▓▓▓▓▓▓▀▀▀            ▲          ▀▀▀▓▓▓▓▓▓        Dobrar            │
+│                          a dobra acende                não é romper.         │
+│                          em laranja — o                                      │
+│                          único acento em área         parágrafo (62ch)       │
 └──────────────────────────────────────────────────────────────────────────────┘
+   A copy fica à direita e alinhada à direita: a fita corre da esquerda para a
+   direita e a leitura chega junto com ela. O véu (`u-veil-right`) é espelhado.
+```
+
+### 4.4b Retrato — Cena 4
+```
+┌──────────────────┐
+│                  │   Em retrato a fita corre na diagonal e ocupa o terço
+│  ▓▓▓▄▄▄          │   superior: horizontal, numa janela alta e estreita, ela
+│ ░░░░░░▀▀▓▓▄▄     │   viraria um traço perdido no meio de muito preto.
+│  ▓▓▓▓▀▀    ●●    │
+│                  │   A ondulação encolhe junto com o comprimento — senão a
+│ FLEXIBILIDADE    │   fita sai pelo topo — e a key light vem mais de frente,
+│                  │   porque com pouca inclinação nenhuma face encontraria
+│ Dobrar           │   uma luz rasante e o trecho visível cairia no escuro.
+│ não é romper.    │
+│                  │
+│ parágrafo        │
+│                  │
+└──────────────────┘
 ```
 
 ### 4.5 Desktop — Cena 5 (Aceitação)

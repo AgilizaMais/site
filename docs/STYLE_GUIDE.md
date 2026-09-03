@@ -53,6 +53,13 @@
 > **Regra:** texto sobre WebGL sempre recebe um véu (`radial-gradient` de `--bg` a 0→70%) atrás,
 > garantindo ≥ 7:1 mesmo no frame mais claro da animação. Verificado por captura do frame mais luminoso.
 
+O véu tem duas variantes, e usar a errada aparece na tela: `.u-veil` ancora o
+gradiente à esquerda (blocos alinhados à esquerda) e `.u-veil-right` o espelha
+(blocos alinhados à direita, como o da Cena 4). Num bloco à direita com o véu
+padrão, a borda dura do gradiente vira um retângulo visível sobre a cena.
+Em retrato as duas viram a mesma faixa a partir da base — ali o texto fica
+embaixo do objeto, não ao lado dele.
+
 ### Paleta clara — *em teste*
 
 Não é uma inversão da escura: é uma paleta própria. O papel é quente e o acento
