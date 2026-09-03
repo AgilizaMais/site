@@ -24,11 +24,14 @@
      General Sans / Satoshi ainda não estão no repositório (ver docs/FONTS.md).
      Enquanto isso, a stack de sistema mantém as métricas próximas: geométrica,
      x-height alta, tracking negativo aplicado via escala tipográfica. */
-  --font-display: 'General Sans', 'Satoshi', 'Neue Montreal', ui-sans-serif, -apple-system,
-    'Segoe UI', system-ui, sans-serif;
-  --font-ui: 'Satoshi', 'General Sans', ui-sans-serif, -apple-system, 'Segoe UI', system-ui,
-    sans-serif;
-  --font-mono: ui-monospace, 'SFMono-Regular', 'JetBrains Mono', Menlo, monospace;
+  --font-display:
+    "General Sans", "Satoshi", "Neue Montreal", ui-sans-serif, -apple-system,
+    "Segoe UI", system-ui, sans-serif;
+  --font-ui:
+    "Satoshi", "General Sans", ui-sans-serif, -apple-system, "Segoe UI",
+    system-ui, sans-serif;
+  --font-mono:
+    ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, monospace;
 
   /* Layout */
   --margin-x: clamp(1.25rem, 5vw, 7.5rem);
@@ -45,29 +48,6 @@
   --e-out-soft: cubic-bezier(0.25, 1, 0.5, 1);
 
   color-scheme: dark;
-}
-
-/* =========================================================
-   TEMA CLARO (em teste)
-   Não é uma inversão: é uma paleta própria. O papel é quente, a tinta é
-   quente, e o acento escurece para manter contraste sobre claro — o mesmo
-   #F97316 sobre creme dá 2.4:1 em texto, e reprova.
-   ========================================================= */
-:root[data-theme='light'] {
-  --bg: #faf7f2;
-  --surface: #ffffff;
-  --surface-2: #f2ede4;
-  --text: #17150f;
-  --muted: #6b6459;
-  --accent: #b3400d;
-
-  --accent-soft: rgba(179, 64, 13, 0.12);
-  --accent-line: rgba(179, 64, 13, 0.4);
-  --hairline: rgba(23, 21, 15, 0.12);
-  --glass: rgba(255, 255, 255, 0.6);
-  --glass-edge: rgba(23, 21, 15, 0.12);
-
-  color-scheme: light;
 }
 
 /* =========================================================
@@ -160,7 +140,7 @@ canvas {
      mesmo no frame mais luminoso da cena. (STYLE_GUIDE §2)
      No tema claro o véu clareia em vez de escurecer: ver abaixo. */
   .u-veil::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: -18% -28% -18% -60%;
     z-index: -1;
@@ -216,29 +196,6 @@ canvas {
   }
 }
 
-/* No tema claro o véu abre o papel em vez de fechá-lo. */
-:root[data-theme='light'] .u-veil::before {
-  background: radial-gradient(
-    62% 58% at 22% 50%,
-    rgb(250 247 242 / 0.95) 0%,
-    rgb(250 247 242 / 0.82) 40%,
-    rgb(250 247 242 / 0.4) 72%,
-    rgb(250 247 242 / 0) 100%
-  );
-}
-
-@media (max-width: 767px) {
-  :root[data-theme='light'] .u-veil::before {
-    background: linear-gradient(
-      to bottom,
-      rgb(250 247 242 / 0) 0%,
-      rgb(250 247 242 / 0.92) 20%,
-      rgb(250 247 242 / 0.98) 42%,
-      rgb(250 247 242 / 0.98) 100%
-    );
-  }
-}
-
 /* Grão de filme e vinheta — camada única, sem custo por frame. */
 .u-grain {
   position: fixed;
@@ -256,18 +213,11 @@ canvas {
   inset: 0;
   z-index: 59;
   pointer-events: none;
-  background: radial-gradient(120% 90% at 50% 45%, transparent 45%, rgb(9 9 11 / 0.62) 100%);
-}
-
-/* No papel, a vinheta é quente e discreta: fechar as bordas com preto
-   sujaria o claro. */
-:root[data-theme='light'] .u-vignette {
-  background: radial-gradient(120% 90% at 50% 45%, transparent 55%, rgb(23 21 15 / 0.07) 100%);
-}
-
-:root[data-theme='light'] .u-grain {
-  opacity: 0.055;
-  mix-blend-mode: multiply;
+  background: radial-gradient(
+    120% 90% at 50% 45%,
+    transparent 45%,
+    rgb(9 9 11 / 0.62) 100%
+  );
 }
 
 /* =========================================================
@@ -286,29 +236,51 @@ canvas {
 
 /* Sem movimento, um trilho de scroll é só tela vazia: a cena vira uma seção
    comum, de uma tela, com o conteúdo já visível. */
-[data-motion='reduced'] .u-scroll-track {
+[data-motion="reduced"] .u-scroll-track {
   height: auto !important;
 }
 
-[data-motion='reduced'] .u-scroll-sticky {
+[data-motion="reduced"] .u-scroll-sticky {
   position: static !important;
   min-height: 100svh;
 }
 
-[data-motion='reduced'] *,
-[data-motion='reduced'] *::before,
-[data-motion='reduced'] *::after {
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
   animation-duration: 0.01ms !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
 
-:root[data-theme='light'] .u-veil-right::before {
-  background: radial-gradient(
-    68% 62% at 70% 50%,
-    rgb(250 247 242 / 0.97) 0%,
-    rgb(250 247 242 / 0.92) 42%,
-    rgb(250 247 242 / 0.46) 74%,
-    rgb(250 247 242 / 0) 100%
-  );
+/*
+  Pausa nos pontos de leitura, metade do toque.
+
+  O Lenis roda com `syncTouch: false`: no dedo, o embalo é o do sistema
+  operacional e não passa por ele — então o JS não tem como saber onde a
+  rolagem vai parar nem interferir nela. O motor de snap do navegador conversa
+  com esse embalo por dentro, e é ele que desacelera o arremesso para dentro do
+  texto. Ver lib/motion/useScrollSnap.ts para a metade da roda do mouse.
+
+  `proximity`, nunca `mandatory`: quem passa longe de um ponto de leitura não é
+  puxado para ele.
+*/
+@media (hover: none) and (pointer: coarse) {
+  :root:not([data-motion="reduced"]) {
+    scroll-snap-type: y proximity;
+  }
+
+  [data-snap="start"] {
+    scroll-snap-align: start;
+  }
+
+  /* O fim do trilho é onde a copy termina de entrar: alinhar o fim do
+     elemento com o fim da tela cai exatamente nesse ponto. */
+  [data-snap="end"] {
+    scroll-snap-align: end;
+  }
+
+  [data-motion="reduced"] [data-snap] {
+    scroll-snap-align: none;
+  }
 }

@@ -18,6 +18,7 @@ uniform float uTime;
 uniform float uFormation;   // 0 = pó disperso · 1 = desenho formado
 uniform float uBreath;
 uniform float uDrift;
+uniform float uZoom;
 uniform float uSize;
 uniform float uPixelRatio;
 
@@ -73,6 +74,11 @@ void main() {
   t = 1.0 - pow(1.0 - t, 4.0);
 
   vec3 p = mix(scattered, target, t);
+
+  // Aproximação de entrada. Fica aqui, e não num transform de CSS: o R3F mede
+  // o contêiner com getBoundingClientRect, e um transform no pai fazia o
+  // canvas nascer maior que a caixa que ele deveria preencher.
+  p *= uZoom;
 
   vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mvPosition;

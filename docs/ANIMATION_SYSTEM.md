@@ -254,17 +254,48 @@ Luz central se abre (`scaleX` de 1px → 60vw, `cine`), headline em RevealLines,
 ## 5b. Pausa suave nos pontos de leitura
 
 Cada cena marca onde ela descansa com `data-snap`: `start` (topo da seção) ou
-`end` (fim do trilho, onde a copy termina de entrar). Quando o scroll cessa, se
-o ponto mais próximo estiver a menos de **40% da altura da tela**, o site conduz
-o resto do caminho em 0.9s com chegada desacelerada.
-
-Não é ancoragem rígida. A janela é estreita o bastante para não sequestrar o
-gesto — solto a 700px do ponto, o site não faz nada. O que ela resolve é passar
+`end` (fim do trilho, onde a copy termina de entrar). O que ela resolve é passar
 direto por um texto que só termina de aparecer no fim de um trilho longo, que
 era o caso da Cena 2.
 
-Desativada no modo reduzido. Toque, teclado e barra de rolagem cancelam uma
-condução em curso.
+**São dois mecanismos, um por plataforma, porque a rolagem tem donos
+diferentes.**
+
+**Roda do mouse — `lib/motion/useScrollSnap.ts`.** Aqui o Lenis é dono da
+rolagem e mantém em `targetScroll` onde o embalo vai parar. Se um ponto de
+leitura estiver entre a posição atual e esse destino, o destino passa a ser o
+ponto: a rolagem desacelera para dentro do texto em vez de atravessá-lo. A
+troca usa `programmatic: false`, o mesmo caminho da roda — a chegada tem a
+suavização da casa, e a rolada seguinte parte dali. É preciso passar `duration`
+e `easing` explicitamente: sem `programmatic`, o Lenis não preenche nenhuma das
+duas e a animação não sai do lugar.
+
+O ajuste roda no **próprio evento de roda**, não só no quadro de animação. Num
+aparelho a 10fps um único passo de animação atravessa mais de 2000px e o ponto
+passaria despercebido; no evento, o destino acabou de mudar e a posição ainda
+não saiu do lugar.
+
+**Toque — CSS, em `globals.css`.** O Lenis roda com `syncTouch: false`: no dedo
+o embalo é o do sistema operacional, não passa pelo Lenis, e por isso o JS não
+sabe onde a rolagem vai parar nem tem como interferir. Era essa a metade que
+faltava — e o celular é justamente onde o texto da Cena 2 passava batido.
+Quem conversa com esse embalo por dentro do compositor é o motor de snap do
+navegador: `scroll-snap-type: y proximity` sob `(hover: none) and
+(pointer: coarse)`, com `scroll-snap-align: start` e `end` nos marcadores.
+`end` alinha o fim do elemento com o fim da tela, que cai exatamente no ponto
+de leitura no fim do trilho. `proximity`, nunca `mandatory`.
+
+**Nem um nem outro é ancoragem rígida.** Depois de chegar a um ponto, o gesto
+seguinte o "consome" e a rolagem segue livre — é o que impede a pausa de virar
+armadilha. Ponto que ficou para trás nunca puxa de volta. Um assentamento em
+`scrollend` fecha distâncias pequenas que sobraram. Tudo desativado no modo
+reduzido.
+
+> **Frear pela velocidade não funciona.** Foi a primeira tentativa. Num
+> arremesso o scroll anda mais de 800px por quadro e atravessa qualquer janela
+> de aproximação numa única atualização. E esperar o embalo terminar para então
+> corrigir chega tarde: a essa altura o texto já ficou para trás. O que
+> funciona é olhar para o destino, não para a posição.
 
 ## 6. Microinterações
 

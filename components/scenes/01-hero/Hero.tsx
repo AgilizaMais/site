@@ -32,11 +32,23 @@ export function Hero() {
 
       <p className="sr-only">{hero.canvasDescription}</p>
 
-      {/* O objeto ocupa a cena inteira e passa por trás do texto. */}
+      {/*
+        O objeto ocupa a cena inteira e passa por trás do texto.
+
+        Aqui NÃO pode haver transform. O R3F mede o contêiner com
+        getBoundingClientRect, que devolve a caixa já transformada: com um
+        `scale` de entrada, o canvas nascia 8% maior que o pai e deslocado
+        para a direita — e ficava assim, porque o ResizeObserver observa a
+        caixa de layout, que não mudou. Só um resize de verdade (a barra do
+        navegador recolhendo, no primeiro gesto de scroll) corrigia.
+
+        A aproximação de entrada mudou de lugar: agora acontece dentro do
+        WebGL, na própria nuvem (`HeroParticles`), onde não há o que medir.
+      */}
       <m.div
         className="absolute inset-0"
-        initial={{ opacity: 0, scale: 1.08 }}
-        animate={enter}
+        initial={{ opacity: 0 }}
+        animate={resolved ? { opacity: 1 } : undefined}
         transition={{ duration: d(1.6), delay: d(0.7), ease: [0.65, 0, 0.35, 1] }}
       >
         <HeroCanvas />

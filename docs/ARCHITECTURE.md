@@ -190,12 +190,13 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
 18. **Vidro que desfoca DOM é DOM.** O `backdrop-filter` do painel atinge de
    fato o texto atrás dele, coisa que o WebGL não alcança. O shader cuida do
    que só ele sabe fazer: deslocamento, dispersão cromática e a aresta de luz.
-19. **Tema claro não é troca de tokens.** As três cenas desenham com blending
-   **aditivo**, que só existe sobre preto: sobre papel, somar luz não escurece
-   nada e o site ficaria em branco. O tema alterna três coisas ao mesmo tempo —
-   a paleta CSS, o modo de composição do material (aditivo ↔ normal) e a
-   paleta do WebGL (luz clara ↔ tinta escura).
-   Duas consequências que exigiram refatorar os shaders:
+19. **Tema claro não é troca de tokens.** (Avaliado e descartado — a direção é
+   o preto. O aprendizado fica, porque ele mudou os shaders para melhor.)
+   As cenas desenham com blending **aditivo**, que só existe sobre preto: sobre
+   papel, somar luz não escurece nada e o site ficaria em branco. Trocar de
+   fundo alterava três coisas ao mesmo tempo — a paleta CSS, o modo de
+   composição do material (aditivo ↔ normal) e a paleta do WebGL.
+   Duas consequências que exigiram refatorar os shaders, e que permanecem:
    · **cobertura e cor precisam ser grandezas separadas.** Derivar o alpha da
      luminância funciona enquanto o desenho é claro; com tinta escura a
      luminância é baixa por definição e o desenho sumiria. As Cenas 2 e 3
@@ -203,8 +204,8 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    · **a curva de contraste é por tema.** No aditivo a cor também crescia com
      a densidade, então a resposta era quase quadrática — é dela que vinham os
      cruzamentos quentes e o fundo bem escuro. Separar cor de cobertura tornou
-     tudo linear e clareou as cenas inteiras; o expoente `uCurve` (1.9 no
-     escuro, 1.2 no claro) devolve o contraste original.
+     tudo linear e clareou as cenas inteiras; o expoente `uCurve` (1.9)
+     devolve o contraste original.
 20. **Controle de movimento existe em todo viewport.** Ele estava dentro do
    bloco `md:flex` da navbar e sumia no celular junto com os links — uma falha
    de acessibilidade, não só de conveniência. Os controles passam a ser
@@ -212,14 +213,30 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    no desktop, agrupamento fixo no mobile). `display: none` não é exposto à
    árvore de acessibilidade, então não há controle duplicado para leitores de
    tela.
-21. **Enquadramento não pode depender da altura do viewport no celular.**
-   `viewport.height` do R3F é constante (depende só da câmera), então um termo
-   de largura equivale a uma fração fixa da largura do canvas em pixels, e um
-   termo de altura, a uma fração da altura. No celular a altura muda sozinha
-   quando a barra do navegador recolhe: o objeto era enquadrado pela altura e
-   mudava de tamanho e de lugar no primeiro gesto de scroll. Em retrato o
-   enquadramento passou a depender só da largura.
-22. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+21. **O R3F mede o contêiner com `getBoundingClientRect` — que devolve a caixa
+   JÁ TRANSFORMADA.** O wrapper do canvas do Hero entrava com um `scale: 1.08`
+   de CSS. O canvas nascia 8% maior que o pai e deslocado para a direita, e
+   ficava assim: o `ResizeObserver` observa a caixa de *layout*, que não mudou.
+   Só um resize de verdade corrigia — no celular, a barra do navegador
+   recolhendo no primeiro gesto de scroll, que é exatamente o "o cérebro pula
+   de lugar quando eu mexo" relatado.
+   **Nenhum transform em ancestral de canvas do R3F.** A aproximação de entrada
+   foi para dentro do WebGL (uniform `uZoom` no vertex shader do Hero), onde não
+   há o que medir.
+22. **Enquadramento: fração da largura, e ponto de quebra em pixels.**
+   `viewport.height` do R3F é constante (depende só da câmera) e
+   `viewport.width` é derivada do ASPECTO — ou seja, muda quando a altura do
+   canvas muda. Duas consequências:
+   · O tamanho do objeto se expressa como fração de `viewport.width`, que é
+     fração da largura do canvas seja qual for o aspecto. Sem clamp mínimo: com
+     ele, o cálculo passando rente ao limite fazia o tamanho pular entre dois
+     valores.
+   · Retrato ou paisagem se decide por `size.width` em **pixels CSS**, no mesmo
+     ponto de quebra do layout (`md`, 768px). Comparar `viewport.width` (mundo)
+     significava decidir pelo aspecto: uma medição transitória durante o
+     carregamento mandava o objeto para o ramo de paisagem, e ele só voltava
+     quando o aspecto mudasse de novo.
+23. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

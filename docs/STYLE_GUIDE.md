@@ -60,32 +60,22 @@ padrão, a borda dura do gradiente vira um retângulo visível sobre a cena.
 Em retrato as duas viram a mesma faixa a partir da base — ali o texto fica
 embaixo do objeto, não ao lado dele.
 
-### Paleta clara — *em teste*
+### Paleta clara — *avaliada e descartada*
 
-Não é uma inversão da escura: é uma paleta própria. O papel é quente e o acento
-**escurece** — o mesmo `#F97316` sobre creme dá 2.4:1 em texto e reprova.
+Houve uma paleta clara paralela (papel quente `#FAF7F2`, tinta `#17150F`,
+acento escurecido para `#B3400D`, porque o mesmo `#F97316` sobre creme dá 2.4:1
+em texto e reprova). Foi construída, medida e avaliada; a direção ficou com o
+preto, e ela saiu do código.
 
-| Token | Hex | Uso |
-|---|---|---|
-| `--bg` | `#FAF7F2` | Papel quente. |
-| `--surface` | `#FFFFFF` | Cards e superfícies elevadas. |
-| `--text` | `#17150F` | Preto quente. |
-| `--muted` | `#6B6459` | Texto secundário. |
-| `--accent` | `#B3400D` | Assinatura. Mesma função, outro valor. |
+Fica registrado o motivo de ela não ter sido uma troca de tokens: as cenas
+desenham com blending **aditivo**, que só existe sobre preto. Sobre papel, somar
+luz não escurece nada e o site ficaria em branco. Trocar de fundo exigia trocar
+o modo de composição do material, a paleta do WebGL e a curva de contraste ao
+mesmo tempo — e separar cobertura de cor nos shaders das Cenas 2 e 3, porque
+derivar o alpha da luminância só funciona enquanto o desenho é claro.
 
-| Par | Ratio | Status |
-|---|---|---|
-| `#17150F` sobre `#FAF7F2` | 17.1:1 | AAA |
-| `#6B6459` sobre `#FAF7F2` | 5.5:1 | AA |
-| `#B3400D` sobre `#FAF7F2` | 5.4:1 | AA |
-| `#FFF8F1` sobre `#B3400D` (botão) | 5.5:1 | AA |
-| `#6B6459` sobre `#FFFFFF` | 5.9:1 | AA |
-
-> **O WebGL não segue os tokens de CSS.** No escuro o desenho é luz somada
-> sobre o preto; no claro é tinta depositada sobre o papel. Trocar só as cores
-> deixaria as três cenas invisíveis — aditivo sobre branco não escurece nada.
-> A paleta do WebGL vive em `lib/theme/ThemeProvider.ts` (`GL_PALETTE`), com
-> cor, modo de composição, ganho e curva de contraste por tema.
+> **O WebGL não segue os tokens de CSS.** A paleta que os shaders usam vive em
+> `lib/theme/ThemeProvider.tsx` (`GL_PALETTE`) — hoje uma constante, sem tema.
 
 ### Temperatura de luz por cena (WebGL)
 | Cena | Key light | Rim / accent | Sensação |

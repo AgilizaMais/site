@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { ScreenQuad } from '@/components/canvas/ScreenQuad';
 import { linesVert } from '@/components/scenes/02-anxiety/shaders/lines.vert';
 import { glassFrag } from './shaders/glass.frag';
-import { GL_PALETTE, useTheme } from '@/lib/theme/ThemeProvider';
+import { GL_PALETTE } from '@/lib/theme/ThemeProvider';
 
 export type PanelRect = { cx: number; cy: number; hx: number; hy: number; radius: number };
 
@@ -21,8 +21,6 @@ type Props = {
 };
 
 export function GlassPanel({ reduced, rect, drive, pointer }: Props) {
-  const { theme } = useTheme();
-  const palette = GL_PALETTE[theme];
   const invalidate = useThree((s) => s.invalidate);
   const size = useThree((s) => s.size);
 
@@ -36,16 +34,15 @@ export function GlassPanel({ reduced, rect, drive, pointer }: Props) {
       uPanelCenter: { value: new THREE.Vector2(0.66, 0.5) },
       uPanelHalf: { value: new THREE.Vector2(0.12, 0.2) },
       uRadius: { value: 0.02 },
-      uColorLight: { value: new THREE.Color(palette.light) },
-      uColorAccent: { value: new THREE.Color(palette.accent) },
+      uColorLight: { value: new THREE.Color(GL_PALETTE.light) },
+      uColorAccent: { value: new THREE.Color(GL_PALETTE.accent) },
       // O campo da Cena 3 cobre a tela inteira; um pouco menos de ganho
       // aqui mantém o espaço negativo que o resto do site pede.
-      uGain: { value: palette.gain * 0.78 },
-      uCurve: { value: palette.curve },
-      uGlassBody: { value: palette.additive ? 1.22 : 0.72 },
+      uGain: { value: GL_PALETTE.gain * 0.78 },
+      uCurve: { value: GL_PALETTE.curve },
+      uGlassBody: { value: 1.22 },
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [theme],
+    [],
   );
 
   const material = useMemo(
@@ -55,11 +52,11 @@ export function GlassPanel({ reduced, rect, drive, pointer }: Props) {
         fragmentShader: glassFrag,
         transparent: true,
         depthWrite: false,
-        // Luz somada no escuro, tinta depositada no claro.
-        blending: palette.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+        // O desenho é luz somada sobre o preto.
+        blending: THREE.AdditiveBlending,
         uniforms,
       }),
-    [uniforms, palette.additive],
+    [uniforms],
   );
 
   useEffect(() => () => material.dispose(), [material]);

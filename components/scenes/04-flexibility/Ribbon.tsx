@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { GL_PALETTE, useTheme } from '@/lib/theme/ThemeProvider';
+import { GL_PALETTE } from '@/lib/theme/ThemeProvider';
 import { ribbonVert } from './shaders/ribbon.vert';
 import { ribbonFrag } from './shaders/ribbon.frag';
 import type { DeviceTier } from '@/lib/hooks/useDeviceTier';
@@ -41,8 +41,6 @@ const KEY_DIR_NARROW = new THREE.Vector3(-0.34, 0.42, 0.84).normalize();
 const FILL_DIR = new THREE.Vector3(0.62, -0.44, 0.65).normalize();
 
 export function Ribbon({ tier, reduced, progress }: Props) {
-  const { theme } = useTheme();
-  const palette = GL_PALETTE[theme];
   const mesh = useRef<THREE.Mesh>(null);
   const viewport = useThree((s) => s.viewport);
   const invalidate = useThree((s) => s.invalidate);
@@ -89,15 +87,15 @@ export function Ribbon({ tier, reduced, progress }: Props) {
       uWidth: { value: width },
       uLength: { value: length },
       uAmp: { value: amp },
-      uShadow: { value: new THREE.Color(palette.surfaceShadow) },
-      uLight: { value: new THREE.Color(palette.surfaceLight) },
-      uAccent: { value: new THREE.Color(palette.accent) },
+      uShadow: { value: new THREE.Color(GL_PALETTE.surfaceShadow) },
+      uLight: { value: new THREE.Color(GL_PALETTE.surfaceLight) },
+      uAccent: { value: new THREE.Color(GL_PALETTE.accent) },
       uKeyDir: { value: (narrow ? KEY_DIR_NARROW : KEY_DIR).clone() },
       uFillDir: { value: FILL_DIR.clone() },
       uOpacity: { value: reduced ? 1 : 0 },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reduced, theme],
+    [reduced],
   );
 
   useEffect(() => {

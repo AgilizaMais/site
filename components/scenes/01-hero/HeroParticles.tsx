@@ -5,7 +5,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { gsap, registerGsap } from '@/lib/motion/gsap';
 import { onSkipIntro } from '@/lib/motion/introBus';
-import { GL_PALETTE, useTheme } from '@/lib/theme/ThemeProvider';
+import { GL_PALETTE } from '@/lib/theme/ThemeProvider';
 import { countFor, useBrainCloud } from './useBrainCloud';
 import { particlesVert } from './shaders/particles.vert';
 import { particlesFrag } from './shaders/particles.frag';
@@ -27,36 +27,36 @@ const PEAK_OPACITY = 0.92;
 const SOURCE_ASPECT = 900 / 817;
 
 export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
-  const { theme } = useTheme();
-  const palette = GL_PALETTE[theme];
   const points = useRef<THREE.Points>(null);
   const invalidate = useThree((s) => s.invalidate);
   const viewport = useThree((s) => s.viewport);
   const size = useThree((s) => s.size);
   const mountedAt = useRef(typeof performance === 'undefined' ? 0 : performance.now());
 
-  const narrow = viewport.width < 3.4;
+  /**
+   * Retrato ou paisagem — decidido pela largura do canvas em pixels CSS, no
+   * mesmo ponto de quebra do layout (`md`, 768px).
+   *
+   * A versão anterior comparava `viewport.width`, que é largura em unidades de
+   * mundo e portanto derivada do ASPECTO. Uma medição transitória do canvas
+   * durante o carregamento virava um aspecto errado, o objeto ia para o ramo
+   * de paisagem — maior e deslocado para a direita — e só voltava quando o
+   * aspecto mudava de novo. Pixels CSS não têm essa ambiguidade.
+   */
+  const narrow = size.width < 768;
 
   /**
-   * Enquadramento.
+   * Enquadramento, sempre como fração da largura do canvas: o que quer que
+   * aconteça com o tamanho do canvas, o objeto ocupa a mesma parte dele.
    *
-   * `viewport.height` é constante (depende só da câmera), então o termo de
-   * largura equivale a uma fração fixa da largura do canvas em pixels — e o
-   * termo de altura, a uma fração da ALTURA. No celular a altura muda sozinha
-   * quando a barra do navegador recolhe: o objeto era enquadrado pela altura,
-   * e mudava de tamanho e de lugar no primeiro gesto de scroll.
-   *
-   * Em retrato o enquadramento passa a depender só da largura, que é estável.
-   * Em paisagem o termo de altura continua, porque ali é ele que impede o
-   * objeto de estourar numa janela baixa — e ali a altura não oscila.
+   * O segundo termo, em paisagem, usa `viewport.height` — que é constante,
+   * porque depende só da câmera. Ele existe para o objeto não estourar numa
+   * janela muito larga; sem clamp mínimo, que era o que fazia o tamanho pular
+   * entre dois valores quando o cálculo passava rente ao limite.
    */
-  const worldWidth = THREE.MathUtils.clamp(
-    narrow
-      ? viewport.width / 1.3
-      : Math.min(viewport.width / 1.55, (viewport.height / 1.5) * SOURCE_ASPECT),
-    1.0,
-    3.4,
-  );
+  const worldWidth = narrow
+    ? viewport.width / 1.3
+    : Math.min(viewport.width / 1.55, (viewport.height / 1.5) * SOURCE_ASPECT);
 
   const objectWidthPx = (worldWidth * size.width) / viewport.width;
 
@@ -83,13 +83,15 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uDrift: { value: reduced ? 0 : 0.016 },
       uSize: { value: tier === 'low' ? 2.4 : 2.0 },
       uPixelRatio: { value: 1 },
-      uColorLight: { value: new THREE.Color(palette.light) },
-      uColorAccent: { value: new THREE.Color(palette.accent) },
-      uGain: { value: palette.gain },
+      uColorLight: { value: new THREE.Color(GL_PALETTE.light) },
+      uColorAccent: { value: new THREE.Color(GL_PALETTE.accent) },
+      uGain: { value: GL_PALETTE.gain },
       uOpacity: { value: reduced ? PEAK_OPACITY : 0 },
+      /** Aproximação de entrada. Era um `scale` em CSS — ver Hero.tsx. */
+      uZoom: { value: reduced ? 1 : 1.07 },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [reduced, tier, theme],
+    [reduced, tier],
   );
 
   /**
@@ -104,15 +106,11 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
         fragmentShader: particlesFrag,
         transparent: true,
         depthWrite: false,
-        /**
-         * No escuro o desenho é luz somada sobre o preto. No claro é tinta
-         * depositada sobre o papel — aditivo sobre branco não escurece nada e
-         * a cena simplesmente desapareceria.
-         */
-        blending: palette.additive ? THREE.AdditiveBlending : THREE.NormalBlending,
+        // O desenho é luz somada sobre o preto.
+        blending: THREE.AdditiveBlending,
         uniforms,
       }),
-    [uniforms, palette.additive],
+    [uniforms],
   );
 
   // Formação: dispersão → desenho. Começa quando a nuvem fica pronta.
@@ -129,6 +127,7 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
     const tl = gsap.timeline({ delay: Math.max(0, formationDelay - elapsed) });
     tl.to(uniforms.uOpacity, { value: PEAK_OPACITY, duration: 1.4, ease: 'none' }, 0);
     tl.to(uniforms.uFormation, { value: 1, duration: 2.4, ease: 'none' }, 0);
+    tl.to(uniforms.uZoom, { value: 1, duration: 1.6, ease: 'power2.out' }, 0);
 
     const off = onSkipIntro(() => tl.totalProgress(1));
 
