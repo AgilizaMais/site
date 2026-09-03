@@ -182,7 +182,6 @@ export function SelfEsteem() {
       ref={section}
       id={selfEsteem.id}
       aria-labelledby="selfesteem-title"
-      data-snap="start"
       className="relative flex min-h-[100svh] items-center overflow-hidden py-24 md:py-0"
     >
       <p className="sr-only">{selfEsteem.canvasDescription}</p>

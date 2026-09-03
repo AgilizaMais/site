@@ -12,7 +12,7 @@ import { useMotionPreference } from './MotionPreferenceProvider';
  */
 const LenisCtx = createContext<React.RefObject<Lenis | null> | null>(null);
 
-/** A instância do Lenis, para quem precisa conduzir o scroll (ver useScrollSnap). */
+/** A instância do Lenis, para quem precisa ler ou ajustar a rolagem (ver useScrollSpeedLimit). */
 export const useLenis = () => useContext(LenisCtx);
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {

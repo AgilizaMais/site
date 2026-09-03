@@ -11,7 +11,7 @@ import { Cursor } from "@/components/ui/Cursor";
 import { SkipLink } from "@/components/ui/SkipLink";
 import { MotionFeatures } from "@/components/ui/MotionFeatures";
 import { Controls } from "@/components/ui/Controls";
-import { ScrollSnap } from "@/components/ui/ScrollSnap";
+import { ScrollSpeedLimit } from "@/components/ui/ScrollSpeedLimit";
 
 export const metadata: Metadata = siteMetadata;
 
@@ -39,7 +39,7 @@ export default function RootLayout({
         <MotionPreferenceProvider>
           <MotionFeatures>
             <SmoothScrollProvider>
-              <ScrollSnap />
+              <ScrollSpeedLimit />
               <SkipLink />
               <Navbar />
               <Cursor />

@@ -251,51 +251,58 @@ Luz central se abre (`scaleX` de 1px → 60vw, `cine`), headline em RevealLines,
 
 ---
 
-## 5b. Pausa suave nos pontos de leitura
+## 5b. Teto de velocidade da rolagem
 
-Cada cena marca onde ela descansa com `data-snap`: `start` (topo da seção) ou
-`end` (fim do trilho, onde a copy termina de entrar). O que ela resolve é passar
-direto por um texto que só termina de aparecer no fim de um trilho longo, que
-era o caso da Cena 2.
+O site não tem pontos de parada, âncoras nem correção de posição: ele nunca
+decide para onde o visitante vai, nem interrompe o gesto dele. A única coisa
+que limita é o quanto de embalo um gesto pode acumular.
 
-**São dois mecanismos, um por plataforma, porque a rolagem tem donos
-diferentes.**
+O Lenis guarda em `targetScroll` para onde o embalo está indo e em
+`animatedScroll` onde a página está agora. A diferença — a **dianteira** — é o
+que determina a velocidade: quanto mais longe o destino, mais rápido o Lenis
+corre até ele. Limitar a dianteira limita a velocidade, e é um ajuste contínuo,
+sem descontinuidade nenhuma. Implementação em `lib/motion/useScrollSpeedLimit.ts`.
 
-**Roda do mouse — `lib/motion/useScrollSnap.ts`.** Aqui o Lenis é dono da
-rolagem e mantém em `targetScroll` onde o embalo vai parar. Se um ponto de
-leitura estiver entre a posição atual e esse destino, o destino passa a ser o
-ponto: a rolagem desacelera para dentro do texto em vez de atravessá-lo. A
-troca usa `programmatic: false`, o mesmo caminho da roda — a chegada tem a
-suavização da casa, e a rolada seguinte parte dali. É preciso passar `duration`
-e `easing` explicitamente: sem `programmatic`, o Lenis não preenche nenhuma das
-duas e a animação não sai do lugar.
+**Calibração.** Com `duration: 1.1` e a easing exponencial do provider,
 
-O ajuste roda no **próprio evento de roda**, não só no quadro de animação. Num
-aparelho a 10fps um único passo de animação atravessa mais de 2000px e o ponto
-passaria despercebido; no evento, o destino acabou de mudar e a posição ainda
-não saiu do lugar.
+```
+velocidade de pico ≈ dianteira × 6.31 por segundo
+```
 
-**Toque — CSS, em `globals.css`.** O Lenis roda com `syncTouch: false`: no dedo
-o embalo é o do sistema operacional, não passa pelo Lenis, e por isso o JS não
-sabe onde a rolagem vai parar nem tem como interferir. Era essa a metade que
-faltava — e o celular é justamente onde o texto da Cena 2 passava batido.
-Quem conversa com esse embalo por dentro do compositor é o motor de snap do
-navegador: `scroll-snap-type: y proximity` sob `(hover: none) and
-(pointer: coarse)`, com `scroll-snap-align: start` e `end` nos marcadores.
-`end` alinha o fim do elemento com o fim da tela, que cai exatamente no ponto
-de leitura no fim do trilho. `proximity`, nunca `mandatory`.
+(6.31 é a derivada da easing na origem dividida pela duração.) O teto está em
+frações da altura da tela, então o pico permitido é `MAX_LEAD × 6.31` telas por
+segundo:
 
-**Nem um nem outro é ancoragem rígida.** Depois de chegar a um ponto, o gesto
-seguinte o "consome" e a rolagem segue livre — é o que impede a pausa de virar
-armadilha. Ponto que ficou para trás nunca puxa de volta. Um assentamento em
-`scrollend` fecha distâncias pequenas que sobraram. Tudo desativado no modo
-reduzido.
+| `MAX_LEAD` | Pico | Sensação |
+|---|---|---|
+| 0.25 | 1.6 telas/s | contido, quase deliberado |
+| **0.35** | **2.2 telas/s** | atual |
+| 0.50 | 3.2 telas/s | solto |
 
-> **Frear pela velocidade não funciona.** Foi a primeira tentativa. Num
-> arremesso o scroll anda mais de 800px por quadro e atravessa qualquer janela
-> de aproximação numa única atualização. E esperar o embalo terminar para então
-> corrigir chega tarde: a essa altura o texto já ficou para trás. O que
-> funciona é olhar para o destino, não para a posição.
+Para comparar: um clique de roda vale ~100px de dianteira, ou 0.7 tela/s numa
+tela de 900px — muito abaixo do teto, e portanto intocado. Rolar para ler não
+sente nada. Sem limite, o giro insistente estabiliza perto de 800px de
+dianteira na roda (5.5 telas/s) e passa fácil de 2000px no trackpad
+(14 telas/s).
+
+**O teto nunca trunca um gesto sozinho.** Ele é sempre no mínimo o delta do
+próprio evento: um mouse que manda o scroll em linhas ou em páginas, ou um
+trackpad que entrega um delta grande de uma vez, pediu aquela distância num
+movimento só. Cortá-la seria o site engolindo a rolagem, que é pior do que ser
+rápido. O que o teto impede é o **empilhamento** de gestos.
+
+**Só vale para roda e trackpad.** No toque o Lenis roda com `syncTouch: false`:
+o embalo é o do sistema operacional, não passa por ele, e não há dianteira para
+limitar. Levar o teto para o celular exigiria `syncTouch: true`, com o Lenis
+assumindo a rolagem do dedo inteira — troca de sensação grande, decisão à parte.
+
+> **O que foi tentado antes e removido: pausa nos pontos de leitura.** Cada cena
+> marcava onde descansava e o site conduzia até lá — freando o embalo na roda,
+> e com `scroll-snap-type: proximity` no toque. Funcionava: o texto da Cena 2
+> parava de passar batido. Mas custou a fluidez, que é o ativo principal deste
+> site. Um site cinematográfico não pode ter soluços. Ficou o aprendizado de
+> que **corrigir posição sempre aparece**, por mais suave que seja a curva —
+> o que não aparece é mexer só na velocidade.
 
 ## 6. Microinterações
 

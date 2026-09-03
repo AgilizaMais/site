@@ -85,7 +85,7 @@ export function Flexibility() {
     <section id={flexibility.id} aria-labelledby="flexibility-title" className="relative">
       <p className="sr-only">{flexibility.canvasDescription}</p>
 
-      <div ref={track} data-snap="end" className="u-scroll-track h-[300svh]">
+      <div ref={track} className="u-scroll-track h-[300svh]">
         <div className="u-scroll-sticky sticky top-0 flex h-[100svh] items-center overflow-hidden">
           <FlexibilityCanvas progress={progress.current} />
 

@@ -236,7 +236,15 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
      significava decidir pelo aspecto: uma medição transitória durante o
      carregamento mandava o objeto para o ramo de paisagem, e ele só voltava
      quando o aspecto mudasse de novo.
-23. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+23. **Corrigir posição de scroll sempre aparece; limitar velocidade, não.**
+   Houve uma versão com pausa suave nos pontos de leitura — o site conduzia o
+   embalo até o texto, com curva desacelerada e sem trava. Resolvia o problema
+   (o texto da Cena 2 deixava de passar batido) e ainda assim foi removida: por
+   mais suave que seja, uma correção de posição é uma decisão que o site toma
+   pelo visitante, e ela se sente. O que sobrou é um teto de velocidade, que
+   nunca decide para onde ninguém vai — só limita o embalo que um gesto pode
+   acumular (`lib/motion/useScrollSpeedLimit.ts`).
+24. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

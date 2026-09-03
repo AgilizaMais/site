@@ -252,35 +252,3 @@ canvas {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
-
-/*
-  Pausa nos pontos de leitura, metade do toque.
-
-  O Lenis roda com `syncTouch: false`: no dedo, o embalo é o do sistema
-  operacional e não passa por ele — então o JS não tem como saber onde a
-  rolagem vai parar nem interferir nela. O motor de snap do navegador conversa
-  com esse embalo por dentro, e é ele que desacelera o arremesso para dentro do
-  texto. Ver lib/motion/useScrollSnap.ts para a metade da roda do mouse.
-
-  `proximity`, nunca `mandatory`: quem passa longe de um ponto de leitura não é
-  puxado para ele.
-*/
-@media (hover: none) and (pointer: coarse) {
-  :root:not([data-motion="reduced"]) {
-    scroll-snap-type: y proximity;
-  }
-
-  [data-snap="start"] {
-    scroll-snap-align: start;
-  }
-
-  /* O fim do trilho é onde a copy termina de entrar: alinhar o fim do
-     elemento com o fim da tela cai exatamente nesse ponto. */
-  [data-snap="end"] {
-    scroll-snap-align: end;
-  }
-
-  [data-motion="reduced"] [data-snap] {
-    scroll-snap-align: none;
-  }
-}

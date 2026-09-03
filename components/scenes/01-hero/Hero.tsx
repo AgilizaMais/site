@@ -25,7 +25,6 @@ export function Hero() {
     <section
       id={hero.id}
       aria-labelledby="hero-title"
-      data-snap="start"
       className="relative flex min-h-[100svh] flex-col overflow-hidden"
     >
       <HeroIntro />

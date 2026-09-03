@@ -83,7 +83,7 @@ export function Anxiety() {
     <section id={anxiety.id} aria-labelledby="anxiety-title" className="relative">
       <p className="sr-only">{anxiety.canvasDescription}</p>
 
-      <div ref={track} data-snap="end" className="u-scroll-track h-[380svh]">
+      <div ref={track} className="u-scroll-track h-[380svh]">
         <div className="u-scroll-sticky sticky top-0 flex h-[100svh] items-center overflow-hidden">
           <AnxietyCanvas progress={progress.current} />
 
