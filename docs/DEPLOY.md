@@ -52,6 +52,34 @@ out/
 
 ---
 
+## Build de prévia (um recorte de cenas)
+
+Para mostrar o site até uma cena antes das seguintes existirem:
+
+```bash
+BASE_PATH=/testepsi npm run build:preview      # vai só até a Cena 2 (Ansiedade)
+```
+
+Ou, escolhendo as cenas:
+
+```bash
+BASE_PATH=/pasta NEXT_PUBLIC_SCENES=inicio,ansiedade npm run build:static
+```
+
+O recorte passa pelo registro `implementedScenes` (`lib/content/site.ts`), que é
+o mesmo que a navegação, o sumário da primeira tela e o CTA "Iniciar jornada" já
+consultam — então cortar ali corta tudo junto, **sem âncora morta em lugar
+nenhum**. Verificado: numa prévia até a Ansiedade, as únicas âncoras da página
+são `#inicio` e `#ansiedade`.
+
+> **A prévia sai com `noindex, nofollow` automaticamente.** Hospedada num
+> domínio de verdade, ela seria um site incompleto com o nome e o CRP da
+> psicóloga aparecendo na busca. O sinal é o mesmo que corta as cenas, para
+> ninguém ter de lembrar de ligá-lo. O build completo continua indexável.
+
+
+---
+
 ## Opção B — Vercel (recomendada)
 
 Feita para Next.js, com HTTPS, CDN e deploy automático a cada push.

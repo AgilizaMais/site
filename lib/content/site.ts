@@ -111,12 +111,28 @@ export type SceneId = (typeof scenes)[number]['id'];
  * A navegação só oferece o que já existe — nenhuma âncora morta chega ao usuário.
  * Ao entregar uma cena, basta acrescentar o id aqui.
  */
-export const implementedScenes: readonly SceneId[] = [
-  'inicio',
-  'ansiedade',
-  'autoestima',
-  'flexibilidade',
-];
+const built: readonly SceneId[] = ['inicio', 'ansiedade', 'autoestima', 'flexibilidade'];
+
+/**
+ * Recorte de build, para prévias.
+ *
+ * `NEXT_PUBLIC_SCENES=inicio,ansiedade` gera um site que vai só até a Cena 2 —
+ * é o que se manda para a cliente ver uma etapa antes das outras existirem.
+ * O recorte passa por AQUI, e não por um `page.tsx` alternativo, porque este é
+ * o registro que a navegação, o sumário da primeira tela e o CTA "Iniciar
+ * jornada" já consultam: cortar aqui corta tudo junto, sem âncora morta.
+ *
+ * A variável é lida em tempo de build (o Next a inlina), então a versão
+ * completa não carrega uma linha de código a mais por causa disto.
+ */
+const requested = process.env.NEXT_PUBLIC_SCENES?.split(',')
+  .map((id) => id.trim())
+  .filter(Boolean);
+
+export const implementedScenes: readonly SceneId[] =
+  requested && requested.length > 0
+    ? built.filter((id) => requested.includes(id))
+    : built;
 
 export const isImplemented = (id: SceneId) => implementedScenes.includes(id);
 

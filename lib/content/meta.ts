@@ -3,6 +3,17 @@ import { professional } from './site';
 
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rafaellearaujo.psi.br';
 
+/**
+ * Build de prévia — um recorte de cenas para mostrar uma etapa antes das
+ * outras existirem (ver `implementedScenes` em `site.ts`).
+ *
+ * Uma prévia hospedada num domínio de verdade não pode ser indexada: seria um
+ * site incompleto, com o nome e o CRP dela, aparecendo na busca. O `noindex`
+ * sai automaticamente do mesmo sinal que corta as cenas, para ninguém ter de
+ * lembrar de ligá-lo.
+ */
+const isPreview = Boolean(process.env.NEXT_PUBLIC_SCENES);
+
 const description =
   'Psicologia clínica com abordagem em Terapia Cognitivo-Comportamental. Ansiedade, autoestima, flexibilidade psicológica e aceitação.';
 
@@ -25,7 +36,7 @@ export const metadata: Metadata = {
     description,
   },
   twitter: { card: 'summary_large_image', title: professional.name, description },
-  robots: { index: true, follow: true },
+  robots: isPreview ? { index: false, follow: false } : { index: true, follow: true },
 };
 
 /**
