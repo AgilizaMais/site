@@ -209,7 +209,14 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    no desktop, agrupamento fixo no mobile). `display: none` não é exposto à
    árvore de acessibilidade, então não há controle duplicado para leitores de
    tela.
-21. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+21. **Enquadramento não pode depender da altura do viewport no celular.**
+   `viewport.height` do R3F é constante (depende só da câmera), então um termo
+   de largura equivale a uma fração fixa da largura do canvas em pixels, e um
+   termo de altura, a uma fração da altura. No celular a altura muda sozinha
+   quando a barra do navegador recolhe: o objeto era enquadrado pela altura e
+   mudava de tamanho e de lugar no primeiro gesto de scroll. Em retrato o
+   enquadramento passou a depender só da largura.
+22. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

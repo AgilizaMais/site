@@ -12,6 +12,7 @@ varying float vBrightness;
 varying float vWarmth;
 varying float vTwinkle;
 varying float vDepth;
+varying float vPulse;
 
 ${dither}
 
@@ -29,9 +30,11 @@ void main() {
   // sem precisar recalculá-la.
   vec3 color = mix(uColorAccent, uColorLight, vWarmth);
   color *= 0.3 + vBrightness * 1.15;
+  // A onda acende o acento por onde passa.
+  color += uColorAccent * vPulse * 0.5;
 
   float depthFade = mix(1.0, 0.55, vDepth);
-  float a = alpha * uOpacity * vTwinkle * depthFade * (0.25 + vBrightness * 0.95);
+  float a = alpha * uOpacity * vTwinkle * depthFade * (0.25 + vBrightness * 0.95 + vPulse * 0.45);
   a = dither8x8(gl_FragCoord.xy, a);
 
   gl_FragColor = vec4(color, a);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import { registerGsap, gsap, ScrollTrigger } from './gsap';
 import { useMotionPreference } from './MotionPreferenceProvider';
@@ -10,8 +10,15 @@ import { useMotionPreference } from './MotionPreferenceProvider';
  * No modo reduzido, o Lenis nem é instanciado — o scroll nativo assume.
  * docs/ANIMATION_SYSTEM.md §4
  */
+const LenisCtx = createContext<React.RefObject<Lenis | null> | null>(null);
+
+/** A instância do Lenis, para quem precisa conduzir o scroll (ver useScrollSnap). */
+export const useLenis = () => useContext(LenisCtx);
+
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
   const { reduced } = useMotionPreference();
+  const lenisRef = useRef<Lenis | null>(null);
+  const [, setReady] = useState(0);
 
   useEffect(() => {
     registerGsap();
@@ -25,6 +32,10 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       syncTouch: false,
       touchMultiplier: 1.6,
     });
+
+    lenisRef.current = lenis;
+    // Um render para que os consumidores do contexto encontrem a instância.
+    setReady((n) => n + 1);
 
     const raf = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
@@ -46,8 +57,9 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       document.removeEventListener('click', onClick);
       gsap.ticker.remove(raf);
       lenis.destroy();
+      lenisRef.current = null;
     };
   }, [reduced]);
 
-  return <>{children}</>;
+  return <LenisCtx.Provider value={lenisRef}>{children}</LenisCtx.Provider>;
 }

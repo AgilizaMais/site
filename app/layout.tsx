@@ -9,6 +9,7 @@ import { Cursor } from '@/components/ui/Cursor';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { MotionFeatures } from '@/components/ui/MotionFeatures';
 import { Controls } from '@/components/ui/Controls';
+import { ScrollSnap } from '@/components/ui/ScrollSnap';
 
 export const metadata: Metadata = siteMetadata;
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <MotionPreferenceProvider>
           <MotionFeatures>
             <SmoothScrollProvider>
+              <ScrollSnap />
               <SkipLink />
               <Navbar />
               <Cursor />

@@ -25,6 +25,7 @@ varying float vBrightness;
 varying float vWarmth;
 varying float vTwinkle;
 varying float vDepth;
+varying float vPulse;
 
 ${simplex3d}
 
@@ -32,14 +33,28 @@ void main() {
   vec3 target = position;
 
   // --- 1. Deriva: campo de ruído que evolui no tempo, com fase por partícula.
+  //
+  // Duas escalas somadas. A larga move regiões inteiras devagar — é ela que
+  // faz a nuvem parecer respirar em vez de vibrar; a fina dá vida ponto a
+  // ponto. Só a fina, o olho lê como ruído parado.
   float phase = aSeed.x * 6.2831853;
-  vec3 q = target * 2.2 + vec3(0.0, 0.0, uTime * 0.1);
-  vec3 flow = vec3(
-    snoise(q),
-    snoise(q + vec3(19.3, 7.1, 0.0)),
-    snoise(q + vec3(43.7, 31.9, 0.0))
+
+  vec3 qWide = target * 0.9 + vec3(0.0, 0.0, uTime * 0.16);
+  vec3 wide = vec3(
+    snoise(qWide),
+    snoise(qWide + vec3(19.3, 7.1, 0.0)),
+    snoise(qWide + vec3(43.7, 31.9, 0.0))
   );
-  target += flow * uDrift * (0.6 + 0.4 * sin(uTime * 0.5 + phase));
+
+  vec3 qFine = target * 3.4 + vec3(0.0, 0.0, uTime * 0.42);
+  vec3 fine = vec3(
+    snoise(qFine),
+    snoise(qFine + vec3(5.1, 71.3, 0.0)),
+    snoise(qFine + vec3(31.7, 12.9, 0.0))
+  );
+
+  target += wide * uDrift * (0.7 + 0.3 * sin(uTime * 0.42 + phase));
+  target += fine * uDrift * 0.42 * (0.6 + 0.4 * sin(uTime * 1.1 + phase * 1.7));
 
   // --- 2. Respiração: ciclo de 4s.
   float breath = sin(uTime * 1.5707963) * 0.5 + 0.5;
@@ -64,7 +79,12 @@ void main() {
 
   vBrightness = aSeed.z;
   vWarmth = aSeed.w;
-  vTwinkle = 0.8 + 0.2 * sin(uTime * 1.3 + phase);
+  vTwinkle = 0.68 + 0.32 * sin(uTime * 1.15 + phase);
+
+  // Onda de luz atravessando a forma, da frente para trás. É o movimento que
+  // se enxerga de longe, sem depender de olhar partícula por partícula.
+  float wave = fract(uTime * 0.085 - position.x * 0.22 - position.y * 0.05);
+  vPulse = smoothstep(0.0, 0.14, wave) * smoothstep(0.42, 0.16, wave);
   vDepth = clamp((-mvPosition.z - 3.4) / 2.0, 0.0, 1.0);
 
   // O tamanho é fixado em PIXELS CSS e só então multiplicado pelo DPR: limitar

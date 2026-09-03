@@ -106,11 +106,16 @@ t=1.05  headline RevealLines (clip-path, stagger 90ms)
 t=1.35  subheadline FadeUp
 t=1.55  CTA: scale 0.96→1
 t=1.80  hint de scroll + assinatura
-loop    três movimentos somados, em escalas de tempo diferentes:
-        · deriva tangencial contínua (campo de ruído; fase própria por partícula)
-        · respiração global, amplitude 2.2% em ciclo de 4s
-        · onda de luz atravessando a forma, de trás para a frente
-        + parallax de cursor ±2.2° (lerp 0.045)
+loop    quatro movimentos somados, em escalas de tempo diferentes:
+        · deriva LARGA (ruído de baixa frequência) — move regiões inteiras devagar
+        · deriva FINA — vida ponto a ponto
+        · respiração global, amplitude 3% em ciclo de 4s
+        · onda de luz atravessando a forma
+        + parallax de cursor ±1.6° (lerp 0.045)
+
+> Só a deriva fina, o olho lê como ruído parado: é a escala larga que faz a
+> nuvem parecer respirar. E a onda é o movimento que se enxerga de longe, sem
+> depender de olhar partícula por partícula.
 ```
 Entrada percebida: **~2,4s**, com a headline pintada em ~1,3s.
 
@@ -209,6 +214,21 @@ Cross-fade entre etapas com `cine`, sem slide lateral genérico.
 Luz central se abre (`scaleX` de 1px → 60vw, `cine`), headline em RevealLines, botão com halo respirando (`breath`, amplitude 6%).
 
 ---
+
+## 5b. Pausa suave nos pontos de leitura
+
+Cada cena marca onde ela descansa com `data-snap`: `start` (topo da seção) ou
+`end` (fim do trilho, onde a copy termina de entrar). Quando o scroll cessa, se
+o ponto mais próximo estiver a menos de **40% da altura da tela**, o site conduz
+o resto do caminho em 0.9s com chegada desacelerada.
+
+Não é ancoragem rígida. A janela é estreita o bastante para não sequestrar o
+gesto — solto a 700px do ponto, o site não faz nada. O que ela resolve é passar
+direto por um texto que só termina de aparecer no fim de um trilho longo, que
+era o caso da Cena 2.
+
+Desativada no modo reduzido. Toque, teclado e barra de rolagem cancelam uma
+condução em curso.
 
 ## 6. Microinterações
 

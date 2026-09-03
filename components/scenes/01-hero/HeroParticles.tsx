@@ -37,9 +37,23 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
 
   const narrow = viewport.width < 3.4;
 
-  // Enquadramento pela menor dimensão: em retrato é a largura que limita.
+  /**
+   * Enquadramento.
+   *
+   * `viewport.height` é constante (depende só da câmera), então o termo de
+   * largura equivale a uma fração fixa da largura do canvas em pixels — e o
+   * termo de altura, a uma fração da ALTURA. No celular a altura muda sozinha
+   * quando a barra do navegador recolhe: o objeto era enquadrado pela altura,
+   * e mudava de tamanho e de lugar no primeiro gesto de scroll.
+   *
+   * Em retrato o enquadramento passa a depender só da largura, que é estável.
+   * Em paisagem o termo de altura continua, porque ali é ele que impede o
+   * objeto de estourar numa janela baixa — e ali a altura não oscila.
+   */
   const worldWidth = THREE.MathUtils.clamp(
-    Math.min(viewport.width / (narrow ? 1.3 : 1.55), (viewport.height / 1.5) * SOURCE_ASPECT),
+    narrow
+      ? viewport.width / 1.3
+      : Math.min(viewport.width / 1.55, (viewport.height / 1.5) * SOURCE_ASPECT),
     1.0,
     3.4,
   );
@@ -65,8 +79,8 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
     () => ({
       uTime: { value: 0 },
       uFormation: { value: reduced ? 1 : 0 },
-      uBreath: { value: reduced ? 0 : 0.016 },
-      uDrift: { value: reduced ? 0 : 0.004 },
+      uBreath: { value: reduced ? 0 : 0.03 },
+      uDrift: { value: reduced ? 0 : 0.016 },
       uSize: { value: tier === 'low' ? 2.4 : 2.0 },
       uPixelRatio: { value: 1 },
       uColorLight: { value: new THREE.Color(palette.light) },
@@ -152,7 +166,9 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   // No desktop o objeto sai do centro: o texto ocupa a esquerda e cruza a
   // borda dele. No mobile fica centralizado e acima do texto.
   const objectX = narrow ? 0 : viewport.width * 0.11;
-  const objectY = narrow ? viewport.height * 0.17 : 0.04;
+  // Também em unidades do objeto, e não da altura do viewport: a barra do
+  // navegador não pode reposicionar o cérebro.
+  const objectY = narrow ? worldWidth * 0.34 : 0.04;
 
   return <points ref={points} geometry={geometry} material={material} position={[objectX, objectY, 0]} />;
 }
