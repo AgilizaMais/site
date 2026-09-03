@@ -185,6 +185,9 @@ Trilho vertical de 1px na margem direita, 8 marcadores. Ativo = `--accent`, 4px.
 - **Grão:** overlay de ruído estático, opacidade 3–4%, `mix-blend-mode: overlay`, tile 128px. Sem animação (custo zero).
 - **Vinheta:** radial `--bg` de 55%→100%, alpha 0→0.55.
 - **Sem fotografia de banco.** A única fotografia do site é a autoral da Rafaelle, **na Cena 1** — recorte em PNG com transparência, sobre o cérebro de partículas. Ela não é colada por cima do cenário: partículas amostradas do próprio contorno dela (ombro, borda do cabelo) passam à FRENTE da imagem, e é isso que integra a figura ao fundo. A base dissolve num gradiente para o fundo, nunca numa aresta reta.
+- **No retrato ela é ampliada e cortada na altura do tronco.** A figura inteira,
+  até as pernas, gasta altura de tela sem dizer nada — e o que ela tem a dizer
+  está no rosto e nos ombros. É o mesmo enquadramento da referência aprovada.
 - **A fotografia é DOM, não textura.** Mantê-la como `<img>` garante texto alternativo de verdade, carregamento como imagem para o navegador e existência sem WebGL. É por isso que as faíscas da frente são uma segunda camada: um canvas só não tem como ficar atrás e na frente da mesma imagem.
 - **Ícones:** apenas 3 no site inteiro (seta, close, som/movimento). Traço 1.5px, cantos retos.
 

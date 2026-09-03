@@ -50,7 +50,7 @@ const SIDE_BY_SIDE_SLACK = 8;
  * Não é margem estética: é exatamente a faixa em que a borda de cima do
  * cérebro aparece. Zero aqui esconde a nuvem inteira atrás dela.
  */
-const BREATH = 52;
+const BREATH = 80;
 
 /** Teto e piso da altura da fotografia. */
 const MAX_PHOTO_RATIO = 0.58;
@@ -61,15 +61,17 @@ const MIN_PHOTO = 150;
  * fotografia. `0.30` põe o centro na altura da testa: é o que faz a nuvem
  * emoldurar o rosto em vez de nascer atrás dos ombros.
  */
-const BRAIN_SPAN = 1.42;
-const BRAIN_ANCHOR = 0.3;
+const BRAIN_SPAN = 1.5;
+const BRAIN_ANCHOR = 0.2;
 
 /**
  * Teto da largura do cérebro, em fração da largura da seção. Num celular alto
  * a fotografia fica grande, e 1.42× dela estourava as duas bordas da tela: a
  * nuvem virava uma faixa cortada, não um objeto.
  */
-const BRAIN_MAX_SPAN = 0.98;
+const BRAIN_MAX_SPAN = 1.22;
+// Um pouco além da largura da tela é sangria, não corte: a nuvem passa das
+// bordas como um objeto grande demais para o quadro, que é o efeito procurado.
 
 /**
  * Altura da navbar mais uma folga. No desktop é ela quem faz o teto: sem

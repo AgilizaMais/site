@@ -280,7 +280,25 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
      retângulos medidos, não por breakpoint.
    Recuos que precisam limpar a navbar têm piso em `rem`, não só em `svh`: a
    barra tem 68px fixos, e numa janela curta uma fração da altura não a limpa.
-27. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+27. **A fotografia é ampliada e cortada por baixo no retrato.** A caixa visível
+   é 1.34× mais LARGA que a imagem (proporção `1474/1290`); a imagem entra com
+   `w-full`, fica mais alta que a caixa e o excesso sai por baixo. O PNG traz a
+   psicóloga até as pernas, e num celular essas pernas gastam altura sem dizer
+   nada: cortá-las é o que permite o rosto e os ombros ocuparem a tela sem
+   roubar espaço do texto nem do cérebro. As proporções são CLASSES, nunca
+   estilo inline — um `style` vence a variante `md:` e o desktop, onde a figura
+   inteira cabe, herdaria o corte do celular. A camada de faíscas acompanha o
+   retângulo DESENHADO da imagem, e não a caixa visível: com a ampliação as
+   duas deixam de coincidir, e é o retângulo da imagem que a amostragem do
+   contorno conhece.
+28. **Recarregar volta ao início** (`lib/motion/scrollBoot.ts`). O navegador
+   restaura a posição de scroll sozinho; aqui isso é ruim, porque a primeira
+   tela é uma entrada encenada e cair no meio da Cena 3 com ela rodando atrás é
+   o pior dos dois mundos — além de o ScrollTrigger recalcular a partir de uma
+   posição que o Lenis ainda não conhece. `history.scrollRestoration='manual'`
+   no `<head>`, antes da primeira pintura; o Lenis nasce em zero pela mesma
+   razão. Com hash na URL nada é tocado: a âncora continua funcionando.
+29. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

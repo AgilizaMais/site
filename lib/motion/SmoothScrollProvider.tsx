@@ -33,6 +33,14 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
       touchMultiplier: 1.6,
     });
 
+    /**
+     * O Lenis nasce lendo a posição atual do documento. Se o navegador
+     * restaurou o scroll antes de o script de boot rodar, o `scrollTo(0,0)` de
+     * lá já corrigiu o documento — mas a instância precisa nascer sabendo
+     * disso, senão ela anima a partir da posição antiga.
+     */
+    if (!window.location.hash) lenis.scrollTo(0, { immediate: true, force: true });
+
     lenisRef.current = lenis;
     // Um render para que os consumidores do contexto encontrem a instância.
     setReady((n) => n + 1);

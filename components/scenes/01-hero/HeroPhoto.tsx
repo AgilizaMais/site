@@ -22,10 +22,31 @@ import photo from './assets/rafaelle.webp';
  * compartilham exatamente este retângulo, e é por isso que ele é uma constante
  * e não duas listas de classes parecidas.
  */
+/**
+ * A caixa visível. No retrato ela é 1.34× mais LARGA que a imagem
+ * (1100 × 1.34 = 1474): a imagem entra com `w-full`, fica mais alta que a
+ * caixa e o excesso sai por baixo, cortado. No desktop as duas proporções
+ * coincidem e nada é cortado.
+ */
 const BOX =
-  'absolute bottom-0 inset-x-0 mx-auto h-[var(--hero-photo-h,44svh)] md:inset-x-auto md:left-auto md:right-[2vw] md:mx-0 md:h-[88%]';
+  'absolute bottom-0 inset-x-0 mx-auto h-[var(--hero-photo-h,44svh)] aspect-[1474/1290] overflow-hidden md:inset-x-auto md:left-auto md:right-[2vw] md:mx-0 md:h-[88%] md:aspect-[1100/1290]';
 
-const ASPECT = { aspectRatio: `${photo.width} / ${photo.height}`, width: 'auto' } as const;
+/** O retângulo desenhado da imagem, dentro da caixa. */
+const DRAWN = 'absolute left-0 top-0 w-full aspect-[1100/1290]';
+
+/**
+ * Ampliação da figura dentro da caixa, no retrato: 1.34×, embutida na
+ * proporção `1474/1290` acima.
+ *
+ * O PNG traz a psicóloga até as pernas, e num celular essas pernas gastam
+ * altura sem dizer nada. Cortá-las é o que permite o rosto e os ombros
+ * ocuparem a tela sem roubar espaço do texto nem do cérebro — é o mesmo
+ * enquadramento da referência. No desktop sobra altura e a figura inteira
+ * cabe, então lá a ampliação é 1.
+ *
+ * As proporções são classes, e não estilo inline: um `style` venceria a
+ * variante `md:` e o desktop herdaria o corte do celular.
+ */
 
 /** Quando ela começa a subir — a formação do cérebro termina em 2.3s. */
 const RISE_DELAY = 2.3;
@@ -87,7 +108,7 @@ export function HeroPhoto({ boxRef }: { boxRef: React.RefObject<HTMLDivElement |
         faria o canvas irmão nascer com a caixa errada
         (docs/ARCHITECTURE.md §5, item 21).
       */}
-      <div ref={image} className={`${BOX} pointer-events-none select-none`} style={ASPECT}>
+      <div ref={image} className={`${BOX} pointer-events-none select-none`}>
         {/*
           `<img>` puro, e não `next/image`: com `output: export` as imagens já
           saem sem otimização, então o componente só acrescentaria runtime ao
@@ -102,7 +123,7 @@ export function HeroPhoto({ boxRef }: { boxRef: React.RefObject<HTMLDivElement |
           height={photo.height}
           fetchPriority="high"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-contain object-bottom"
+          className={DRAWN}
         />
         {/*
           A base dissolve no fundo. Sem isso a foto termina numa aresta reta
@@ -115,8 +136,17 @@ export function HeroPhoto({ boxRef }: { boxRef: React.RefObject<HTMLDivElement |
         />
       </div>
 
-      <div ref={boxRef} className={`${BOX} pointer-events-none`} style={ASPECT}>
-        <HeroSparks delay={PHOTO_SETTLED} />
+      {/*
+        A camada de faíscas acompanha o RETÂNGULO DESENHADO da imagem, e não a
+        caixa visível: com a ampliação as duas deixam de coincidir, e é o
+        retângulo da imagem que a amostragem do contorno conhece. O recorte
+        acontece no mesmo lugar, porque as duas vivem dentro da mesma caixa
+        com `overflow: hidden`.
+      */}
+      <div ref={boxRef} className={`${BOX} pointer-events-none`}>
+        <div className={DRAWN}>
+          <HeroSparks delay={PHOTO_SETTLED} />
+        </div>
       </div>
     </>
   );

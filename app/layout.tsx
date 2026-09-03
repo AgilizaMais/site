@@ -5,6 +5,7 @@ import {
   MotionPreferenceProvider,
   motionBootScript,
 } from "@/lib/motion/MotionPreferenceProvider";
+import { scrollBootScript } from "@/lib/motion/scrollBoot";
 import { SmoothScrollProvider } from "@/lib/motion/SmoothScrollProvider";
 import { Navbar } from "@/components/ui/Navbar";
 import { Cursor } from "@/components/ui/Cursor";
@@ -30,6 +31,8 @@ export default function RootLayout({
       <head>
         {/* Aplica a preferência de movimento antes da primeira pintura. */}
         <script dangerouslySetInnerHTML={{ __html: motionBootScript }} />
+        {/* Desliga a restauração de scroll do navegador. */}
+        <script dangerouslySetInnerHTML={{ __html: scrollBootScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
