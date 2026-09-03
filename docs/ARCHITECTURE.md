@@ -115,7 +115,7 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    `lib/motion/gsap.ts`.
 5. **GLSL ES 1.00 não tem `%` para inteiros.** O dither usa aritmética em float.
 6. **`LazyMotion` + `m` no lugar de `motion`.** Reduziu o first-load de 195 KB para
-   **175 KB gz** — dentro do orçamento de 180 KB.
+   **181 KB gz** — dentro do orçamento de 200 KB que o CI faz valer. Subiu de 175 KB com a Cena 1 revisada (fotografia, índice da jornada e a camada de faíscas).
 7. **A nuvem de pontos é gerada num Web Worker.** A amostragem do SDF do cérebro
    custa 0,7–1,5s; na main thread isso engasgava a entrada inteira. O worker
    devolve os buffers como transferíveis (sem cópia), e a formação começa assim
@@ -262,16 +262,24 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    do gradiente do alfa, máxima exatamente na aresta. Nada de inventar onde
    passam o ombro e a borda do cabelo. Mesma ideia da nuvem do cérebro, com a
    imagem virando mapa de BORDA em vez de mapa de brilho.
-26. **O enquadramento do objeto vem da medição do layout, não de frações do
-   viewport** (`useHeroFrame.ts`). O cérebro pertence a ela: centro, tamanho e
-   teto saem da caixa da fotografia e do bloco de texto. Números fixos servem
-   num aparelho e quebram no seguinte — a coluna de texto ocupa uma fatia
-   diferente da tela em cada altura, e num celular curto a borda da nuvem
-   terminava atrás de um texto de 11px. O teto (o objeto nunca sobe acima da
-   base do texto) só vale quando as duas colunas se cruzam; se o layout é lado
-   a lado, ele empurraria a nuvem para fora da tela — e a pergunta
-   "empilhado ou lado a lado?" é geométrica, respondida pelos retângulos
-   medidos, não por breakpoint.
+26. **O enquadramento vem da medição do layout, não de frações do viewport**
+   (`useHeroFrame.ts`). Três coisas saem de lá:
+   · **A altura da fotografia no retrato.** Era `min(44svh, 100svh - 30rem)`,
+     onde as 30rem eram um chute do espaço que o texto ia ocupar. Num aparelho
+     com a barra do navegador comendo altura o chute sobrava, a figura encolhia
+     para 31% da tela e ficava uma faixa vazia enorme entre o texto e ela. A
+     conta usa a base real do bloco de texto, menos um respiro — que não é
+     margem estética: é a faixa em que a borda de cima do cérebro aparece.
+   · **Onde o cérebro fica.** Ele pertence a ela: centro e tamanho saem da
+     caixa da fotografia. A largura tem teto na largura da seção, senão num
+     celular alto a nuvem estoura as duas bordas e vira faixa cortada.
+   · **O teto de altura do objeto.** No retrato é a base do texto; no desktop é
+     a base da navbar — sem ele a nuvem sobe até o topo da tela e as partículas
+     mais claras deixam o nome e o controle de movimento a 2:1 de contraste.
+     A pergunta "empilhado ou lado a lado?" é geométrica, respondida pelos
+     retângulos medidos, não por breakpoint.
+   Recuos que precisam limpar a navbar têm piso em `rem`, não só em `svh`: a
+   barra tem 68px fixos, e numa janela curta uma fração da altura não a limpa.
 27. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 

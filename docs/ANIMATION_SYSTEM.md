@@ -100,19 +100,21 @@ lib/motion/
 ```
 t=0.00  loader: linha de luz 1px expande do centro (0.7s, outExpo)
 t=0.50  loader dissolve (0.6s, cine); canvas entra opacity 0→1 (1.6s, cine)
-t=0.70  partículas: dispersão → formação do cérebro (1.8s, easeOutQuart no shader,
+t=0.60  partículas: dispersão → formação do cérebro (1.7s, easeOutQuart no shader,
         com atraso por partícula de até 0.45 — cada uma chega no seu tempo,
         vindo de todos os lados); aproximação uZoom 1.07→1 no vertex shader
 t=0.90  eyebrow FadeUp
 t=1.05  headline RevealLines (clip-path, stagger 90ms)
 t=1.40  subheadline FadeUp
 t=1.70  CTA (só no desktop)
-t=1.90  FOTOGRAFIA sobe da base: opacity 0→1, y 9%→0 (1.3s)
+t=2.30  FOTOGRAFIA sobe da base: opacity 0→1, y 9%→0 (1.4s). Começa
+        EXATAMENTE quando a formação da nuvem termina — a figura só entra
+        num cérebro que já tem forma
 t=2.60  convite "role para baixo"
-t=2.90  faíscas do contorno dela acendem, de BAIXO PARA CIMA (1.9s) —
+t=2.90  índice da jornada (rodapé, só no desktop)
+t=3.70  faíscas do contorno dela acendem, de BAIXO PARA CIMA (1.8s) —
         a revelação segue o mesmo sentido da subida da foto, então elas
         nascem do movimento em vez de acenderem por cima dele
-t=2.90  índice da jornada (rodapé, só no desktop)
 loop    quatro movimentos somados, em escalas de tempo diferentes:
         · deriva LARGA (ruído de baixa frequência) — move regiões inteiras devagar
         · deriva FINA — vida ponto a ponto
@@ -124,11 +126,18 @@ loop    quatro movimentos somados, em escalas de tempo diferentes:
 > nuvem parecer respirar. E a onda é o movimento que se enxerga de longe, sem
 > depender de olhar partícula por partícula.
 ```
-Entrada percebida: **~3,2s** até a fotografia assentar, com a headline pintada em ~1,3s. A ordem é a da narrativa: o pensamento se forma, a frase aparece, a pessoa entra, e o contorno dela acende por último.
+Entrada percebida: **~3,7s** até a fotografia assentar, com a headline pintada em ~1,3s. A ordem é a da narrativa: o pensamento se forma, a frase aparece, a pessoa entra, e o contorno dela acende por último.
 
 > **A fotografia não é o primeiro plano de saída — é o terceiro tempo.** Ela
 > entra depois de a nuvem estar formada e a frase, dita. Entrar junto faria a
 > cena disputar atenção consigo mesma.
+
+> **A subida dela é GSAP, não framer.** O framer anima pela Web Animations API
+> e, ao terminar, devolve o valor ao estilo inline. Nessa troca havia um quadro
+> em que a animação já tinha sido removida e o estilo ainda dizia
+> `opacity: 0` — a fotografia piscava, invisível, por volta dos 4s.
+> Reproduzível em três execuções seguidas. O GSAP escreve o estilo direto e não
+> tem essa entrega.
 
 > **Por que mais rápido do que o previsto originalmente (1.9s para a headline):**
 > a headline é o elemento de LCP. Atrasá-la até 1.9s empurrava o LCP para perto

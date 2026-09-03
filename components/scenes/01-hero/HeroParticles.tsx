@@ -29,7 +29,7 @@ const PEAK_OPACITY = 1;
 /** Proporção da imagem-fonte (900×817). */
 const SOURCE_ASPECT = 900 / 817;
 
-export function HeroParticles({ tier, reduced, frame, formationDelay = 0.7 }: Props) {
+export function HeroParticles({ tier, reduced, frame, formationDelay = 0.6 }: Props) {
   const points = useRef<THREE.Points>(null);
   const invalidate = useThree((s) => s.invalidate);
   const viewport = useThree((s) => s.viewport);
@@ -52,16 +52,16 @@ export function HeroParticles({ tier, reduced, frame, formationDelay = 0.7 }: Pr
   const objectX = (frame.cx - 0.5) * viewport.width;
 
   /**
-   * O cérebro nunca sobe acima da base do texto. Sem esse teto, num celular
-   * curto — onde o texto desce mais — a borda superior da nuvem terminava
-   * atrás do convite a rolar, e as partículas mais claras comiam a legibilidade
-   * de um texto de 11px.
+   * O cérebro nunca sobe acima do teto medido: a base do texto no retrato, a
+   * base da navbar no desktop. Sem ele, num celular curto — onde o texto desce
+   * mais — a borda superior da nuvem terminava atrás do convite a rolar; e no
+   * desktop ela subia até o topo da tela, deixando o nome e o controle de
+   * movimento ilegíveis sobre as partículas mais claras.
    */
-  const centerY = (0.5 - frame.cy) * viewport.height;
-  const objectY =
-    frame.ceiling > 0
-      ? Math.min(centerY, (0.5 - frame.ceiling) * viewport.height - worldHeight / 2)
-      : centerY;
+  const objectY = Math.min(
+    (0.5 - frame.cy) * viewport.height,
+    (0.5 - frame.ceiling) * viewport.height - worldHeight / 2,
+  );
 
   const objectWidthPx = (worldWidth * size.width) / viewport.width;
 
@@ -131,7 +131,7 @@ export function HeroParticles({ tier, reduced, frame, formationDelay = 0.7 }: Pr
     const elapsed = (performance.now() - mountedAt.current) / 1000;
     const tl = gsap.timeline({ delay: Math.max(0, formationDelay - elapsed) });
     tl.to(uniforms.uOpacity, { value: PEAK_OPACITY, duration: 1.1, ease: 'none' }, 0);
-    tl.to(uniforms.uFormation, { value: 1, duration: 1.8, ease: 'none' }, 0);
+    tl.to(uniforms.uFormation, { value: 1, duration: 1.7, ease: 'none' }, 0);
     tl.to(uniforms.uZoom, { value: 1, duration: 1.4, ease: 'power2.out' }, 0);
 
     const off = onSkipIntro(() => tl.totalProgress(1));

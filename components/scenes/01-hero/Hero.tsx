@@ -30,9 +30,10 @@ import { useHeroFrame } from './useHeroFrame';
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null);
+  const stage = useRef<HTMLDivElement>(null);
   const photoBox = useRef<HTMLDivElement>(null);
   const copyBlock = useRef<HTMLDivElement>(null);
-  const frame = useHeroFrame(section, photoBox, copyBlock);
+  const frame = useHeroFrame(section, stage, photoBox, copyBlock);
 
   const { reduced, resolved } = useMotionPreference();
   const d = (seconds: number) => (reduced ? 0 : seconds);
@@ -67,8 +68,13 @@ export function Hero() {
 
       <div className="relative z-10 flex min-h-[100svh] flex-col">
         {/* Palco: a fotografia é ancorada na base DESTA linha, então no
-            desktop ela encosta no topo do índice sem número mágico nenhum. */}
-        <div className="relative flex flex-1 items-start pt-[7svh] md:items-center md:pt-0">
+            desktop ela encosta no topo do índice sem número mágico nenhum.
+            O recuo de topo tem um piso em rem, e não só em svh: a navbar tem
+            68px fixos, e numa janela curta uma fração da altura não a limpa —
+            a eyebrow subia por cima do nome. No desktop o recuo é a própria
+            altura da navbar, para que a centralização vertical aconteça no
+            espaço abaixo dela. */}
+        <div ref={stage} className="relative flex flex-1 items-start pt-[max(4.75rem,5svh)] md:items-center md:pt-[4.25rem]">
           <HeroPhoto boxRef={photoBox} />
 
           <div className="relative z-10 mx-auto w-full max-w-content u-margin-x">
@@ -92,14 +98,14 @@ export function Hero() {
                 lines={hero.headline}
                 accentFrom={hero.headlineAccentFrom}
                 delay={d(1.05)}
-                className="mt-5 font-display text-display-hero text-text md:mt-6"
+                className="mt-4 font-display text-display-hero text-text md:mt-6"
               />
 
               <m.p
                 initial={{ opacity: 0, y: 16 }}
                 animate={enter}
                 transition={{ duration: d(0.8), delay: d(1.4), ease: [0.16, 1, 0.3, 1] }}
-                className="u-measure mt-6 text-body-l text-muted md:mt-7"
+                className="u-measure mt-5 text-body-l text-muted md:mt-7"
               >
                 {hero.subheadline}
               </m.p>
@@ -115,12 +121,12 @@ export function Hero() {
                 <MagneticButton href={nextSceneHref('inicio')}>{hero.cta.label}</MagneticButton>
               </m.div>
 
-              <ScrollHint className="mt-8 md:hidden" />
+              <ScrollHint className="mt-7 md:hidden" />
             </div>
           </div>
         </div>
 
-        <div className="mx-auto w-full max-w-content shrink-0 u-margin-x pb-8 md:pb-7">
+        <div className="mx-auto w-full max-w-content shrink-0 u-margin-x pb-4 md:pb-7">
           {/* A assinatura já está na navbar; repeti-la aqui só encheria a
               linha. Sobra o convite a rolar, sozinho. */}
           <ScrollHint className="mb-6 hidden md:flex" />
