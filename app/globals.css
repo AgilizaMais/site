@@ -167,6 +167,18 @@ canvas {
     );
   }
 
+  /*
+    Véu da primeira tela. Ali o objeto não fica ATRÁS do texto: o cérebro
+    desceu para trás da fotografia, e a coluna de texto corre sobre fundo
+    quase limpo. O véu padrão, dimensionado para as cenas em que o WebGL
+    passa por baixo da copy inteira, apagava o cérebro no retrato — a faixa
+    dele desce 30% além do bloco de texto, que é exatamente onde a nuvem
+    começa.
+  */
+  .u-veil-hero::before {
+    inset: -16% -30% -4% -30%;
+  }
+
   /* No mobile o texto fica embaixo do objeto, não ao lado: o véu vira uma
      faixa a partir da base. */
   @media (max-width: 767px) {
@@ -179,6 +191,20 @@ canvas {
         rgb(9 9 11 / 0.9) 20%,
         rgb(9 9 11 / 0.97) 42%,
         rgb(9 9 11 / 0.97) 100%
+      );
+    }
+
+    .u-veil-hero::before {
+      /* O véu termina ACIMA do fim do bloco: o convite a rolar fica sobre a
+         borda superior do cérebro, que é onde a nuvem ainda é rala. Cobrir
+         até ali apagaria justamente a parte do objeto que aparece entre o
+         texto e a fotografia. */
+      inset: -16% -30% 9% -30%;
+      background: linear-gradient(
+        to bottom,
+        rgb(9 9 11 / 0.82) 0%,
+        rgb(9 9 11 / 0.7) 52%,
+        rgb(9 9 11 / 0) 100%
       );
     }
   }

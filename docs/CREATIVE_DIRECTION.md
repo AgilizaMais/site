@@ -78,10 +78,10 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 > aditivo) e não é ilustrativo (nenhum contorno, nenhuma "rede neural"). Ocupa o
 > fundo da cena e passa por trás do texto, em vez de posar como retrato.
 
-- **[V]** Preto absoluto. À direita do centro, um cérebro em perfil composto por 12–95k partículas, conforme a área ocupada na tela. A leitura é anatômica e deliberada: perfil alongado, fissura de Sylvius esculpida separando o lobo temporal, cerebelo como massa própria com textura mais fina, tronco encefálico descendo. Key light quente de cima-frente; brasa contornando a silhueta. Vinheta forte. Grão 3%.
-- **[M]** Loader (linha de luz) → canvas entra em `scale 1.08→1` → partículas se formam da dispersão (2.4s) → headline em clip-path (stagger 90ms) → sub → CTA. Em loop, três movimentos somados: deriva tangencial contínua (cada partícula com fase própria), respiração de 4s a 2.2%, e uma onda lenta de luz atravessando a forma de trás para a frente.
-- **[C]** *A mudança acontece em movimento.* / Sub / **Iniciar jornada** / assinatura "Júlia Beatriz · Psicóloga Clínica · CRP 15/8791".
-- **[I]** Parallax de cursor ±2.2° (lerp 0.045). CTA magnético. Scroll hint discreto, some ao primeiro scroll.
+- **[V]** Preto absoluto. Três camadas de profundidade: o cérebro de partículas ao fundo, a **fotografia da psicóloga** sobre ele, e faíscas do próprio contorno dela passando à frente. A leitura do cérebro é anatômica e deliberada: perfil alongado, fissura de Sylvius separando o lobo temporal, cerebelo com textura mais fina, tronco encefálico descendo. A partícula é **fina e definida, e a maioria é âmbar** — o branco fica para os pontos que a imagem-fonte tem de fato claros. Key light quente de cima-frente; brasa contornando a silhueta. Vinheta forte. Grão 3%.
+- **[M]** Loader (linha de luz) → partículas se formam da dispersão, vindo de todos os lados (1.8s) → headline em clip-path (stagger 90ms) → sub → **a fotografia sobe da base** (1.9s→3.2s) → **o contorno dela acende**, de baixo para cima (2.9s→4.8s) → índice da jornada. Em loop, três movimentos somados: deriva em duas escalas, respiração de 4s a 3%, e uma onda lenta de luz atravessando a forma.
+- **[C]** *Entre o caos / e a calma existe / **um caminho**.* — a última linha é a única palavra em acento da primeira tela. / Sub / **Iniciar jornada** (só no desktop) / convite "role para baixo" com seta fina e estática / índice da jornada no rodapé (só no desktop).
+- **[I]** Parallax de cursor ±1.6° (lerp 0.045). CTA magnético. Convite a rolar some ao primeiro scroll.
 - **[R]** Frame estático da formação concluída + texto. Sem loop — verificado: dois frames consecutivos são byte-a-byte idênticos.
 
 > **Decisão do cliente — imagem como fonte de posições.** Depois de cinco
@@ -183,7 +183,7 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 ### CENA 6 — CREDIBILIDADE · "Sustentar"
 - **[V]** Quatro cards de vidro discretíssimo sobre o preto, em grade 2×2 (desktop) / 1 coluna (mobile). Sem WebGL pesado: apenas grão, vinheta e um spotlight que segue o cursor.
 - **[M]** Entrada `FadeUp` com stagger 110ms. Hover: elevação 4px, borda vira acento, spotlight radial.
-- **[C]** *Sobre* / **Ciência aplicada com cuidado.** / 4 cards: Júlia Beatriz · CRP 15/8791 · PUCRS · Atuação.
+- **[C]** *Sobre* / **Ciência aplicada com cuidado.** / 4 cards: Rafaelle Araújo · CRP 15/8791 · PUCRS · Atuação.
 - **[I]** Hover por card. Foco por teclado com o mesmo tratamento visual.
 - **[R]** Cards estáticos, sem spotlight.
 
@@ -209,7 +209,7 @@ Legenda: **[V]** visual · **[M]** movimento · **[C]** copy · **[I]** interaç
 
 ## 4. Wireframes (ASCII)
 
-### 4.1 Desktop — Cena 1 (Hero)
+### 4.1 Desktop — Cena 1 (Hero) — *como construído*
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
 │  JÚLIA BEATRIZ · CRP 15/8791                        sobre  processo  [agendar]│ ← navbar ~invisível
@@ -323,7 +323,7 @@ progress 0.15 (caos)          progress 0.55 (desacelera)      progress 0.90 (sin
 │                                                                              │
 │   ┌────────────────────────────┐   ┌────────────────────────────┐            │
 │   │ 01                         │   │ 02                         │            │
-│   │ Júlia Beatriz              │   │ CRP 15/8791                │            │
+│   │ Rafaelle Araújo              │   │ CRP 15/8791                │            │
 │   │ Psicóloga clínica...       │   │ Registro ativo no CRP.     │            │
 │   └────────────────────────────┘   └────────────────────────────┘            │
 │   ┌────────────────────────────┐   ┌────────────────────────────┐            │
@@ -364,7 +364,7 @@ progress 0.15 (caos)          progress 0.55 (desacelera)      progress 0.90 (sin
 │                                                                              │
 │                        ( Agendar uma conversa → )                            │
 │                                                                              │
-│  Júlia Beatriz · CRP 15/8791        contato        privacidade      © 2026   │
+│  Rafaelle Araújo · CRP 15/8791        contato        privacidade      © 2026   │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -376,7 +376,7 @@ progress 0.15 (caos)          progress 0.55 (desacelera)      progress 0.90 (sin
 │    ░▒▓█████▓▒░      │        │ com cuidado.        │
 │   ▒▓█ busto █▓▒     │        │                     │
 │    ░▒▓█████▓▒░      │        │ ┌─────────────────┐ │
-│                     │        │ │ 01 Júlia Beatriz│ │
+│                     │        │ │ 01 Rafaelle Araújo│ │
 │ A MUDANÇA           │        │ └─────────────────┘ │
 │ ACONTECE EM         │        │ ┌─────────────────┐ │
 │ MOVIMENTO.          │        │ │ 02 CRP 15/8791  │ │

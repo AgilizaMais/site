@@ -99,13 +99,20 @@ lib/motion/
 ### Cena 1 — Hero (entrada) — *implementado*
 ```
 t=0.00  loader: linha de luz 1px expande do centro (0.7s, outExpo)
-t=0.70  loader dissolve (0.6s, cine); canvas entra opacity 0→1 + scale 1.06→1 (1.4s, cine)
-t=0.85  partículas: dispersão → formação do busto (2.2s, easeOutQuart no shader,
-        com atraso por partícula de até 0.45 — cada uma chega no seu tempo)
+t=0.50  loader dissolve (0.6s, cine); canvas entra opacity 0→1 (1.6s, cine)
+t=0.70  partículas: dispersão → formação do cérebro (1.8s, easeOutQuart no shader,
+        com atraso por partícula de até 0.45 — cada uma chega no seu tempo,
+        vindo de todos os lados); aproximação uZoom 1.07→1 no vertex shader
+t=0.90  eyebrow FadeUp
 t=1.05  headline RevealLines (clip-path, stagger 90ms)
-t=1.35  subheadline FadeUp
-t=1.55  CTA: scale 0.96→1
-t=1.80  hint de scroll + assinatura
+t=1.40  subheadline FadeUp
+t=1.70  CTA (só no desktop)
+t=1.90  FOTOGRAFIA sobe da base: opacity 0→1, y 9%→0 (1.3s)
+t=2.60  convite "role para baixo"
+t=2.90  faíscas do contorno dela acendem, de BAIXO PARA CIMA (1.9s) —
+        a revelação segue o mesmo sentido da subida da foto, então elas
+        nascem do movimento em vez de acenderem por cima dele
+t=2.90  índice da jornada (rodapé, só no desktop)
 loop    quatro movimentos somados, em escalas de tempo diferentes:
         · deriva LARGA (ruído de baixa frequência) — move regiões inteiras devagar
         · deriva FINA — vida ponto a ponto
@@ -117,7 +124,11 @@ loop    quatro movimentos somados, em escalas de tempo diferentes:
 > nuvem parecer respirar. E a onda é o movimento que se enxerga de longe, sem
 > depender de olhar partícula por partícula.
 ```
-Entrada percebida: **~2,4s**, com a headline pintada em ~1,3s.
+Entrada percebida: **~3,2s** até a fotografia assentar, com a headline pintada em ~1,3s. A ordem é a da narrativa: o pensamento se forma, a frase aparece, a pessoa entra, e o contorno dela acende por último.
+
+> **A fotografia não é o primeiro plano de saída — é o terceiro tempo.** Ela
+> entra depois de a nuvem estar formada e a frase, dita. Entrar junto faria a
+> cena disputar atenção consigo mesma.
 
 > **Por que mais rápido do que o previsto originalmente (1.9s para a headline):**
 > a headline é o elemento de LCP. Atrasá-la até 1.9s empurrava o LCP para perto

@@ -13,6 +13,8 @@ type Props = {
   delay?: number;
   /** Quando false, a animação aguarda (usado pela timeline do Hero). */
   play?: boolean;
+  /** Índice da primeira linha em acento. Da headline do Hero para baixo. */
+  accentFrom?: number;
   id?: string;
 };
 
@@ -29,6 +31,7 @@ export function RevealLines({
   className = '',
   delay = 0,
   play = true,
+  accentFrom,
   id,
 }: Props) {
   const root = useRef<HTMLElement>(null);
@@ -66,9 +69,14 @@ export function RevealLines({
 
   return (
     <Tag id={id} ref={root as never} className={className}>
-      {lines.map((line) => (
+      {lines.map((line, index) => (
         <span key={line} className="block overflow-hidden pb-[0.08em]">
-          <span data-line-inner className="block will-change-transform">
+          <span
+            data-line-inner
+            className={`block will-change-transform${
+              accentFrom !== undefined && index >= accentFrom ? ' text-accent' : ''
+            }`}
+          >
             {line}
           </span>
         </span>

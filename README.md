@@ -1,6 +1,6 @@
-# Júlia Beatriz — *Mind in Motion*
+# Rafaelle Araújo — *Mind in Motion*
 
-Site da psicóloga clínica Júlia Beatriz (CRP 15/8791): uma jornada narrativa em oito cenas,
+Site da psicóloga clínica Rafaelle Araújo (CRP 15/8791): uma jornada narrativa em oito cenas,
 onde cada conceito clínico é traduzido em matéria visual antes de virar texto.
 
 ## Stack
@@ -45,6 +45,7 @@ Construção por etapas, uma cena por vez.
 - ✅ Fase 2 — **Cena 2: Ansiedade**
 - ✅ Fase 3 — **Cena 3: Autoestima**
 - ✅ Fase 4 — **Cena 4: Flexibilidade**
+- ✅ Revisão da Cena 1 — fotografia autoral, nova headline e partículas âmbar
 - ⬜ Fases 5–8 — Cenas 5 a 8
 - ⬜ Fase 9 — polimento global, SEO, LGPD, QA e deploy
 

@@ -54,6 +54,12 @@ components/
     02-anxiety/              // Anxiety.tsx AnxietyCanvas.tsx AnxietyScene.tsx
                              // AnxietyLines.tsx shaders/lines.vert.ts .frag.ts
     01-hero/                 // Hero.tsx HeroCanvas.tsx HeroScene.tsx HeroParticles.tsx
+                             // HeroPhoto.tsx HeroIndex.tsx ScrollHint.tsx
+                             // useHeroFrame.ts   (enquadramento medido no layout)
+                             // HeroSparks.tsx SparksScene.tsx Sparks.tsx
+                             // silhouette.ts silhouette.worker.ts useSilhouetteCloud.ts
+                             // shaders/sparks.vert.ts .frag.ts
+                             // assets/rafaelle.webp
                              // imageCloud.ts      (amostragem da imagem-fonte)
                              // cloud.worker.ts useBrainCloud.ts
                              // assets/brain-source.jpg
@@ -244,7 +250,29 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
    pelo visitante, e ela se sente. O que sobrou é um teto de velocidade, que
    nunca decide para onde ninguém vai — só limita o embalo que um gesto pode
    acumular (`lib/motion/useScrollSpeedLimit.ts`).
-24. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+24. **Um canvas não fica atrás E na frente da mesma imagem.** A fotografia da
+   Cena 1 é DOM — `<img>`, com texto alternativo de verdade, carregamento como
+   imagem e existência sem WebGL. Para que partículas passem À FRENTE dela sem
+   perder isso, a cena tem duas camadas: o cérebro atrás, e uma segunda cena
+   (`HeroSparks`, câmera ortográfica) na frente. A alternativa — a foto como
+   textura dentro do WebGL — resolveria a profundidade e custaria as três
+   coisas.
+25. **O contorno das faíscas é lido do canal alfa do PNG.** A foto é um recorte,
+   então o alfa já É a silhueta dela: a densidade das partículas é a magnitude
+   do gradiente do alfa, máxima exatamente na aresta. Nada de inventar onde
+   passam o ombro e a borda do cabelo. Mesma ideia da nuvem do cérebro, com a
+   imagem virando mapa de BORDA em vez de mapa de brilho.
+26. **O enquadramento do objeto vem da medição do layout, não de frações do
+   viewport** (`useHeroFrame.ts`). O cérebro pertence a ela: centro, tamanho e
+   teto saem da caixa da fotografia e do bloco de texto. Números fixos servem
+   num aparelho e quebram no seguinte — a coluna de texto ocupa uma fatia
+   diferente da tela em cada altura, e num celular curto a borda da nuvem
+   terminava atrás de um texto de 11px. O teto (o objeto nunca sobe acima da
+   base do texto) só vale quando as duas colunas se cruzam; se o layout é lado
+   a lado, ele empurraria a nuvem para fora da tela — e a pergunta
+   "empilhado ou lado a lado?" é geométrica, respondida pelos retângulos
+   medidos, não por breakpoint.
+27. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções
@@ -371,6 +399,6 @@ Cada fase termina com: revisão criativa · profiling (FPS/bundle) · checklist 
 
 1. Número de WhatsApp e/ou e-mail oficial para o CTA.
 2. Destino de deploy e domínio (Vercel vs. GitHub Pages + CNAME).
-3. Existe foto autoral utilizável? (Se não, seguimos sem foto — está previsto.)
+3. ~~Existe foto autoral utilizável?~~ **Recebida e integrada na Cena 1.** Confirmar direitos de uso da imagem antes da publicação.
 4. Atendimento on-line, presencial ou ambos? Cidade/UF a divulgar.
 5. Confirmação do texto institucional da Cena 6 pela própria psicóloga (responsabilidade profissional).

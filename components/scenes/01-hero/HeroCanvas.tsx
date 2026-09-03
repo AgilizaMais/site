@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useDeviceTier } from '@/lib/hooks/useDeviceTier';
 import { useInViewport } from '@/lib/hooks/useInViewport';
 import { useMotionPreference } from '@/lib/motion/MotionPreferenceProvider';
+import type { HeroFrame } from './useHeroFrame';
 
 /**
  * three + R3F ficam fora do bundle de servidor e do first-load JS:
@@ -19,7 +20,7 @@ const HeroScene = dynamic(() => import('./HeroScene').then((m) => m.HeroScene), 
  * reduzido) cai para um halo estático em CSS — a cena continua composta,
  * apenas parada. Nunca um spinner, nunca um buraco preto.
  */
-export function HeroCanvas() {
+export function HeroCanvas({ frame }: { frame: HeroFrame }) {
   const tier = useDeviceTier();
   const { reduced } = useMotionPreference();
   const [mounted, setMounted] = useState(false);
@@ -44,7 +45,7 @@ export function HeroCanvas() {
         }}
       />
       {mounted && !noWebgl && (
-        <HeroScene tier={tier === 'none' ? 'mid' : tier} reduced={reduced} active={inView} />
+        <HeroScene tier={tier === 'none' ? 'mid' : tier} reduced={reduced} active={inView} frame={frame} />
       )}
     </div>
   );

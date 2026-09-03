@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { professional } from './site';
 
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://juliabeatriz.psi.br';
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rafaellearaujo.psi.br';
 
 const description =
   'Psicologia clínica com abordagem em Terapia Cognitivo-Comportamental. Ansiedade, autoestima, flexibilidade psicológica e aceitação.';

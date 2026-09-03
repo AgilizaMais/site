@@ -106,18 +106,40 @@ export function sampleImage(
       (noise2(x * 2.6 + 11, y * 2.6 + 7) - 0.5) * o.depth +
       Math.sqrt(dome) * o.depth * 0.85 * (rand() < 0.5 ? 1 : -1);
 
-    const i3 = i * 3;
-    positions[i3] = x;
-    positions[i3 + 1] = y;
-    positions[i3 + 2] = z;
+    /**
+     * Uma em cada vinte e cinco se solta e flutua para fora do desenho. São as
+     * dispersas: sem elas o cérebro tem uma silhueta recortada demais e parece
+     * um adesivo em vez de uma nuvem.
+     */
+    const stray = rand() < 0.04;
+    /**
+     * A fuga é numa direção qualquer, com distância sorteada — e não uma
+     * escala a partir do centro do objeto. Escalar afasta cada ponto ao longo
+     * do próprio raio, e o conjunto vira um rastro apontando para fora, como
+     * se o desenho estivesse escorrendo.
+     */
+    const angle = rand() * Math.PI * 2;
+    const away = stray ? rand() ** 2 * halfW * 0.42 : 0;
 
-    // Calor: quanto o pixel puxa para o branco em vez do âmbar.
-    const warmth = Math.min(1, Math.max(0, (b / Math.max(r, 1)) * 1.35));
+    const i3 = i * 3;
+    positions[i3] = x + Math.cos(angle) * away;
+    positions[i3 + 1] = y + Math.sin(angle) * away * 0.8;
+    positions[i3 + 2] = stray ? z + (rand() - 0.5) * o.depth * 2.5 : z;
+
+    /**
+     * Calor: quanto o pixel puxa para o branco em vez do âmbar.
+     *
+     * O expoente empurra a distribuição inteira para o âmbar — a maioria das
+     * partículas é da cor do acento, e o branco fica reservado para os pixels
+     * que são de fato claros na fonte. Sem ele o desenho vira uma nuvem
+     * acinzentada e o acento some.
+     */
+    const warmth = Math.min(1, Math.max(0, (b / Math.max(r, 1)) * 1.2)) ** 3.2;
 
     const i4 = i * 4;
     seeds[i4] = rand();
     seeds[i4 + 1] = 0.45 + rand() * 0.55;
-    seeds[i4 + 2] = Math.min(1, lum * 1.15);
+    seeds[i4 + 2] = Math.min(1, lum * 1.15) * (stray ? 0.45 + rand() * 0.3 : 1);
     seeds[i4 + 3] = warmth;
     i += 1;
   }

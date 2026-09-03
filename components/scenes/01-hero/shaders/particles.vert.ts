@@ -96,7 +96,7 @@ void main() {
   // O tamanho é fixado em PIXELS CSS e só então multiplicado pelo DPR: limitar
   // depois do DPR encolhe a partícula em telas 2x/3x e o conjunto vira borrão.
   float size = uSize * aSeed.y * mix(0.5, 1.0, t);
-  float cssSize = clamp(size * (4.4 / -mvPosition.z), 0.9, 2.6);
+  float cssSize = clamp(size * (4.4 / -mvPosition.z), 0.85, 1.9);
   gl_PointSize = cssSize * uPixelRatio;
 }
 `;

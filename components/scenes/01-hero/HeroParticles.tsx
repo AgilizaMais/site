@@ -10,10 +10,13 @@ import { countFor, useBrainCloud } from './useBrainCloud';
 import { particlesVert } from './shaders/particles.vert';
 import { particlesFrag } from './shaders/particles.frag';
 import type { DeviceTier } from '@/lib/hooks/useDeviceTier';
+import type { HeroFrame } from './useHeroFrame';
 
 type Props = {
   tier: DeviceTier;
   reduced: boolean;
+  /** Enquadramento medido no layout — ver useHeroFrame. */
+  frame: HeroFrame;
   /** Atraso, em segundos, antes da formação começar. */
   formationDelay?: number;
 };
@@ -21,12 +24,12 @@ type Props = {
 const POINTER_TILT = THREE.MathUtils.degToRad(1.6);
 
 /** Opacidade final: o objeto é fundo, o texto é primeiro plano. */
-const PEAK_OPACITY = 0.92;
+const PEAK_OPACITY = 1;
 
 /** Proporção da imagem-fonte (900×817). */
 const SOURCE_ASPECT = 900 / 817;
 
-export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
+export function HeroParticles({ tier, reduced, frame, formationDelay = 0.7 }: Props) {
   const points = useRef<THREE.Points>(null);
   const invalidate = useThree((s) => s.invalidate);
   const viewport = useThree((s) => s.viewport);
@@ -34,29 +37,31 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   const mountedAt = useRef(typeof performance === 'undefined' ? 0 : performance.now());
 
   /**
-   * Retrato ou paisagem — decidido pela largura do canvas em pixels CSS, no
-   * mesmo ponto de quebra do layout (`md`, 768px).
+   * Enquadramento: o objeto pertence a ELA. Centro, tamanho e teto vêm da
+   * medição do layout (`useHeroFrame`), não de frações fixas do viewport —
+   * a coluna de texto ocupa uma fatia diferente da tela em cada altura de
+   * aparelho, e um número fixo que serve num celular quebra no seguinte.
    *
-   * A versão anterior comparava `viewport.width`, que é largura em unidades de
-   * mundo e portanto derivada do ASPECTO. Uma medição transitória do canvas
-   * durante o carregamento virava um aspecto errado, o objeto ia para o ramo
-   * de paisagem — maior e deslocado para a direita — e só voltava quando o
-   * aspecto mudava de novo. Pixels CSS não têm essa ambiguidade.
+   * `viewport.height` do R3F é constante (depende só da câmera) e
+   * `viewport.width` é ela vezes o aspecto, então multiplicar uma fração da
+   * caixa por eles devolve exatamente o mesmo enquadramento em pixels.
    */
-  const narrow = size.width < 768;
+  const worldWidth = frame.w * viewport.width;
+  const worldHeight = worldWidth / SOURCE_ASPECT;
+
+  const objectX = (frame.cx - 0.5) * viewport.width;
 
   /**
-   * Enquadramento, sempre como fração da largura do canvas: o que quer que
-   * aconteça com o tamanho do canvas, o objeto ocupa a mesma parte dele.
-   *
-   * O segundo termo, em paisagem, usa `viewport.height` — que é constante,
-   * porque depende só da câmera. Ele existe para o objeto não estourar numa
-   * janela muito larga; sem clamp mínimo, que era o que fazia o tamanho pular
-   * entre dois valores quando o cálculo passava rente ao limite.
+   * O cérebro nunca sobe acima da base do texto. Sem esse teto, num celular
+   * curto — onde o texto desce mais — a borda superior da nuvem terminava
+   * atrás do convite a rolar, e as partículas mais claras comiam a legibilidade
+   * de um texto de 11px.
    */
-  const worldWidth = narrow
-    ? viewport.width / 1.3
-    : Math.min(viewport.width / 1.55, (viewport.height / 1.5) * SOURCE_ASPECT);
+  const centerY = (0.5 - frame.cy) * viewport.height;
+  const objectY =
+    frame.ceiling > 0
+      ? Math.min(centerY, (0.5 - frame.ceiling) * viewport.height - worldHeight / 2)
+      : centerY;
 
   const objectWidthPx = (worldWidth * size.width) / viewport.width;
 
@@ -81,7 +86,7 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
       uFormation: { value: reduced ? 1 : 0 },
       uBreath: { value: reduced ? 0 : 0.03 },
       uDrift: { value: reduced ? 0 : 0.016 },
-      uSize: { value: tier === 'low' ? 2.4 : 2.0 },
+      uSize: { value: tier === 'low' ? 2.0 : 1.7 },
       uPixelRatio: { value: 1 },
       uColorLight: { value: new THREE.Color(GL_PALETTE.light) },
       uColorAccent: { value: new THREE.Color(GL_PALETTE.accent) },
@@ -125,9 +130,9 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
     // Se a amostragem demorou mais que o atraso previsto, a formação começa já.
     const elapsed = (performance.now() - mountedAt.current) / 1000;
     const tl = gsap.timeline({ delay: Math.max(0, formationDelay - elapsed) });
-    tl.to(uniforms.uOpacity, { value: PEAK_OPACITY, duration: 1.4, ease: 'none' }, 0);
-    tl.to(uniforms.uFormation, { value: 1, duration: 2.4, ease: 'none' }, 0);
-    tl.to(uniforms.uZoom, { value: 1, duration: 1.6, ease: 'power2.out' }, 0);
+    tl.to(uniforms.uOpacity, { value: PEAK_OPACITY, duration: 1.1, ease: 'none' }, 0);
+    tl.to(uniforms.uFormation, { value: 1, duration: 1.8, ease: 'none' }, 0);
+    tl.to(uniforms.uZoom, { value: 1, duration: 1.4, ease: 'power2.out' }, 0);
 
     const off = onSkipIntro(() => tl.totalProgress(1));
 
@@ -161,13 +166,6 @@ export function HeroParticles({ tier, reduced, formationDelay = 0.85 }: Props) {
   });
 
   if (!geometry) return null;
-
-  // No desktop o objeto sai do centro: o texto ocupa a esquerda e cruza a
-  // borda dele. No mobile fica centralizado e acima do texto.
-  const objectX = narrow ? 0 : viewport.width * 0.11;
-  // Também em unidades do objeto, e não da altura do viewport: a barra do
-  // navegador não pode reposicionar o cérebro.
-  const objectY = narrow ? worldWidth * 0.34 : 0.04;
 
   return <points ref={points} geometry={geometry} material={material} position={[objectX, objectY, 0]} />;
 }

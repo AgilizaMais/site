@@ -4,7 +4,7 @@
  */
 
 export const professional = {
-  name: 'Júlia Beatriz',
+  name: 'Rafaelle Araújo',
   role: 'Psicóloga Clínica',
   crp: 'CRP 15/8791',
   education: 'Pós-graduanda em Terapia Cognitivo-Comportamental — PUCRS',
@@ -12,14 +12,43 @@ export const professional = {
 
 export const hero = {
   id: 'inicio',
-  headline: ['A mudança', 'acontece', 'em movimento.'],
+  eyebrow: 'Psicologia clínica',
+  /**
+   * A última linha carrega o acento. É a única palavra em laranja de toda a
+   * primeira tela, e é ela que responde ao caos anunciado na primeira.
+   */
+  headline: ['Entre o caos', 'e a calma existe', 'um caminho.'],
+  headlineAccentFrom: 2,
   subheadline:
     'Um espaço para compreender sua mente com ciência, acolhimento e propósito.',
+  /** Só no desktop: no celular o polegar já tem o gesto de rolar. */
   cta: { label: 'Iniciar jornada' },
-  scrollHint: 'Role para começar',
+  scrollHint: 'Role para baixo',
+  photoAlt:
+    'Rafaelle Araújo, psicóloga clínica, sentada, apoiando o queixo na mão.',
   /** Descrição da cena WebGL para leitores de tela (o canvas é aria-hidden). */
   canvasDescription:
-    'Um cérebro humano abstrato, desenhado por milhares de partículas de luz que percorrem seus sulcos e respiram lentamente no escuro.',
+    'Um cérebro humano abstrato, desenhado por milhares de partículas âmbar que percorrem seus sulcos e respiram lentamente no escuro. Algumas delas se soltam e passam à frente da fotografia, contornando o ombro e a borda do cabelo.',
+} as const;
+
+/**
+ * Índice da jornada, no rodapé da primeira tela do desktop. Não é navegação —
+ * é sumário: diz de que o site trata antes de pedir qualquer rolagem.
+ *
+ * No celular ele não existe: ali a primeira tela é a fotografia e a frase, e
+ * mais nada.
+ */
+export const heroIndex = {
+  items: [
+    { id: 'ansiedade', label: 'Ansiedade', line: 'Compreender para viver com mais leveza.' },
+    { id: 'autoestima', label: 'Autoestima', line: 'Reconhecer seu valor além das expectativas.' },
+    { id: 'flexibilidade', label: 'Flexibilidade', line: 'Adaptação que fortalece, não que desgasta.' },
+    { id: 'aceitacao', label: 'Aceitação', line: 'Acolher o que é real abre espaço para o novo.' },
+  ],
+  credential: {
+    label: 'TCC',
+    line: 'Pós-graduanda em Terapia Cognitivo-Comportamental, PUCRS.',
+  },
 } as const;
 
 export const anxiety = {

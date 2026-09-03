@@ -28,6 +28,16 @@ const config: Config = {
         mono: 'var(--font-mono)',
       },
       fontSize: {
+        /**
+         * Escala própria da primeira tela.
+         *
+         * O teto é mais baixo que o do `display-xl` porque aqui a headline
+         * divide a largura com a fotografia. E o piso é baixo de propósito:
+         * ele só entra abaixo de ~293px de tela, onde um piso confortável
+         * faria a linha mais longa ("e a calma existe") quebrar em duas e
+         * desmontar o ritmo de três linhas. Verificado de 320px a 1920px.
+         */
+        'display-hero': ['clamp(1.9rem, 10.4vw, 4.9rem)', { lineHeight: '0.94', letterSpacing: '-0.035em', fontWeight: '500' }],
         'display-xl': ['clamp(3rem, 7.2vw, 6.75rem)', { lineHeight: '0.92', letterSpacing: '-0.035em', fontWeight: '500' }],
         'display-l': ['clamp(2.5rem, 6.5vw, 6rem)', { lineHeight: '0.96', letterSpacing: '-0.03em', fontWeight: '500' }],
         'display-m': ['clamp(2rem, 4.5vw, 3.75rem)', { lineHeight: '1.02', letterSpacing: '-0.025em', fontWeight: '500' }],

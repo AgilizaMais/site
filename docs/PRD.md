@@ -1,4 +1,4 @@
-# PRD — Júlia Beatriz · "Mind in Motion"
+# PRD — Rafaelle Araújo · "Mind in Motion"
 
 > Documento de produto. Fonte da verdade para escopo, conteúdo, narrativa e critérios de aceite.
 > Versão 1.0 — Etapa 1 (pré-implementação).
@@ -23,7 +23,7 @@ O visitante primeiro **sente**. Depois **lê**. Só então **decide**.
 
 | Campo | Valor |
 |---|---|
-| Nome | Júlia Beatriz |
+| Nome | Rafaelle Araújo |
 | Profissão | Psicóloga Clínica |
 | Registro | CRP 15/8791 |
 | Formação | Pós-graduanda em Terapia Cognitivo-Comportamental — PUCRS |
@@ -109,10 +109,10 @@ A cena 5 é o **ponto de silêncio** deliberado: menos elementos, menos texto, m
 ## 6. Conteúdo por cena (copy aprovada)
 
 ### Cena 1 — Hero
-- **Headline:** A mudança acontece em movimento.
+- **Headline:** Entre o caos e a calma existe um caminho.
 - **Sub:** Um espaço para compreender sua mente com ciência, acolhimento e propósito.
-- **CTA:** Iniciar jornada
-- **Assinatura discreta:** Júlia Beatriz · Psicóloga Clínica · CRP 15/8791
+- **CTA:** Iniciar jornada *(só no desktop; no celular o gesto de rolar já é o convite)*
+- **Assinatura discreta:** Rafaelle Araújo · Psicóloga Clínica · CRP 15/8791
 
 ### Cena 2 — Ansiedade
 - **Eyebrow:** Ansiedade
@@ -145,7 +145,7 @@ A cena 5 é o **ponto de silêncio** deliberado: menos elementos, menos texto, m
 - **Eyebrow:** Sobre
 - **Headline:** Ciência aplicada com cuidado.
 - **Cards:**
-  1. **Júlia Beatriz** — Psicóloga clínica. Atendimento on-line e presencial para adolescentes e adultos.
+  1. **Rafaelle Araújo** — Psicóloga clínica. Atendimento on-line e presencial para adolescentes e adultos.
   2. **CRP 15/8791** — Registro ativo no Conselho Regional de Psicologia.
   3. **PUCRS** — Pós-graduanda em Terapia Cognitivo-Comportamental.
   4. **Atuação** — Ansiedade · Autoestima · Flexibilidade psicológica · Aceitação.
@@ -160,7 +160,7 @@ A cena 5 é o **ponto de silêncio** deliberado: menos elementos, menos texto, m
 - **Headline:** Talvez este seja apenas o começo.
 - **Sub:** Se fez sentido até aqui, o próximo passo é simples: uma conversa.
 - **CTA:** Agendar uma conversa
-- **Rodapé:** Júlia Beatriz · CRP 15/8791 · [contato] · Política de Privacidade · © 2026
+- **Rodapé:** Rafaelle Araújo · CRP 15/8791 · [contato] · Política de Privacidade · © 2026
 
 ---
 
