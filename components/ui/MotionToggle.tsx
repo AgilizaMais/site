@@ -3,7 +3,14 @@
 import { useMotionPreference } from '@/lib/motion/MotionPreferenceProvider';
 
 /** Controle explícito de movimento — o luxo nunca pode atropelar a acessibilidade. */
-export function MotionToggle({ className = '' }: { className?: string }) {
+export function MotionToggle({
+  className = '',
+  compact = false,
+}: {
+  className?: string;
+  /** Rótulo curto para o agrupamento do mobile. O rótulo lido continua inteiro. */
+  compact?: boolean;
+}) {
   const { reduced, toggle } = useMotionPreference();
 
   return (
@@ -16,7 +23,9 @@ export function MotionToggle({ className = '' }: { className?: string }) {
       <span className="sr-only">
         {reduced ? 'Ativar animações do site' : 'Reduzir animações do site'}
       </span>
-      <span aria-hidden>{reduced ? 'movimento: off' : 'movimento: on'}</span>
+      <span aria-hidden>
+        {compact ? (reduced ? 'mov: off' : 'mov: on') : reduced ? 'movimento: off' : 'movimento: on'}
+      </span>
     </button>
   );
 }

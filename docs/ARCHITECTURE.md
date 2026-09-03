@@ -202,7 +202,14 @@ docs/                        // PRD, STYLE_GUIDE, ANIMATION_SYSTEM, ARCHITECTURE
      cruzamentos quentes e o fundo bem escuro. Separar cor de cobertura tornou
      tudo linear e clareou as cenas inteiras; o expoente `uCurve` (1.9 no
      escuro, 1.2 no claro) devolve o contraste original.
-20. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
+20. **Controle de movimento existe em todo viewport.** Ele estava dentro do
+   bloco `md:flex` da navbar e sumia no celular junto com os links — uma falha
+   de acessibilidade, não só de conveniência. Os controles passam a ser
+   renderizados duas vezes, com visibilidade exclusiva por breakpoint (navbar
+   no desktop, agrupamento fixo no mobile). `display: none` não é exposto à
+   árvore de acessibilidade, então não há controle duplicado para leitores de
+   tela.
+21. **Registro de cenas implementadas** (`lib/content/site.ts`): a navegação só oferece
    âncoras que já existem, então a construção por etapas nunca expõe link morto.
 
 ### Convenções

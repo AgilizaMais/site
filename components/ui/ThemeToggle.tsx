@@ -6,7 +6,14 @@ import { useTheme } from '@/lib/theme/ThemeProvider';
  * Alternador de tema — instrumento de avaliação, não parte do produto.
  * Sai quando a direção de arte decidir entre claro e escuro.
  */
-export function ThemeToggle({ className = '' }: { className?: string }) {
+export function ThemeToggle({
+  className = '',
+  compact = false,
+}: {
+  className?: string;
+  /** Rótulo curto para o agrupamento do mobile. O rótulo lido continua inteiro. */
+  compact?: boolean;
+}) {
   const { theme, toggle } = useTheme();
 
   return (
@@ -19,7 +26,9 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
       <span className="sr-only">
         {theme === 'light' ? 'Usar tema escuro' : 'Usar tema claro'}
       </span>
-      <span aria-hidden>{theme === 'light' ? 'tema: claro' : 'tema: escuro'}</span>
+      <span aria-hidden>
+        {compact ? (theme === 'light' ? 'claro' : 'escuro') : theme === 'light' ? 'tema: claro' : 'tema: escuro'}
+      </span>
     </button>
   );
 }

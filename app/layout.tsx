@@ -8,6 +8,7 @@ import { Navbar } from '@/components/ui/Navbar';
 import { Cursor } from '@/components/ui/Cursor';
 import { SkipLink } from '@/components/ui/SkipLink';
 import { MotionFeatures } from '@/components/ui/MotionFeatures';
+import { Controls } from '@/components/ui/Controls';
 
 export const metadata: Metadata = siteMetadata;
 
@@ -39,6 +40,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Navbar />
               <Cursor />
               <main id="conteudo">{children}</main>
+
+              {/* No mobile a navbar não tem espaço para os controles, e o de
+                  movimento é acessibilidade: fica num agrupamento próprio,
+                  fora do caminho da leitura. */}
+              <Controls
+                compact
+                className="fixed bottom-4 right-4 z-50 flex rounded-full border border-hairline bg-glass px-3.5 py-2 backdrop-blur-[14px] md:hidden"
+              />
               <div className="u-vignette" aria-hidden />
               <div className="u-grain" aria-hidden />
             </SmoothScrollProvider>
