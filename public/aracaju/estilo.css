@@ -67,6 +67,15 @@ h1{font-size:38px;line-height:1.04;margin:15px 0 6px;font-weight:900;letter-spac
   padding:6px 12px;font-size:13px;font-weight:700;font-family:inherit;color:var(--tinta);
 }
 .chip i{width:12px;height:12px;border-radius:3px;background:var(--cor);flex:0 0 auto}
+.chip-mun b{background:var(--cor);color:#fff;border-radius:5px;padding:1px 6px;font-size:11px;letter-spacing:.8px}
+.chip.on b{background:rgba(255,255,255,.9);color:#16242C}
+.legenda-tit{font-size:11.5px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  color:var(--tinta-fraca);margin:12px 0 6px}
+.legenda-linha{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#modo-zonas{border:1.5px dashed var(--linha);background:#fff;border-radius:999px;padding:6px 12px;
+  font-size:12.5px;font-weight:700;font-family:inherit;color:var(--tinta-fraca);cursor:pointer}
+#modo-zonas:hover{border-color:var(--roxo);color:var(--roxo)}
+#modo-zonas.on{background:var(--roxo);border-color:var(--roxo);border-style:solid;color:#fff}
 .chip:hover{border-color:var(--cor)}
 .chip.on{background:var(--cor);border-color:var(--cor);color:#fff}
 .chip.on i{background:rgba(255,255,255,.85)}
@@ -89,17 +98,21 @@ h1{font-size:38px;line-height:1.04;margin:15px 0 6px;font-weight:900;letter-spac
 #mapa.arrastando{cursor:grabbing}
 
 .mar{fill:#1273AF}
-.terra-base{fill:#F2E7D2}
-.vizinho{fill:#D9CDB6;stroke:#B9A98C;stroke-width:1.6;transition:fill .15s}
-.vizinho:hover,.vizinho.ativo{fill:#C8B896}
+.terra-base{fill:#EDE1CA}
+.camada-terra.apagado{opacity:.25}
+/* municípios vizinhos: são eles que carregam a cor */
+.vizinho{fill:var(--cor);stroke:#FFF6E8;stroke-width:2.5;transition:fill .15s,filter .15s}
+.vizinho:hover,.vizinho.ativo{filter:brightness(1.22) saturate(1.15)}
+.vizinho.foco{stroke:#fff;stroke-width:5}
 
+/* Aracaju: neutra por padrão, para os vizinhos saltarem aos olhos */
 .bairro{
-  fill:var(--cor);stroke:#FFF6E8;stroke-width:2;
+  fill:#F6EEDD;stroke:#CBB894;stroke-width:1.4;
   transition:fill .14s,stroke-width .14s;
 }
-.bairro:hover,.bairro.ativo{
-  fill:#fff;stroke:var(--cor);stroke-width:4;
-}
+.bairro:hover,.bairro.ativo{fill:#fff;stroke:#16242C;stroke-width:3.2}
+body.modo-zonas .bairro{fill:var(--cor);stroke:#FFF6E8;stroke-width:2}
+body.modo-zonas .bairro:hover,body.modo-zonas .bairro.ativo{fill:#fff;stroke:var(--cor);stroke-width:4}
 .alvo{cursor:pointer}
 .apagado{opacity:.22;pointer-events:none}
 
@@ -112,8 +125,12 @@ text{pointer-events:none;font-family:"Segoe UI",Arial,sans-serif}
 .rot-bairro{font-size:12.5px;font-weight:800;fill:#1B1208;text-anchor:middle;paint-order:stroke;
   stroke:rgba(255,255,255,.75);stroke-width:2.6px;stroke-linejoin:round}
 .rot-mini{font-size:10.5px}
-.rot-vizinho{font-size:15px;font-weight:900;fill:#6B5B3E;text-anchor:middle;letter-spacing:.4px;
-  paint-order:stroke;stroke:rgba(255,255,255,.6);stroke-width:3px}
+.rot-vizinho{font-size:17px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:.3px;
+  paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:3.5px}
+.selo-dir{font-size:13px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:2.5px;
+  paint-order:stroke;stroke:rgba(0,0,0,.4);stroke-width:3.5px;opacity:.95}
+.selo-mar{fill:#DFF1FF;letter-spacing:4px;stroke:rgba(8,60,95,.7)}
+.rot-oceano.foco{opacity:1;fill:#fff}
 .rot-rio{font-size:14px;font-weight:900;fill:#EAF7FF;text-anchor:middle;letter-spacing:.6px;
   paint-order:stroke;stroke:rgba(8,60,95,.75);stroke-width:3.5px}
 .rot-ponto{font-size:11.5px;font-weight:800;fill:#26160A;paint-order:stroke;
@@ -230,3 +247,17 @@ footer a{color:#fff}
 .rot-oceano{font-size:26px;font-weight:900;fill:#BEE6FF;text-anchor:middle;
   letter-spacing:7px;opacity:.75}
 .rot-marco{font-size:13px;fill:#7A3B00;letter-spacing:.8px}
+
+/* rosa dos ventos */
+.rosa{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:16px 0;text-align:center}
+.rosa .cel{background:#fff;border:1.5px solid var(--linha);border-radius:11px;padding:10px 7px;
+  font-size:13px;display:flex;flex-direction:column;justify-content:center;min-height:96px;
+  border-top:5px solid var(--cor)}
+.rosa .cel .ponto{font-weight:900;font-size:11.5px;letter-spacing:1.2px;margin-bottom:4px;color:var(--cor)}
+.rosa .cel small{color:var(--tinta-fraca)}
+.rosa .miolo{background:linear-gradient(150deg,#0B3C5D,#1276A8);color:#fff;border:none;
+  font-weight:900;font-size:17px;letter-spacing:-.3px;display:flex;align-items:center;justify-content:center}
+.rosa .vazio{background:transparent;border:1.5px dashed #DCD2C4;color:#A79C8E;font-size:11.5px;
+  display:flex;align-items:center;justify-content:center}
+
+[hidden]{display:none!important}

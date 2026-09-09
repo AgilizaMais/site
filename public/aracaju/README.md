@@ -17,6 +17,14 @@ nenhuma dependência do resto do repositório — é HTML/CSS/JS puro dentro de
 | `mapa.js` | desenha o SVG e cuida de hover, clique, busca, filtro e zoom |
 | `resumo.html` | o site em texto que já existia, com link para o mapa |
 
+## Hierarquia visual
+
+A cor está nos **municípios vizinhos**, não nos bairros: cada limítrofe tem sua
+própria cor e um selo de direção (N, NE, L, O, S), e Aracaju fica neutra no meio.
+É o recorte que as questões cobram ("qual município faz limite ao norte?").
+O botão *Colorir bairros por zona* liga o modo antigo, com Aracaju pintada por
+zona, para estudar a divisão interna.
+
 ## Como o mapa é desenhado
 
 Não é um mapa geográfico real (sem GeoJSON, sem biblioteca). É um **desenho
@@ -36,5 +44,5 @@ Para mexer em um bairro, edite `AREAS` em `dados.js`:
 
 `cel` = `[linhaDeCima, linhaDeBaixo, colunaInicial, colunaFinal]`. Para mudar o
 formato do território, mexa nos pontos da `MALHA` — todos os bairros se ajustam
-juntos. Rios são traçados (`AGUAS[].d`), vizinhos são polígonos (`VIZINHOS[].pol`)
-e pontes/marcos são pontos (`PONTOS[].xy`).
+juntos. Rios são traçados (`AGUAS[].d`), vizinhos são polígonos (`VIZINHOS[].pol`, cada um
+com `cor` e `dir`) e pontes/marcos são pontos (`PONTOS[].xy`).

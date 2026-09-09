@@ -252,7 +252,7 @@ const AREAS = [
 
 /* --- águas ---------------------------------------------- */
 const AGUAS = [
-  { id:"oceano", nome:"Oceano Atlântico", tipo:"mar",
+  { id:"oceano", nome:"Oceano Atlântico", tipo:"mar", lado:"Leste", cor:"#1273AF", dir:"L",
     rotulo:[795,830], largura:0,
     resumo:"O limite LESTE de Aracaju — sempre.",
     itens:[
@@ -303,15 +303,15 @@ const AGUAS = [
 
 /* --- municípios vizinhos -------------------------------- */
 const VIZINHOS = [
-  { id:"santo-amaro", nome:"Santo Amaro das Brotas", lado:"Norte",
+  { id:"santo-amaro", nome:"Santo Amaro das Brotas", lado:"Norte", cor:"#7B4FA8", dir:"N",
     pol:[[0,0],[300,0],[380,120],[440,235],[300,275],[180,250],[30,186],[0,170]],
     rotulo:[190,110],
     resumo:"Vizinho ao norte, do outro lado do rio Sergipe.",
     itens:[["Separado por","Estuário do rio Sergipe / rio do Sal."],
            ["Atenção","É limítrofe, mas NÃO faz parte da Região Metropolitana de Aracaju."]]},
-  { id:"barra-dos-coqueiros", nome:"Barra dos Coqueiros", lado:"Nordeste",
-    pol:[[664,548],[642,470],[592,402],[520,340],[440,235],[455,180],[540,150],[640,152],[730,185],[790,250],[800,340],[770,430],[720,500]],
-    rotulo:[714,264],
+  { id:"barra-dos-coqueiros", nome:"Barra dos Coqueiros", lado:"Nordeste", cor:"#E4572E", dir:"NE",
+    pol:[[664,548],[642,470],[592,402],[520,340],[440,235],[380,120],[300,0],[640,0],[790,175],[830,320],[785,445],[722,508]],
+    rotulo:[690,230],
     resumo:"Vizinho a NORDESTE, alcançado por ponte.",
     itens:[
       ["Separado por","A foz do rio Sergipe."],
@@ -319,7 +319,7 @@ const VIZINHOS = [
       ["Porto","O Terminal Marítimo Inácio Barbosa (porto de Sergipe) fica AQUI, não em Aracaju."],
       ["RMA","Integra a Região Metropolitana de Aracaju."]
     ]},
-  { id:"socorro", nome:"Nossa Senhora do Socorro", lado:"Norte e Oeste",
+  { id:"socorro", nome:"Nossa Senhora do Socorro", lado:"Norte e Oeste", cor:"#1F9E6E", dir:"N / O",
     pol:[[0,170],[30,186],[180,250],[258,300],[238,378],[226,456],[214,600],[100,478],[0,480]],
     rotulo:[105,330],
     resumo:"Vizinho ao norte e a oeste, separado pelo rio do Sal.",
@@ -328,7 +328,7 @@ const VIZINHOS = [
       ["Marca","Abriga os grandes conjuntos habitacionais do complexo da Taiçoca."],
       ["RMA","Integra a Região Metropolitana de Aracaju."]
     ]},
-  { id:"sao-cristovao", nome:"São Cristóvão", lado:"Oeste e Sul",
+  { id:"sao-cristovao", nome:"São Cristóvão", lado:"Oeste e Sul", cor:"#C98A1E", dir:"O / S",
     pol:[[0,480],[100,478],[214,600],[206,668],[218,748],[240,828],[275,900],[305,978],[330,1060],[352,1145],[375,1228],[250,1225],[110,1200],[0,1180]],
     rotulo:[120,880],
     resumo:"Vizinho a oeste e ao sul — a antiga capital.",
@@ -338,7 +338,7 @@ const VIZINHOS = [
       ["Disputa","Reivindica judicialmente a área da Zona de Expansão (Mosqueiro, Robalo, Areia Branca…). O caso chegou ao STF."],
       ["Marca","Abriga o campus da UFS, no Rosa Elze. Integra a RMA."]
     ]},
-  { id:"itaporanga", nome:"Itaporanga d'Ajuda", lado:"Sul",
+  { id:"itaporanga", nome:"Itaporanga d'Ajuda", lado:"Sul", cor:"#B23A6F", dir:"S",
     pol:[[0,1180],[110,1200],[250,1225],[370,1252],[470,1272],[545,1288],[600,1262],[620,1400],[0,1400]],
     rotulo:[230,1330],
     resumo:"Vizinho ao SUL, do outro lado do Vaza-Barris.",

@@ -80,10 +80,18 @@ function desenhar(){
   /* municípios vizinhos */
   VIZINHOS.forEach(v => {
     const g = el("g", { class:"grupo" }, camadas.vizinhos);
-    const p = el("polygon", { points: pts(v.pol), class:"vizinho", id:"f-" + v.id }, g);
+    const p = el("polygon", {
+      points: pts(v.pol), class:"vizinho", id:"f-" + v.id,
+      style:"--cor:" + v.cor
+    }, g);
     registrar(p, Object.assign({ zona:"vizinho" }, v));
-    const t = el("text", { x:v.rotulo[0], y:v.rotulo[1], class:"rot-vizinho" }, camadas.rotulos);
-    quebrar(t, v.nome, v.rotulo[0], v.rotulo[1], 15);
+
+    const [rx, ry] = v.rotulo;
+    const gr = el("g", { class:"rot-mun", id:"r-" + v.id }, camadas.rotulos);
+    const selo = el("text", { x:rx, y:ry - 22, class:"selo-dir" }, gr);
+    selo.textContent = v.dir;
+    const t = el("text", { x:rx, y:ry + 4, class:"rot-vizinho" }, gr);
+    quebrar(t, v.nome, rx, ry + 4, 17);
   });
 
   /* bairros de Aracaju */
@@ -150,6 +158,9 @@ function desenhar(){
   const oc = el("text", { x:800, y:900, class:"rot-oceano",
     transform:"rotate(90 800 900)" }, camadas.rotulos);
   oc.textContent = "OCEANO ATLÂNTICO";
+  const ocd = el("text", { x:846, y:900, class:"selo-dir selo-mar",
+    transform:"rotate(90 846 900)" }, camadas.rotulos);
+  ocd.textContent = "LESTE";
 
   bussola();
 }
@@ -189,7 +200,7 @@ function bussola(){
 function mostrarTip(e, d){
   const z = ZONAS[d.zona || "vizinho"];
   tip.innerHTML =
-    `<span class="tip-zona" style="background:${z ? z.cor : "#888"}">${d.lado || (z ? z.nome : "")}</span>` +
+    `<span class="tip-zona" style="background:${d.cor || (z ? z.cor : "#888")}">${d.lado ? "Limite " + d.lado : (z ? z.nome : "")}</span>` +
     `<strong>${d.nome}</strong><span class="tip-txt">${d.resumo || ""}</span>` +
     `<span class="tip-dica">clique para abrir os detalhes</span>`;
   tip.classList.add("ver");
@@ -228,7 +239,7 @@ function abrirModal(d){
   const z = ZONAS[d.zona || "vizinho"];
   mTitulo.textContent = d.nome;
   mZona.textContent = d.lado ? "Limite " + d.lado : (z ? z.nome : "");
-  mZona.style.background = z ? z.cor : "#888";
+  mZona.style.background = d.cor || (z ? z.cor : "#888");
   mResumo.textContent = d.resumo || "";
   mCorpo.innerHTML = "";
   (d.itens || []).forEach(([h, p]) => {
@@ -270,37 +281,93 @@ function vizinhosDe(d){
     .map(o => o.a);
 }
 
-/* ---------- filtros por zona ---------- */
+/* ---------- legenda: municípios (foco) + zonas ---------- */
+let foco = null; /* {tipo:"mun"|"zona", id} */
+
 function montarLegenda(){
-  const cx = document.getElementById("legenda");
-  Object.entries(ZONAS).forEach(([id, z]) => {
+  const cxM = document.getElementById("legenda-mun");
+  const alvos = [
+    ...VIZINHOS.map(v => ({ id:v.id, nome:v.nome, dir:v.dir, cor:v.cor })),
+    (() => { const o = AGUAS.find(a => a.id === "oceano");
+             return { id:o.id, nome:o.nome, dir:o.dir, cor:o.cor }; })()
+  ];
+  alvos.forEach(a => {
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "chip";
-    b.dataset.zona = id;
+    b.className = "chip chip-mun";
+    b.dataset.alvo = a.id;
+    b.style.setProperty("--cor", a.cor);
+    b.innerHTML = `<i></i><b>${a.dir}</b> ${a.nome}`;
+    b.addEventListener("click", () => alternarFoco("mun", a.id, b));
+    cxM.appendChild(b);
+  });
+
+  const cxZ = document.getElementById("legenda-zona");
+  ["norte","centro","oeste","sul","expansao"].forEach(id => {
+    const z = ZONAS[id];
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip chip-zona";
+    b.dataset.alvo = id;
     b.style.setProperty("--cor", z.cor);
     b.innerHTML = `<i></i>${z.nome}`;
-    b.addEventListener("click", () => alternarZona(id, b));
-    cx.appendChild(b);
+    b.addEventListener("click", () => alternarFoco("zona", id, b));
+    cxZ.appendChild(b);
+  });
+
+  const bt = document.getElementById("modo-zonas");
+  bt.addEventListener("click", () => {
+    const on = document.body.classList.toggle("modo-zonas");
+    bt.classList.toggle("on", on);
+    bt.textContent = on ? "Colorir bairros: ligado" : "Colorir bairros por zona";
+    document.getElementById("legenda-zona").hidden = !on;
+    if (!on && foco && foco.tipo === "zona") limparFoco();
   });
 }
-let zonaFiltro = null;
-function alternarZona(id, botao){
-  zonaFiltro = zonaFiltro === id ? null : id;
-  document.querySelectorAll("#legenda .chip").forEach(c => c.classList.remove("on"));
-  if (zonaFiltro) botao.classList.add("on");
-  svg.classList.toggle("filtrando", !!zonaFiltro);
-  AREAS.forEach(a => {
-    const n = document.getElementById("f-" + a.id);
-    const r = document.getElementById("r-" + a.id);
-    const off = zonaFiltro && a.zona !== zonaFiltro;
-    if (n) n.classList.toggle("apagado", !!off);
-    if (r) r.classList.toggle("apagado", !!off);
-  });
-  document.querySelectorAll(".camada-aguas .rio").forEach(n =>
-    n.classList.toggle("apagado", !!(zonaFiltro && zonaFiltro !== "agua")));
-  document.querySelectorAll(".camada-vizinhos .vizinho").forEach(n =>
-    n.classList.toggle("apagado", !!(zonaFiltro && zonaFiltro !== "vizinho")));
+
+function limparFoco(){
+  foco = null;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+  document.querySelectorAll(".apagado, .foco").forEach(n => n.classList.remove("apagado", "foco"));
+  svg.classList.remove("filtrando");
+}
+
+function alternarFoco(tipo, id, botao){
+  if (foco && foco.tipo === tipo && foco.id === id) { limparFoco(); return; }
+  limparFoco();
+  foco = { tipo, id };
+  botao.classList.add("on");
+  svg.classList.add("filtrando");
+
+  const apagar = n => n && n.classList.add("apagado");
+  const focar  = n => n && n.classList.add("foco");
+
+  if (tipo === "mun"){
+    /* municípios: apaga os bairros e os outros vizinhos */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    VIZINHOS.forEach(v => {
+      const alvo = v.id === id;
+      if (alvo) { focar(document.getElementById("f-" + v.id)); }
+      else { apagar(document.getElementById("f-" + v.id));
+             apagar(document.getElementById("r-" + v.id)); }
+    });
+    if (id === "oceano"){
+      document.querySelector(".camada-terra").classList.add("apagado");
+      document.querySelectorAll(".camada-vizinhos .vizinho, .rot-mun")
+        .forEach(n => n.classList.add("apagado"));
+      document.querySelector(".rot-oceano").classList.add("foco");
+    }
+  } else {
+    /* zonas: apaga os bairros das outras zonas */
+    AREAS.forEach(a => {
+      if (a.zona === id) return;
+      apagar(document.getElementById("f-" + a.id));
+      apagar(document.getElementById("r-" + a.id));
+    });
+    document.querySelectorAll(".camada-vizinhos .vizinho, .rot-mun")
+      .forEach(n => n.classList.add("apagado"));
+  }
 }
 
 /* ---------- busca ---------- */
@@ -407,6 +474,39 @@ function montarLimites(){
   });
 }
 
+/* ---------- rosa dos ventos ---------- */
+function montarRosa(){
+  const cx = document.getElementById("rosa");
+  const V = id => VIZINHOS.find(v => v.id === id);
+  const mar = AGUAS.find(a => a.id === "oceano");
+  const cel = (ponto, dados, quem, sep) => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.className = "cel";
+    d.style.setProperty("--cor", dados ? dados.cor : "#888");
+    d.innerHTML = `<span class="ponto">${ponto}</span>${quem}<small>${sep}</small>`;
+    if (dados) d.addEventListener("click", () => abrirModal(REGISTRO[dados.id] || dados));
+    cx.appendChild(d);
+  };
+  const vazio = txt => {
+    const d = document.createElement("div");
+    d.className = "cel vazio"; d.textContent = txt; cx.appendChild(d);
+  };
+
+  vazio("NO");
+  cel("NORTE", V("socorro"), "N. S. do Socorro<br>Santo Amaro das Brotas", "rio do Sal");
+  cel("NORDESTE", V("barra-dos-coqueiros"), "Barra dos Coqueiros", "rio Sergipe");
+
+  cel("OESTE", V("sao-cristovao"), "São Cristóvão<br>N. S. do Socorro", "divisa em terra");
+  const meio = document.createElement("div");
+  meio.className = "cel miolo"; meio.textContent = "ARACAJU"; cx.appendChild(meio);
+  cel("LESTE", mar, "Oceano Atlântico", "faixa litorânea");
+
+  vazio("SO");
+  cel("SUL", V("itaporanga"), "São Cristóvão<br>Itaporanga d'Ajuda", "rio Vaza-Barris");
+  vazio("SE");
+}
+
 /* ---------- início ---------- */
 desenhar();
 aplicarView();
@@ -414,3 +514,4 @@ montarLegenda();
 montarBusca();
 ligarNavegacao();
 montarLimites();
+montarRosa();

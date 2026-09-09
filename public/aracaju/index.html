@@ -40,7 +40,13 @@
       <button id="zoom-reset" class="txt" type="button" title="Ver o mapa inteiro">Mapa inteiro</button>
     </div>
   </div>
-  <div id="legenda"></div>
+  <div class="legenda-tit">Municípios e água que fazem limite — clique para isolar no mapa</div>
+  <div class="legenda-linha" id="legenda-mun"></div>
+
+  <div class="legenda-linha" style="margin-top:10px">
+    <button id="modo-zonas" type="button">Colorir bairros por zona</button>
+    <div class="legenda-linha" id="legenda-zona" hidden></div>
+  </div>
 
   <div class="moldura" style="margin-top:12px">
     <svg id="mapa" viewBox="0 0 900 1400" preserveAspectRatio="xMidYMid meet"
@@ -53,11 +59,12 @@
   <div class="cap-head"><span class="cap-num">GUIA</span><h2>Como ler este mapa</h2></div>
   <div class="barra"></div>
   <div class="grade">
-    <div class="card"><h4>Cores por zona</h4><p>Cada cor é uma zona da cidade: norte, centro, oeste, sul e Zona de Expansão. Clique numa cor da legenda para isolar só aquela zona.</p></div>
-    <div class="card"><h4>Estrelas ★</h4><p>Marcam os pontos que mais caem em prova: Marco Zero (Santo Antônio), Centro/Quadrado de Pirro, 13 de Julho, Coroa do Meio e Atalaia.</p></div>
-    <div class="card"><h4>Quadrados vermelhos</h4><p>São as pontes. Clique para saber qual rio ela vence e o que ela liga — é assim que a banca cobra.</p></div>
-    <div class="card"><h4>Faixas azuis</h4><p>São os rios: Sergipe, do Sal, Poxim e Vaza-Barris. O azul do fundo, à direita, é o Oceano Atlântico — o limite leste.</p></div>
+    <div class="card"><h4>A cor é do vizinho</h4><p>Cada município limítrofe tem sua própria cor, e o oceano é o azul da direita. Aracaju fica em bege claro no meio — é ela que está cercada. Clique numa cor da legenda para isolar aquele limite.</p></div>
+    <div class="card"><h4>O selo de direção</h4><p>Em cima do nome de cada vizinho vai a direção em que ele fica: <b>N</b>, <b>NE</b>, <b>L</b>, <b>O</b>, <b>S</b>. É exatamente assim que a banca pergunta.</p></div>
+    <div class="card"><h4>Estrelas ★ e pontes</h4><p>As estrelas marcam o que mais cai (marco zero, Centro, 13 de Julho, Coroa do Meio, Atalaia). Os quadrados vermelhos são as pontes: clique para ver qual rio ela vence e o que ela liga.</p></div>
+    <div class="card"><h4>Quer ver os bairros?</h4><p>O botão <b>“Colorir bairros por zona”</b> pinta Aracaju por dentro (norte, centro, oeste, sul e Zona de Expansão) quando você quiser estudar a divisão interna.</p></div>
   </div>
+
   <div class="box">
     <div class="rotulo">BIZU DO MAPA</div>
     <p>Olhe o desenho e repita: <b>água em três lados</b>. Rio do Sal no norte, rio Sergipe no nordeste, oceano no leste, Vaza-Barris no sul. Só o <b>oeste</b> é divisa em terra firme (São Cristóvão e Nossa Senhora do Socorro).</p>
@@ -67,6 +74,7 @@
 <section id="limites">
   <div class="cap-head"><span class="cap-num">SÍNTESE</span><h2>Limites, lado por lado</h2></div>
   <div class="barra"></div>
+  <div class="rosa" id="rosa"></div>
   <div class="tab-rolagem">
     <table>
       <thead><tr><th>Lado</th><th>Com quem faz limite</th><th>Separado por</th></tr></thead>
