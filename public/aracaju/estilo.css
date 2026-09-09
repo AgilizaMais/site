@@ -136,7 +136,34 @@ text{pointer-events:none;font-family:"Segoe UI",Arial,sans-serif}
 .rot-ponto{font-size:11.5px;font-weight:800;fill:#26160A;paint-order:stroke;
   stroke:rgba(255,255,255,.85);stroke-width:3px}
 .rot-ponto.fim{text-anchor:end}
+.rot-saida{font-size:13px;fill:#4A2800}
+.rot-destino{font-size:11.5px;font-weight:900;fill:#1B1208;letter-spacing:.3px;
+  stroke:#fff;stroke-width:3.4px;paint-order:stroke}
+.rot-divisa{font-size:10.5px;font-weight:900;fill:#2B1D0E;text-anchor:middle;letter-spacing:1.6px;
+  paint-order:stroke;stroke:rgba(255,255,255,.85);stroke-width:3.2px}
 .rot-ponto.inicio{text-anchor:start}
+
+/* divisas em terra */
+.divisa{cursor:pointer}
+.divisa-halo{fill:none;stroke:#fff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.divisa-base{fill:none;stroke:#2B1D0E;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.divisa-traco{fill:none;stroke:var(--cor);stroke-width:4.5;stroke-linecap:butt;
+  stroke-dasharray:13 11;transition:stroke-width .15s}
+.divisa:hover .divisa-traco,.divisa.ativo .divisa-traco{stroke:#fff;stroke-width:6}
+.divisa:hover .divisa-halo,.divisa.ativo .divisa-halo{opacity:1}
+.divisa.foco .divisa-halo{stroke:#FFD24A;opacity:1;stroke-width:22}
+
+/* pontes desenhadas sobre o rio */
+.tabuleiro{fill:#C0392B;stroke:#5C160E;stroke-width:2}
+.travessa{stroke:rgba(255,255,255,.7);stroke-width:1.6}
+.pilar{fill:#5C160E}
+.ponte-saida .tabuleiro{fill:#F0A500;stroke:#6B3B00;stroke-width:2.6}
+.ponte-saida .travessa{stroke:rgba(90,50,0,.55);stroke-width:2}
+.ponte-saida .pilar{fill:#6B3B00}
+.selo-saida{fill:#fff;stroke:#6B3B00;stroke-width:2.4}
+.ponte-saida:hover .tabuleiro,.ponte-saida.ativo .tabuleiro{fill:#fff}
+.ponte-interna:hover .tabuleiro,.ponte-interna.ativo .tabuleiro{fill:#8E1F14}
+.ponte-saida.foco .tabuleiro{stroke-width:4;stroke:#fff}
 
 .pino-ponte{fill:#C0392B;stroke:#fff;stroke-width:2.4}
 .pino-marco{fill:#F0A500;stroke:#7A3B00;stroke-width:2.6}
@@ -144,6 +171,8 @@ text{pointer-events:none;font-family:"Segoe UI",Arial,sans-serif}
 .icone-cheio{fill:#7A3B00}
 .ponto{cursor:pointer}
 .ponto:hover .pino-ponte{fill:#8E1F14}
+.chip-limite{border-style:dashed}
+.chip-limite.on{border-style:solid}
 .ponto:hover .pino-marco{fill:#fff}
 
 .bussola-fundo{fill:rgba(255,255,255,.9);stroke:var(--mar);stroke-width:2.5}
@@ -261,3 +290,8 @@ footer a{color:#fff}
   display:flex;align-items:center;justify-content:center}
 
 [hidden]{display:none!important}
+
+.sub-tit{font-size:17px;font-weight:900;color:var(--mar);margin:26px 0 4px}
+.pilula{display:inline-block;color:#fff;font-size:11.5px;font-weight:900;letter-spacing:.6px;
+  padding:3px 9px;border-radius:999px;white-space:nowrap}
+#tab-travessias tr:hover td{background:#F1F7FB}

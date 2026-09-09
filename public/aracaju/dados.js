@@ -32,6 +32,7 @@ const ZONAS = {
   oeste:    { nome: "Zona Oeste",        cor: "#8465B0", texto: "Expansão popular ao longo do rio Poxim." },
   sul:      { nome: "Zona Sul",          cor: "#2F9E8F", texto: "Orla, verticalização e área mais valorizada." },
   expansao: { nome: "Zona de Expansão",  cor: "#C9A227", texto: "≈40% do território: dunas, lagoas, restinga e mangue." },
+  terra:    { nome: "Divisa em terra",   cor: "#2B1D0E", texto: "Os trechos secos do limite — só a oeste e sudoeste." },
   agua:     { nome: "Rios e oceano",     cor: "#1B84C4", texto: "As águas que definem os limites do município." },
   vizinho:  { nome: "Municípios vizinhos",cor: "#B9AC96", texto: "Os cinco municípios limítrofes." }
 };
@@ -271,8 +272,8 @@ const AGUAS = [
       ["Ponte","Ponte Construtor João Alves (2006), ~1.800 m, maior ponte urbana do Nordeste."]
     ]},
   { id:"rio-do-sal", nome:"Rio do Sal", tipo:"rio",
-    d:"M 60 520 L 110 470 L 165 400 L 215 340 L 258 300",
-    largura:16, rotulo:[128,452], rotAng:-52,
+    d:"M 34 398 L 108 422 L 178 446 L 226 456 L 238 378 L 258 300",
+    largura:16, rotulo:[92,428], rotAng:16,
     resumo:"O limite NORTE, com Nossa Senhora do Socorro.",
     itens:[
       ["Função","Faz o limite norte de Aracaju com Nossa Senhora do Socorro."],
@@ -351,7 +352,8 @@ const VIZINHOS = [
 
 /* --- pontos: pontes e marcos ---------------------------- */
 const PONTOS = [
-  { id:"p-joao-alves", tipo:"ponte", curto:"Ponte João Alves", nome:"Ponte Construtor João Alves", xy:[634,456], lado:"dir",
+  { id:"p-joao-alves", tipo:"ponte", curto:"Ponte João Alves", nome:"Ponte Construtor João Alves", xy:[634,456], anc:"dir",
+    ang:-36, vao:96, saida:"barra-dos-coqueiros",
     resumo:"Rio Sergipe · Aracaju ⇄ Barra dos Coqueiros",
     itens:[
       ["Rio","Rio Sergipe (foz)."],
@@ -360,14 +362,15 @@ const PONTOS = [
       ["Tamanho","Cerca de 1.800 m — a maior ponte urbana do Nordeste."],
       ["Efeito","Abriu o litoral norte e o acesso ao Terminal Marítimo Inácio Barbosa."]
     ]},
-  { id:"p-rolemberg", tipo:"ponte", nome:"Ponte José Rolemberg Leite", curto:"Ponte José Rolemberg Leite", xy:[188,368], lado:"esq",
+  { id:"p-rolemberg", tipo:"ponte", nome:"Ponte José Rolemberg Leite", curto:"P. Rolemberg Leite", xy:[237,394], anc:"esq",
+    ang:9, vao:60, saida:"socorro",
     resumo:"Rio do Sal · Aracaju ⇄ N. S. do Socorro",
     itens:[
       ["Rio","Rio do Sal."],
       ["Liga","Zona norte de Aracaju ao conjunto João Alves, em Nossa Senhora do Socorro."],
       ["Papel","É a ponte do limite norte."]
     ]},
-  { id:"p-godofredo", tipo:"ponte", curto:"Ponte Godofredo Diniz", nome:"Ponte Godofredo Diniz", xy:[620,610], lado:"dir",
+  { id:"p-godofredo", tipo:"ponte", curto:"Ponte Godofredo Diniz", nome:"Ponte Godofredo Diniz", xy:[620,610], anc:"dir", ang:27, vao:52,
     resumo:"Rio Poxim · 13 de Julho ⇄ Coroa do Meio",
     itens:[
       ["Rio","Rio Poxim."],
@@ -375,21 +378,22 @@ const PONTOS = [
       ["Época","Anos 1970, gestão João Alves Filho."],
       ["Efeito","Viabilizou a ocupação da orla e o acesso à Atalaia."]
     ]},
-  { id:"p-juscelino", tipo:"ponte", curto:"P. Pres. Juscelino", nome:"Ponte Presidente Juscelino", xy:[556,652], lado:"esq",
+  { id:"p-juscelino", tipo:"ponte", curto:"P. Pres. Juscelino", nome:"Ponte Presidente Juscelino", xy:[556,652], anc:"esq", ang:-72, vao:48,
     resumo:"Rio Poxim · a mais antiga sobre o Poxim",
     itens:[
       ["Rio","Rio Poxim."],
       ["História","Viabilizada após o desmonte do Morro do Bonfim, a duna que forneceu areia para os aterros."],
       ["Efeito","Ligou o Centro ao caminho do mar e acabou com a travessia de balsas."]
     ]},
-  { id:"p-gilberto", tipo:"ponte", curto:"P. Gilberto Vila-Nova", nome:"Ponte Gilberto Vila-Nova de Carvalho", xy:[432,622], lado:"esq",
+  { id:"p-gilberto", tipo:"ponte", curto:"P. Gilberto Vila-Nova", nome:"Ponte Gilberto Vila-Nova de Carvalho", xy:[432,622], anc:"esq", ang:-83, vao:48,
     resumo:"Rio Poxim · Augusto Franco ⇄ av. Tancredo Neves",
     itens:[
       ["Rio","Rio Poxim."],
       ["Data","Entregue em 2013, no aniversário de 158 anos da cidade."],
       ["Liga","Conjunto Augusto Franco à avenida Tancredo Neves, pelo bairro Inácio Barbosa."]
     ]},
-  { id:"p-joel", tipo:"ponte", nome:"Ponte Joel Silveira", xy:[470,1272], lado:"dir",
+  { id:"p-joel", tipo:"ponte", curto:"Ponte Joel Silveira", nome:"Ponte Joel Silveira", xy:[470,1272], anc:"dir",
+    ang:-79, vao:86, saida:"itaporanga",
     resumo:"Rio Vaza-Barris · Mosqueiro ⇄ Itaporanga d'Ajuda",
     itens:[
       ["Rio","Rio Vaza-Barris."],
@@ -397,7 +401,7 @@ const PONTOS = [
       ["Liga","Zona de Expansão (Mosqueiro) a Itaporanga d'Ajuda, pela SE-100 sul."],
       ["Efeito","Abriu o litoral sul do estado."]
     ]},
-  { id:"marco-zero", tipo:"marco", curto:"MARCO ZERO", nome:"Marco Zero — Colina de Santo Antônio", xy:[400,344], lado:"dir",
+  { id:"marco-zero", tipo:"marco", curto:"MARCO ZERO", nome:"Marco Zero — Colina de Santo Antônio", xy:[400,344], anc:"dir",
     resumo:"Onde Aracaju nasceu, em 17/03/1855",
     itens:[
       ["O que é","O Outeiro (Colina) de Santo Antônio, ponto alto onde ficava o povoado e onde a Assembleia Provincial aprovou a transferência da capital."],
@@ -407,15 +411,15 @@ const PONTOS = [
       ["Projetista","Sebastião José Basílio Pirro, engenheiro do Quadrado."],
       ["Detalhe","A cidade nova foi implantada cerca de 500 m ao SUL da colina, em terreno de mangue, para ficar na margem do rio."]
     ]},
-  { id:"aeroporto-pt", tipo:"marco", curto:"Aeroporto Santa Maria", nome:"Aeroporto Santa Maria", xy:[520,800], lado:"dir",
+  { id:"aeroporto-pt", tipo:"marco", curto:"Aeroporto Santa Maria", nome:"Aeroporto Santa Maria", xy:[520,800], anc:"dir",
     resumo:"Aeroporto Internacional de Aracaju",
     itens:[["Onde","Zona sul, entre a Atalaia e a Zona de Expansão."],
            ["Ambiente","Cercado pelos manguezais do Poxim e do canal Santa Maria."]]},
-  { id:"foz-sergipe", tipo:"marco", curto:"Foz do Sergipe", nome:"Foz do rio Sergipe", xy:[672,556], lado:"dir",
+  { id:"foz-sergipe", tipo:"marco", curto:"Foz do Sergipe", nome:"Foz do rio Sergipe", xy:[672,556], anc:"dir",
     resumo:"Onde o rio Sergipe encontra o Atlântico",
     itens:[["Divisa","Separa Aracaju (oeste) de Barra dos Coqueiros (leste/nordeste)."],
            ["Antigo nome","Barra da Cotinguiba."]]},
-  { id:"foz-vb", tipo:"marco", curto:"", nome:"Foz do rio Vaza-Barris", xy:[600,1262], lado:"esq",
+  { id:"foz-vb", tipo:"marco", curto:"", nome:"Foz do rio Vaza-Barris", xy:[600,1262], anc:"esq",
     resumo:"Ponto mais ao sul do litoral de Aracaju",
     itens:[["Divisa","Separa Aracaju de Itaporanga d'Ajuda."]]}
 ];
@@ -427,4 +431,37 @@ const LIMITES = [
   ["Leste","Oceano Atlântico","Faixa litorânea / praias"],
   ["Sul","São Cristóvão e Itaporanga d'Ajuda","Rio Vaza-Barris e canal Santa Maria (Ponte Joel Silveira)"],
   ["Oeste","São Cristóvão e Nossa Senhora do Socorro","Limite terrestre e rio Poxim"]
+];
+
+/* --- divisas em TERRA (o único lado de Aracaju que não é água) --- */
+const DIVISAS = [
+  { id:"divisa-socorro", nome:"Divisa em terra com Nossa Senhora do Socorro",
+    tipo:"terra", cor:"#1F9E6E", vizinho:"socorro",
+    linha:[[226,456],[214,600]], rotulo:[172,552],
+    resumo:"Trecho seco do limite oeste, ao sul do rio do Sal.",
+    itens:[
+      ["O que é","Depois que o rio do Sal termina, o limite com Nossa Senhora do Socorro deixa de ser água e vira uma linha em terra firme."],
+      ["Onde passa","No rumo oeste da zona norte/oeste — bairros como Olaria, Novo Paraíso e Capucho encostam nesse trecho."],
+      ["Na prova","Socorro aparece nas DUAS naturezas: ao NORTE separado pelo rio do Sal, a OESTE por divisa terrestre. Se a questão disser que o limite com Socorro é só fluvial, está incompleta."]
+    ]},
+  { id:"divisa-sao-cristovao", nome:"Divisa em terra com São Cristóvão",
+    tipo:"terra", cor:"#C98A1E", vizinho:"sao-cristovao",
+    linha:[[214,600],[206,668],[218,748],[240,828],[275,900],[305,978],[330,1060],[352,1145],[375,1228]],
+    rotulo:[236,1010],
+    resumo:"A maior divisa seca de Aracaju, do Poxim até o Vaza-Barris.",
+    itens:[
+      ["O que é","Desce por todo o flanco oeste e sudoeste da cidade, do rio Poxim até a margem do rio Vaza-Barris."],
+      ["Onde passa","Jabotiana, Santa Maria e a borda oeste da Zona de Expansão fazem fundo com São Cristóvão."],
+      ["Rio Poxim","Parte do traçado acompanha o rio Poxim, que entra em Aracaju vindo de São Cristóvão — por isso ele às vezes é citado como referência do limite oeste."],
+      ["Disputa","É justamente esse trecho que São Cristóvão questiona na Justiça: o município reivindica a área da antiga Zona de Expansão. O caso chegou ao STF; para a prova, a área é de Aracaju."]
+    ]}
+];
+
+/* --- síntese: como Aracaju se separa de cada vizinho --- */
+const TRAVESSIAS = [
+  { vizinho:"socorro",            natureza:"Água + terra", como:"Rio do Sal (norte) e divisa terrestre (oeste)", ponte:"Ponte José Rolemberg Leite" },
+  { vizinho:"santo-amaro",        natureza:"Água",         como:"Estuário do rio Sergipe",                       ponte:"— (sem ponte direta)" },
+  { vizinho:"barra-dos-coqueiros",natureza:"Água",         como:"Foz do rio Sergipe",                            ponte:"Ponte Construtor João Alves" },
+  { vizinho:"sao-cristovao",      natureza:"Terra",        como:"Divisa terrestre (e rio Poxim como referência)",ponte:"— (não precisa de ponte)" },
+  { vizinho:"itaporanga",         natureza:"Água",         como:"Rio Vaza-Barris",                               ponte:"Ponte Joel Silveira" }
 ];

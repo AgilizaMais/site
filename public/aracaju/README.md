@@ -25,6 +25,17 @@ própria cor e um selo de direção (N, NE, L, O, S), e Aracaju fica neutra no m
 O botão *Colorir bairros por zona* liga o modo antigo, com Aracaju pintada por
 zona, para estudar a divisão interna.
 
+Dois destaques carregam a resposta das questões de limite:
+
+- **Divisa em terra** (`DIVISAS` em `dados.js`): linha preta com tracejado na cor do
+  vizinho, sobre o flanco oeste/sudoeste. É o único lado seco de Aracaju.
+- **Pontes que saem do município** (`PONTOS[].saida`): desenhadas como tabuleiro
+  dourado atravessando o rio, com o município de destino escrito embaixo. As pontes
+  internas (rio Poxim) ficam menores e vermelhas.
+
+Os chips *Divisa em terra* e *Pontes que saem de Aracaju* isolam cada um desses
+grupos no mapa.
+
 ## Como o mapa é desenhado
 
 Não é um mapa geográfico real (sem GeoJSON, sem biblioteca). É um **desenho
@@ -45,4 +56,5 @@ Para mexer em um bairro, edite `AREAS` em `dados.js`:
 `cel` = `[linhaDeCima, linhaDeBaixo, colunaInicial, colunaFinal]`. Para mudar o
 formato do território, mexa nos pontos da `MALHA` — todos os bairros se ajustam
 juntos. Rios são traçados (`AGUAS[].d`), vizinhos são polígonos (`VIZINHOS[].pol`, cada um
-com `cor` e `dir`) e pontes/marcos são pontos (`PONTOS[].xy`).
+com `cor` e `dir`) e pontes/marcos são pontos (`PONTOS[].xy`, com `ang`/`vao` para o tabuleiro e
+`saida` para marcar a ponte como intermunicipal).

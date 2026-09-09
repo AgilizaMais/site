@@ -67,7 +67,7 @@ function registrar(node, dado){
 
 /* ---------- desenho ---------- */
 function desenhar(){
-  ["mar","terra","vizinhos","bairros","aguas","rotulos","pontos","enfeites"]
+  ["mar","terra","vizinhos","bairros","aguas","divisas","rotulos","pontos","enfeites"]
     .forEach(n => camadas[n] = el("g", { class: "camada-" + n }));
 
   /* oceano = fundo */
@@ -129,28 +129,64 @@ function desenhar(){
     t.textContent = r.nome;
   });
 
+  /* divisas em terra */
+  DIVISAS.forEach(v => {
+    const g = el("g", { class:"grupo divisa", id:"f-" + v.id, style:"--cor:" + v.cor }, camadas.divisas);
+    const d = "M " + v.linha.map(p => p[0] + " " + p[1]).join(" L ");
+    el("path", { d, class:"divisa-halo" }, g);
+    el("path", { d, class:"divisa-base" }, g);
+    el("path", { d, class:"divisa-traco" }, g);
+    registrar(g, Object.assign({ zona:"terra" }, v));
+    const t = el("text", { x:v.rotulo[0], y:v.rotulo[1], class:"rot-divisa" }, camadas.rotulos);
+    t.textContent = "DIVISA EM TERRA";
+  });
+
   /* pontes e marcos */
   PONTOS.forEach(p => {
     const g = el("g", { class:"grupo ponto p-" + p.tipo, id:"f-" + p.id }, camadas.pontos);
     if (p.tipo === "ponte"){
-      el("rect", { x:p.xy[0]-11, y:p.xy[1]-11, width:22, height:22, rx:5, class:"pino pino-ponte" }, g);
-      el("path", {
-        d:`M ${p.xy[0]-6} ${p.xy[1]+3} q 6 -9 12 0 M ${p.xy[0]-6} ${p.xy[1]+3} v 4 M ${p.xy[0]+6} ${p.xy[1]+3} v 4`,
-        class:"icone"
-      }, g);
+      const saida = !!p.saida;
+      g.classList.add(saida ? "ponte-saida" : "ponte-interna");
+      /* tabuleiro atravessando o rio */
+      const v = p.vao || 48, esp = saida ? 17 : 11;
+      const tab = el("g", { transform:`rotate(${p.ang || 0} ${p.xy[0]} ${p.xy[1]})` }, g);
+      el("rect", { x:p.xy[0]-v/2, y:p.xy[1]-esp/2, width:v, height:esp, rx:3,
+                   class:"tabuleiro" }, tab);
+      /* travessas do tabuleiro */
+      const n = saida ? 5 : 3;
+      for (let i = 1; i <= n; i++){
+        const px = p.xy[0] - v/2 + (v * i) / (n + 1);
+        el("line", { x1:px, y1:p.xy[1]-esp/2, x2:px, y2:p.xy[1]+esp/2, class:"travessa" }, tab);
+      }
+      /* pilares nas duas margens */
+      [-v/2, v/2].forEach(dx => el("circle", {
+        cx:p.xy[0]+dx, cy:p.xy[1], r:saida ? 5 : 3.5, class:"pilar" }, tab));
+      if (saida) el("circle", { cx:p.xy[0], cy:p.xy[1], r:6, class:"selo-saida" }, g);
     } else {
       el("circle", { cx:p.xy[0], cy:p.xy[1], r:11, class:"pino pino-marco" }, g);
       el("circle", { cx:p.xy[0], cy:p.xy[1], r:4, class:"icone-cheio" }, g);
     }
     const texto = p.curto !== undefined ? p.curto : p.nome.split(" — ")[0];
     if (texto){
-      const dx = p.lado === "esq" ? -16 : 16;
+      const rec = p.vao ? p.vao / 2 + 9 : 16;
+      const dx = p.anc === "esq" ? -rec : rec;
       const t = el("text", {
         x:p.xy[0]+dx, y:p.xy[1]+4,
-        class:"rot-ponto " + (p.lado === "esq" ? "fim" : "inicio") +
+        class:"rot-ponto " + (p.anc === "esq" ? "fim" : "inicio") +
+              (p.saida ? "" : " rot-secundario") +
               (p.id === "marco-zero" ? " rot-marco" : "")
       }, camadas.rotulos);
       t.textContent = texto;
+      if (p.saida){
+        t.classList.add("rot-saida");
+        const viz = VIZINHOS.find(v => v.id === p.saida);
+        const t2 = el("text", {
+          x:p.xy[0] + dx, y:p.xy[1] + 19,
+          class:"rot-ponto rot-destino " + (p.anc === "esq" ? "fim" : "inicio"),
+          style:"--cor:" + (viz ? viz.cor : "#888")
+        }, camadas.rotulos);
+        t2.textContent = "→ " + (viz ? viz.nome : "");
+      }
     }
     registrar(g, p);
   });
@@ -197,10 +233,20 @@ function bussola(){
 }
 
 /* ---------- tooltip ---------- */
-function mostrarTip(e, d){
+function seloDe(d){
   const z = ZONAS[d.zona || "vizinho"];
+  if (d.lado) return { txt:"Limite " + d.lado, cor:d.cor || (z && z.cor) || "#888" };
+  if (d.tipo === "ponte") return d.saida
+    ? { txt:"Ponte intermunicipal", cor:"#F0A500" }
+    : { txt:"Ponte interna (rio Poxim)", cor:"#C0392B" };
+  if (d.tipo === "marco") return { txt:"Ponto de referência", cor:"#F0A500" };
+  return { txt:z ? z.nome : "", cor:d.cor || (z && z.cor) || "#888" };
+}
+
+function mostrarTip(e, d){
+  const s = seloDe(d);
   tip.innerHTML =
-    `<span class="tip-zona" style="background:${d.cor || (z ? z.cor : "#888")}">${d.lado ? "Limite " + d.lado : (z ? z.nome : "")}</span>` +
+    `<span class="tip-zona" style="background:${s.cor}">${s.txt}</span>` +
     `<strong>${d.nome}</strong><span class="tip-txt">${d.resumo || ""}</span>` +
     `<span class="tip-dica">clique para abrir os detalhes</span>`;
   tip.classList.add("ver");
@@ -236,13 +282,24 @@ const mVizinho = document.getElementById("modal-vizinhos");
 
 function abrirModal(d){
   esconderTip();
-  const z = ZONAS[d.zona || "vizinho"];
+  const s = seloDe(d);
   mTitulo.textContent = d.nome;
-  mZona.textContent = d.lado ? "Limite " + d.lado : (z ? z.nome : "");
-  mZona.style.background = d.cor || (z ? z.cor : "#888");
+  mZona.textContent = s.txt;
+  mZona.style.background = s.cor;
   mResumo.textContent = d.resumo || "";
   mCorpo.innerHTML = "";
-  (d.itens || []).forEach(([h, p]) => {
+  const extra = [];
+  if (d.saida){
+    const viz = VIZINHOS.find(v => v.id === d.saida);
+    if (viz) extra.push(["Limite que ela vence",
+      `É por esta ponte que se sai de Aracaju para <b>${viz.nome}</b> — vizinho a <b>${viz.lado}</b>, separado por água. Sem ela, não há ligação por terra.`]);
+  }
+  if (d.vizinho){
+    const viz = VIZINHOS.find(v => v.id === d.vizinho);
+    if (viz) extra.push(["Vizinho deste trecho",
+      `<b>${viz.nome}</b> — a <b>${viz.lado}</b> de Aracaju.`]);
+  }
+  [...extra, ...(d.itens || [])].forEach(([h, p]) => {
     const bloco = document.createElement("div");
     bloco.className = "linha";
     bloco.innerHTML = `<h4>${h}</h4><p>${p}</p>`;
@@ -302,6 +359,24 @@ function montarLegenda(){
     cxM.appendChild(b);
   });
 
+  const cxL = document.getElementById("legenda-limite");
+  [
+    { tipo:"terra", id:"terra", cor:"#2B1D0E", txt:"Divisa em terra",
+      dica:"os trechos secos do limite oeste" },
+    { tipo:"ponte", id:"ponte", cor:"#F0A500", txt:"Pontes que saem de Aracaju",
+      dica:"as travessias sobre os limites de água" }
+  ].forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip chip-limite";
+    b.dataset.alvo = o.id;
+    b.title = o.dica;
+    b.style.setProperty("--cor", o.cor);
+    b.innerHTML = `<i></i>${o.txt}`;
+    b.addEventListener("click", () => alternarFoco(o.tipo, o.id, b));
+    cxL.appendChild(b);
+  });
+
   const cxZ = document.getElementById("legenda-zona");
   ["norte","centro","oeste","sul","expansao"].forEach(id => {
     const z = ZONAS[id];
@@ -358,6 +433,27 @@ function alternarFoco(tipo, id, botao){
         .forEach(n => n.classList.add("apagado"));
       document.querySelector(".rot-oceano").classList.add("foco");
     }
+  } else if (tipo === "terra"){
+    /* divisas secas: só São Cristóvão e Socorro têm trecho em terra */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    VIZINHOS.forEach(v => {
+      if (v.id === "sao-cristovao" || v.id === "socorro") return;
+      apagar(document.getElementById("f-" + v.id));
+      apagar(document.getElementById("r-" + v.id));
+    });
+    document.querySelectorAll(".camada-aguas .grupo").forEach(apagar);
+    document.querySelectorAll(".ponto").forEach(apagar);
+    document.querySelectorAll(".rot-ponto, .rot-destino").forEach(apagar);
+    DIVISAS.forEach(v => focar(document.getElementById("f-" + v.id)));
+  } else if (tipo === "ponte"){
+    /* travessias intermunicipais */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    document.querySelectorAll(".ponte-interna, .p-marco").forEach(apagar);
+    document.querySelectorAll(".camada-divisas .divisa, .rot-divisa, .rot-secundario")
+      .forEach(apagar);
+    document.querySelectorAll(".ponte-saida").forEach(focar);
   } else {
     /* zonas: apaga os bairros das outras zonas */
     AREAS.forEach(a => {
@@ -474,6 +570,23 @@ function montarLimites(){
   });
 }
 
+/* ---------- tabela: água ou terra ---------- */
+function montarTravessias(){
+  const t = document.getElementById("tab-travessias");
+  const cor = { "Água":"#1273AF", "Terra":"#2B1D0E", "Água + terra":"#7B4FA8" };
+  TRAVESSIAS.forEach(v => {
+    const m = VIZINHOS.find(x => x.id === v.vizinho);
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td><b style="color:${m.cor}">${m.nome}</b><br><small>${m.dir}</small></td>` +
+      `<td><span class="pilula" style="background:${cor[v.natureza]}">${v.natureza}</span></td>` +
+      `<td>${v.como}</td><td>${v.ponte}</td>`;
+    tr.style.cursor = "pointer";
+    tr.addEventListener("click", () => abrirModal(REGISTRO[m.id] || m));
+    t.appendChild(tr);
+  });
+}
+
 /* ---------- rosa dos ventos ---------- */
 function montarRosa(){
   const cx = document.getElementById("rosa");
@@ -515,3 +628,4 @@ montarBusca();
 ligarNavegacao();
 montarLimites();
 montarRosa();
+montarTravessias();

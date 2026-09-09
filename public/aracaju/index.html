@@ -43,6 +43,9 @@
   <div class="legenda-tit">Municípios e água que fazem limite — clique para isolar no mapa</div>
   <div class="legenda-linha" id="legenda-mun"></div>
 
+  <div class="legenda-tit">Como esse limite é feito</div>
+  <div class="legenda-linha" id="legenda-limite"></div>
+
   <div class="legenda-linha" style="margin-top:10px">
     <button id="modo-zonas" type="button">Colorir bairros por zona</button>
     <div class="legenda-linha" id="legenda-zona" hidden></div>
@@ -61,7 +64,9 @@
   <div class="grade">
     <div class="card"><h4>A cor é do vizinho</h4><p>Cada município limítrofe tem sua própria cor, e o oceano é o azul da direita. Aracaju fica em bege claro no meio — é ela que está cercada. Clique numa cor da legenda para isolar aquele limite.</p></div>
     <div class="card"><h4>O selo de direção</h4><p>Em cima do nome de cada vizinho vai a direção em que ele fica: <b>N</b>, <b>NE</b>, <b>L</b>, <b>O</b>, <b>S</b>. É exatamente assim que a banca pergunta.</p></div>
-    <div class="card"><h4>Estrelas ★ e pontes</h4><p>As estrelas marcam o que mais cai (marco zero, Centro, 13 de Julho, Coroa do Meio, Atalaia). Os quadrados vermelhos são as pontes: clique para ver qual rio ela vence e o que ela liga.</p></div>
+    <div class="card"><h4>A linha preta tracejada</h4><p>É a <b>divisa em terra</b> — o único jeito de sair de Aracaju a pé. Só existe a oeste e sudoeste, com São Cristóvão e um trecho de Nossa Senhora do Socorro. Clique nela para ver o detalhe.</p></div>
+    <div class="card"><h4>Pontes douradas × vermelhas</h4><p>As <b>douradas</b> atravessam um limite e saem do município (João Alves, Rolemberg Leite e Joel Silveira) — cada uma traz o vizinho de destino escrito embaixo. As <b>vermelhas</b> são internas, todas sobre o rio Poxim.</p></div>
+    <div class="card"><h4>Estrelas ★</h4><p>Marcam o que mais cai em prova: marco zero, Centro, 13 de Julho, Coroa do Meio e Atalaia.</p></div>
     <div class="card"><h4>Quer ver os bairros?</h4><p>O botão <b>“Colorir bairros por zona”</b> pinta Aracaju por dentro (norte, centro, oeste, sul e Zona de Expansão) quando você quiser estudar a divisão interna.</p></div>
   </div>
 
@@ -75,6 +80,18 @@
   <div class="cap-head"><span class="cap-num">SÍNTESE</span><h2>Limites, lado por lado</h2></div>
   <div class="barra"></div>
   <div class="rosa" id="rosa"></div>
+
+  <h3 class="sub-tit">Água ou terra? E precisa de ponte?</h3>
+  <div class="tab-rolagem">
+    <table>
+      <thead><tr><th>Vizinho</th><th>Natureza do limite</th><th>Separado por</th><th>Travessia</th></tr></thead>
+      <tbody id="tab-travessias"></tbody>
+    </table>
+  </div>
+  <div class="box">
+    <div class="rotulo">O RESUMO DO MAPA</div>
+    <p>Só <b>São Cristóvão</b> tem divisa <b>em terra de ponta a ponta</b> com Aracaju — é a única linha preta e tracejada longa do mapa. <b>Nossa Senhora do Socorro</b> é mista: rio do Sal ao norte, divisa seca a oeste. Todos os outros vizinhos são alcançados <b>por ponte</b>, e por isso as três pontes douradas do mapa são as que realmente saem do município.</p>
+  </div>
   <div class="tab-rolagem">
     <table>
       <thead><tr><th>Lado</th><th>Com quem faz limite</th><th>Separado por</th></tr></thead>
