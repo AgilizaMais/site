@@ -285,20 +285,22 @@ const AGUAS = [
     largura:18, rotulo:[330,612], rotAng:-4,
     resumo:"O rio interno: corta a cidade e cria as pontes urbanas.",
     itens:[
-      ["Onde corre","Entra pelo oeste, atravessa a cidade e deságua no rio Sergipe, perto da Coroa do Meio."],
-      ["Formação","Formado pelo encontro do Poxim-Açu com o Poxim-Mirim."],
+      ["Onde corre","Entra pelo oeste, atravessa a cidade e deságua no rio Sergipe, perto da Coroa do Meio. É um dos principais afluentes da margem direita do Sergipe."],
+      ["Formação","Formado pelo Poxim-Açu, pelo Poxim-Mirim e pelo Pitanga. Toda essa sub-bacia pertence à bacia do rio Sergipe."],
       ["Pontes internas","Presidente Juscelino, Godofredo Diniz e Gilberto Vila-Nova de Carvalho — todas ligam bairros de Aracaju entre si."],
       ["Bizu","Poxim = ponte INTERNA. Sergipe, do Sal e Vaza-Barris = pontes que saem do município."]
     ]},
   { id:"rio-pitanga", nome:"Rio Pitanga", tipo:"rio", pequeno:true,
-    d:"M 406 1104 L 399 1162 L 403 1220 L 409 1258",
-    largura:11, rotulo:[374,1166], rotAng:86,
-    resumo:"O 'nome esquecido' da lista dos rios de Aracaju.",
+    d:"M 118 826 L 158 780 L 198 730 L 238 682 L 274 638",
+    largura:11, rotulo:[152,762], rotAng:-50,
+    resumo:"Afluente do Poxim — logo, bacia do rio SERGIPE.",
     itens:[
-      ["Por que ele cai","Aparece nas listas oficiais dos rios que banham o município, junto com Sergipe, Poxim, Vaza-Barris e rio do Sal. Como é pequeno e pouco conhecido, é justamente ele que a banca usa para você errar."],
-      ["Onde fica","Curso menor do sul do município, na bacia do rio Vaza-Barris, na área da Zona de Expansão."],
+      ["Bacia","Integra a sub-bacia do rio Poxim, que por sua vez pertence à BACIA DO RIO SERGIPE. O Poxim é um dos principais afluentes da margem direita do Sergipe."],
+      ["Quem forma o Poxim","Poxim-Açu, Poxim-Mirim e Pitanga. Se a questão listar só os dois primeiros, está incompleta."],
+      ["Onde fica","Vem do oeste/sudoeste, na divisa com São Cristóvão, e desemboca no Poxim antes de a água chegar ao rio Sergipe."],
+      ["Pegadinha","A sub-bacia do Poxim é limitada AO SUL pela bacia do Vaza-Barris — mas o Pitanga não é dela. Ele é bacia do Sergipe."],
       ["Bizu","Os 5 rios de Aracaju: Sergipe, Poxim, Vaza-Barris, rio do Sal e Pitanga — 'Se Pescar, Vai Render Peixe.'"],
-      ["Atenção ao mapa","O traçado aqui é aproximado: o Pitanga entra no mapa para você não esquecer o nome e a bacia, não para decorar o desenho exato."]
+      ["Sobre o desenho","O traçado aqui é aproximado; o que importa para a prova é o nome, a bacia (Sergipe) e o fato de ele formar o Poxim."]
     ]},
   { id:"vaza-barris", nome:"Rio Vaza-Barris", tipo:"rio",
     d:"M 60 1176 L 110 1200 L 250 1225 L 370 1252 L 470 1272 L 545 1288 L 600 1262",
