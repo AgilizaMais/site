@@ -123,7 +123,7 @@ function desenhar(){
     const p = el("path", { d:r.d, class:"rio", "stroke-width": r.largura, id:"f-" + r.id }, g);
     registrar(p, Object.assign({ zona:"agua" }, r));
     const t = el("text", {
-      x:r.rotulo[0], y:r.rotulo[1], class:"rot-rio",
+      x:r.rotulo[0], y:r.rotulo[1], class:"rot-rio" + (r.pequeno ? " rot-rio-mini" : ""),
       transform:`rotate(${r.rotAng || 0} ${r.rotulo[0]} ${r.rotulo[1]})`
     }, camadas.rotulos);
     t.textContent = r.nome;

@@ -290,6 +290,16 @@ const AGUAS = [
       ["Pontes internas","Presidente Juscelino, Godofredo Diniz e Gilberto Vila-Nova de Carvalho — todas ligam bairros de Aracaju entre si."],
       ["Bizu","Poxim = ponte INTERNA. Sergipe, do Sal e Vaza-Barris = pontes que saem do município."]
     ]},
+  { id:"rio-pitanga", nome:"Rio Pitanga", tipo:"rio", pequeno:true,
+    d:"M 406 1104 L 399 1162 L 403 1220 L 409 1258",
+    largura:11, rotulo:[374,1166], rotAng:86,
+    resumo:"O 'nome esquecido' da lista dos rios de Aracaju.",
+    itens:[
+      ["Por que ele cai","Aparece nas listas oficiais dos rios que banham o município, junto com Sergipe, Poxim, Vaza-Barris e rio do Sal. Como é pequeno e pouco conhecido, é justamente ele que a banca usa para você errar."],
+      ["Onde fica","Curso menor do sul do município, na bacia do rio Vaza-Barris, na área da Zona de Expansão."],
+      ["Bizu","Os 5 rios de Aracaju: Sergipe, Poxim, Vaza-Barris, rio do Sal e Pitanga — 'Se Pescar, Vai Render Peixe.'"],
+      ["Atenção ao mapa","O traçado aqui é aproximado: o Pitanga entra no mapa para você não esquecer o nome e a bacia, não para decorar o desenho exato."]
+    ]},
   { id:"vaza-barris", nome:"Rio Vaza-Barris", tipo:"rio",
     d:"M 60 1176 L 110 1200 L 250 1225 L 370 1252 L 470 1272 L 545 1288 L 600 1262",
     largura:22, rotulo:[300,1252], rotAng:12,

@@ -55,6 +55,6 @@ Para mexer em um bairro, edite `AREAS` em `dados.js`:
 
 `cel` = `[linhaDeCima, linhaDeBaixo, colunaInicial, colunaFinal]`. Para mudar o
 formato do território, mexa nos pontos da `MALHA` — todos os bairros se ajustam
-juntos. Rios são traçados (`AGUAS[].d`), vizinhos são polígonos (`VIZINHOS[].pol`, cada um
+juntos. Rios são traçados (`AGUAS[].d`; `pequeno:true` deixa o rótulo menor, caso do Pitanga), vizinhos são polígonos (`VIZINHOS[].pol`, cada um
 com `cor` e `dir`) e pontes/marcos são pontos (`PONTOS[].xy`, com `ang`/`vao` para o tabuleiro e
 `saida` para marcar a ponte como intermunicipal).
