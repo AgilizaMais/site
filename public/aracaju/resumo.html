@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geografia de Aracaju — Resumão para Concurso</title>
+<meta name="description" content="Resumo completo e ilustrado da geografia de Aracaju/SE: limites, rios, pontes, marco zero, zonas e bairros. Material de estudo para concursos.">
+<style>
+:root{
+  --mar:#0B3C5D;
+  --rio:#1276A8;
+  --mangue:#17876B;
+  --caju:#F07E13;
+  --caju-claro:#FFE9CF;
+  --areia:#FFF8EF;
+  --papel:#FFFFFF;
+  --tinta:#16242C;
+  --tinta-fraca:#54666F;
+  --linha:#E3DAcd;
+  --vermelho:#C63B32;
+  --roxo:#6B4E9B;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;scroll-padding-top:78px;}
+body{
+  margin:0;
+  background:var(--areia);
+  color:var(--tinta);
+  font-family:"Segoe UI",Roboto,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:16.5px;
+  line-height:1.55;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 14px;}
+
+/* ---------- CAPA ---------- */
+header.capa{
+  background:
+    radial-gradient(circle at 88% 12%, rgba(240,126,19,.35) 0%, rgba(240,126,19,0) 45%),
+    linear-gradient(160deg,#0B3C5D 0%,#0E5A83 55%,#1276A8 100%);
+  color:#fff;
+  padding:26px 0 0;
+  position:relative;
+  overflow:hidden;
+}
+.faixa-topo{
+  background:var(--caju);
+  color:#2A1500;
+  font-weight:800;
+  font-size:12.5px;
+  letter-spacing:.9px;
+  padding:7px 14px;
+  border-radius:999px;
+  display:inline-block;
+}
+h1{
+  font-size:38px;
+  line-height:1.05;
+  margin:16px 0 6px;
+  font-weight:900;
+  letter-spacing:-.8px;
+}
+.sub-capa{color:#CDE7F5;font-size:15.5px;margin:0 0 18px;max-width:52ch;}
+.onda{display:block;width:100%;height:38px;margin-bottom:-6px;}
+
+/* selos da capa */
+.selos{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+.selo{
+  background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:10px;
+  padding:8px 11px;
+  font-size:13px;
+}
+.selo b{display:block;font-size:16px;}
+
+/* ---------- NAV ---------- */
+nav{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,248,239,.96);
+  border-bottom:2px solid var(--linha);
+  backdrop-filter:blur(6px);
+}
+.nav-scroll{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;scrollbar-width:none;}
+.nav-scroll::-webkit-scrollbar{display:none;}
+.nav-scroll a{
+  flex:0 0 auto;
+  text-decoration:none;
+  color:var(--mar);
+  background:#fff;
+  border:1.5px solid var(--linha);
+  border-radius:999px;
+  padding:6px 13px;
+  font-size:13.5px;
+  font-weight:700;
+  white-space:nowrap;
+}
+.nav-scroll a:hover,.nav-scroll a:focus{background:var(--caju);border-color:var(--caju);color:#fff;}
+
+/* ---------- SEÇÕES ---------- */
+section{padding:30px 0 4px;}
+.cap-head{display:flex;align-items:center;gap:11px;margin-bottom:6px;}
+.cap-num{
+  background:var(--caju);color:#fff;font-weight:900;font-size:12px;
+  padding:6px 9px;border-radius:7px;letter-spacing:.5px;flex:0 0 auto;
+}
+.cap-head h2{margin:0;font-size:23px;font-weight:900;letter-spacing:-.4px;color:var(--mar);}
+.barra{height:5px;background:var(--mar);border-radius:3px;margin-bottom:16px;}
+
+h3{
+  font-size:17.5px;margin:22px 0 8px;font-weight:800;color:var(--mar);
+  display:flex;align-items:center;gap:8px;
+}
+h3::before{content:"";width:11px;height:11px;background:var(--caju);border-radius:2.5px;flex:0 0 auto;}
+p{margin:0 0 11px;}
+ul{margin:0 0 12px;padding-left:19px;}
+li{margin-bottom:5px;}
+strong{color:#0A2E45;}
+
+/* ---------- CAIXAS ---------- */
+.box{
+  border-left:6px solid var(--rio);
+  background:#fff;
+  border-radius:0 12px 12px 0;
+  padding:13px 15px;
+  margin:14px 0;
+  box-shadow:0 1px 0 rgba(0,0,0,.05);
+}
+.box .rotulo{
+  font-size:11.5px;font-weight:900;letter-spacing:1px;
+  color:var(--rio);margin-bottom:5px;
+}
+.box p:last-child,.box ul:last-child{margin-bottom:0;}
+.box.bizu{border-color:var(--caju);background:#FFF6EA;}
+.box.bizu .rotulo{color:#B85B00;}
+.box.atencao{border-color:var(--vermelho);background:#FFF1F0;}
+.box.atencao .rotulo{color:var(--vermelho);}
+.box.ouro{border-color:var(--mangue);background:#EFFAF5;}
+.box.ouro .rotulo{color:#0F6B54;}
+.box.prova{border-color:var(--roxo);background:#F5F1FC;}
+.box.prova .rotulo{color:var(--roxo);}
+.box.entenda{border-color:var(--mar);background:#F1F7FB;}
+.box.entenda .rotulo{color:var(--mar);}
+
+/* ---------- CARDS ---------- */
+.grade{display:grid;gap:11px;grid-template-columns:1fr;margin:14px 0;}
+@media(min-width:620px){.grade.duas{grid-template-columns:1fr 1fr;}}
+.card{
+  background:#fff;border:1.5px solid var(--linha);border-radius:13px;padding:13px 15px;
+}
+.card .tag{
+  display:inline-block;font-size:11px;font-weight:900;letter-spacing:.8px;
+  padding:3px 8px;border-radius:6px;margin-bottom:7px;
+}
+.card h4{margin:0 0 6px;font-size:16.5px;font-weight:800;color:var(--mar);}
+.card p{font-size:14.5px;color:var(--tinta-fraca);margin-bottom:0;}
+.card p b{color:var(--tinta);}
+.t-azul{background:#DCEEF8;color:#0B3C5D;}
+.t-laranja{background:var(--caju-claro);color:#9E4E00;}
+.t-verde{background:#DCF3EA;color:#0F6B54;}
+.t-roxo{background:#EDE5FA;color:#59409E;}
+.t-vermelho{background:#FBE2E0;color:#A62D25;}
+
+/* ---------- ROSA DOS VENTOS ---------- */
+.rosa{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:7px;
+  margin:16px 0;text-align:center;
+}
+.rosa div{
+  background:#fff;border:1.5px solid var(--linha);border-radius:11px;padding:10px 7px;font-size:13px;
+  display:flex;flex-direction:column;justify-content:center;min-height:92px;
+}
+.rosa .ponto{font-weight:900;font-size:11.5px;letter-spacing:1px;margin-bottom:4px;}
+.rosa .miolo{
+  background:linear-gradient(150deg,var(--mar),var(--rio));color:#fff;border:none;
+  font-weight:900;font-size:16px;letter-spacing:-.3px;
+}
+.rosa .vazio{background:transparent;border:1.5px dashed #DCD2C4;color:#A79C8E;font-size:11.5px;}
+.n-cor{color:var(--mangue);}
+.l-cor{color:var(--rio);}
+.s-cor{color:var(--caju);}
+.o-cor{color:var(--roxo);}
+
+/* ---------- TABELA ---------- */
+.tab-rolagem{overflow-x:auto;margin:14px 0;-webkit-overflow-scrolling:touch;}
+table{border-collapse:collapse;width:100%;min-width:520px;background:#fff;font-size:14px;}
+th{background:var(--mar);color:#fff;text-align:left;padding:9px 11px;font-size:13px;}
+td{border-bottom:1px solid var(--linha);padding:9px 11px;vertical-align:top;}
+tr:nth-child(even) td{background:#FCF9F4;}
+.dica-rolar{font-size:12px;color:var(--tinta-fraca);margin:-8px 0 12px;}
+
+/* ---------- LINHA DO TEMPO ---------- */
+.linha-tempo{border-left:3px solid var(--caju);margin:16px 0 16px 8px;padding-left:16px;}
+.evento{margin-bottom:15px;position:relative;}
+.evento::before{
+  content:"";position:absolute;left:-23px;top:5px;width:11px;height:11px;
+  background:var(--caju);border:2.5px solid var(--areia);border-radius:50%;
+}
+.evento b{color:var(--mar);display:block;font-size:15px;}
+.evento span{font-size:14.5px;color:var(--tinta-fraca);}
+
+/* ---------- QUIZ ---------- */
+.quiz{background:#fff;border:2px solid var(--mar);border-radius:15px;padding:16px;margin:18px 0;}
+.q{margin-bottom:18px;padding-bottom:16px;border-bottom:1px dashed var(--linha);}
+.q:last-of-type{border-bottom:none;}
+.q .pergunta{font-weight:700;margin-bottom:9px;font-size:15.5px;}
+.opcoes button{
+  display:block;width:100%;text-align:left;
+  background:#FCF9F4;border:1.5px solid var(--linha);border-radius:9px;
+  padding:9px 12px;margin-bottom:6px;font-size:14.5px;cursor:pointer;
+  font-family:inherit;color:var(--tinta);line-height:1.4;
+}
+.opcoes button:hover:not(:disabled){border-color:var(--rio);}
+.opcoes button:disabled{cursor:default;opacity:1;}
+.opcoes button.certa{background:#E4F6EE;border-color:var(--mangue);font-weight:700;}
+.opcoes button.errada{background:#FDECEA;border-color:var(--vermelho);}
+.feedback{font-size:14px;margin-top:7px;color:var(--tinta-fraca);display:none;}
+.feedback.ver{display:block;}
+.placar{
+  position:sticky;bottom:10px;background:var(--mar);color:#fff;
+  border-radius:11px;padding:11px 14px;font-weight:800;text-align:center;font-size:15px;
+}
+
+/* ---------- RODAPÉ ---------- */
+footer{
+  background:var(--mar);color:#BEDCEC;margin-top:34px;padding:22px 0;
+  font-size:13.5px;text-align:center;
+}
+footer b{color:var(--caju);}
+.voltar-topo{
+  display:inline-block;margin-top:10px;color:#fff;text-decoration:none;
+  border:1.5px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 15px;font-size:13px;
+}
+@media(max-width:400px){
+  h1{font-size:31px;}
+  .cap-head h2{font-size:20px;}
+  body{font-size:16px;}
+}
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">GEOGRAFIA DE ARACAJU · RESUMÃO DE CONCURSO</span>
+    <h1>Aracaju de ponta a ponta</h1>
+    <p class="sub-capa">Limites, rios, pontes, marco zero, zonas e bairros. Só o que cai na prova, organizado para você entender e não decorar.</p>
+    <div class="selos">
+      <div class="selo"><b>17/03/1855</b>fundação</div>
+      <div class="selo"><b>182,163 km²</b>área (IBGE 2025)</div>
+      <div class="selo"><b>602.757</b>hab. (Censo 2022)</div>
+      <div class="selo"><b>2ª</b>capital planejada do país</div>
+    </div>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<nav>
+  <div class="nav-scroll">
+    <a href="#identidade">Cartão de identidade</a>
+    <a href="#origem">Origem e marco zero</a>
+    <a href="#limites">Limites</a>
+    <a href="#aguas">Rios e águas</a>
+    <a href="#pontes">Pontes</a>
+    <a href="#zonas">Zonas e bairros</a>
+    <a href="#relevo">Relevo e clima</a>
+    <a href="#litoral">Litoral e orla</a>
+    <a href="#metropole">Região metropolitana</a>
+    <a href="#quiz">Simulado</a>
+    <a href="index.html" style="background:#F07E13;border-color:#F07E13;color:#fff">🗺️ Mapa interativo</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- 1 -->
+<section id="identidade">
+  <div class="cap-head"><span class="cap-num">CAP. 01</span><h2>Cartão de identidade</h2></div>
+  <div class="barra"></div>
+
+  <p>Aracaju é a capital de Sergipe, fica no <strong>litoral leste do estado</strong> e é a <strong>menor capital do Nordeste em área</strong>. Nasceu de uma canetada política em 1855 para servir de porto e sede de governo.</p>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-azul">NOME</span>
+      <h4>Vem do tupi</h4>
+      <p><b>Ara + acaju</b> = "cajueiro dos papagaios". Gentílico: <b>aracajuano</b> (ou aracajuense).</p></div>
+    <div class="card"><span class="tag t-verde">TERRITÓRIO</span>
+      <h4>182,163 km²</h4>
+      <p>Distrito único, <b>sem zona rural</b>. Altitude média de apenas <b>4 metros</b>.</p></div>
+    <div class="card"><span class="tag t-laranja">POPULAÇÃO</span>
+      <h4>602.757 habitantes</h4>
+      <p>Censo IBGE 2022. Densidade de <b>3.308,89 hab/km²</b> — a mais alta de Sergipe.</p></div>
+    <div class="card"><span class="tag t-roxo">POSIÇÃO</span>
+      <h4>10°54' S / 37°04' O</h4>
+      <p>Hemisfério sul e ocidental, zona intertropical. Fuso <b>UTC−3</b>.</p></div>
+  </div>
+
+  <div class="box entenda">
+    <div class="rotulo">ENTENDA</div>
+    <p>Por que Aracaju tem <strong>densidade altíssima</strong> mas é pequena? Porque o município inteiro é urbano — não existe área rural para "diluir" a população. Some a isso um território pequeno espremido entre dois rios, e o resultado é gente empilhada em pouco espaço.</p>
+  </div>
+
+  <div class="box atencao">
+    <div class="rotulo">ATENÇÃO</div>
+    <p>Área e população mudam conforme a fonte e o ano. Editais e bancas costumam usar os números do <strong>IBGE</strong>: área <strong>182,163 km²</strong> (algumas provas trazem 181,8 km²) e população do <strong>Censo 2022 (602.757)</strong>. Se a questão citar "cerca de 180 km²" ou "mais de 600 mil habitantes", está certa.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="origem">
+  <div class="cap-head"><span class="cap-num">CAP. 02</span><h2>Origem e marco zero</h2></div>
+  <div class="barra"></div>
+
+  <p>Antes de 1855, o que existia ali era o <strong>povoado de Santo Antônio do Aracaju</strong>, na Barra da Cotinguiba: pescadores, oleiros, salineiros e uma capela de Santo Antônio documentada desde 1778. A capital de Sergipe era <strong>São Cristóvão</strong>.</p>
+
+  <h3>O berço: a Colina de Santo Antônio</h3>
+  <p>Foi <strong>no alto da Colina (Outeiro) de Santo Antônio</strong> que a Assembleia Provincial se reuniu e aprovou a mudança da capital. Dali de cima é que a nova cidade foi projetada, olhando para a planície abaixo.</p>
+
+  <div class="box ouro">
+    <div class="rotulo">REGRAS DE OURO</div>
+    <ul>
+      <li><strong>Marco zero / berço da cidade:</strong> Colina de Santo Antônio (bairro Santo Antônio, zona norte).</li>
+      <li><strong>Data:</strong> 17 de março de 1855 — aniversário da cidade.</li>
+      <li><strong>Norma:</strong> Resolução (Lei Provincial) <strong>nº 413</strong>, que elevou o povoado à categoria de cidade e transferiu a capital.</li>
+      <li><strong>Fundador:</strong> <strong>Inácio Joaquim Barbosa</strong>, presidente da província.</li>
+      <li><strong>Engenheiro projetista:</strong> <strong>Sebastião José Basílio Pirro</strong>.</li>
+    </ul>
+  </div>
+
+  <h3>O Quadrado de Pirro</h3>
+  <p>Pirro desenhou o núcleo urbano em <strong>tabuleiro de xadrez</strong>: ruas retas cruzando em ângulo reto, <strong>32 quadras de 110 m × 110 m</strong>. Esse traçado virou o atual <strong>Centro</strong>, e é por isso que Aracaju é a <strong>2ª capital planejada do Brasil</strong>, depois de Teresina (1852).</p>
+
+  <div class="box entenda">
+    <div class="rotulo">ENTENDA</div>
+    <p>A cidade <strong>não desceu o morro</strong> por acaso. A colina era só a sede provisória. O quadrado novo foi implantado cerca de <strong>500 m ao sul</strong> do povoado, em terreno de mangue e alagado, porque o que interessava era a <strong>margem do rio Sergipe</strong>: ali funcionavam a Alfândega e a Mesa de Rendas, ou seja, era onde o dinheiro do açúcar passava. Aracaju nasceu por causa do porto, não da paisagem.</p>
+  </div>
+
+  <div class="box">
+    <div class="rotulo">OS 4 LIMITES DO PLANO ORIGINAL</div>
+    <ul>
+      <li><strong>Norte:</strong> base da colina de Santo Antônio</li>
+      <li><strong>Sul:</strong> atual avenida Desembargador Maynard</li>
+      <li><strong>Leste:</strong> rio Sergipe (onde se fez o aterro da av. Ivo do Prado)</li>
+      <li><strong>Oeste:</strong> cadeia de dunas, hoje a avenida Pedro Calazans</li>
+    </ul>
+  </div>
+
+  <div class="linha-tempo">
+    <div class="evento"><b>1778</b><span>Capela de Santo Antônio já documentada no povoado.</span></div>
+    <div class="evento"><b>17/03/1855</b><span>Resolução nº 413: povoado vira Cidade do Aracaju e recebe a capital.</span></div>
+    <div class="evento"><b>1855–1856</b><span>Pirro implanta o "tabuleiro de xadrez": 32 quadras de 110×110 m.</span></div>
+    <div class="evento"><b>Século XX</b><span>Desmonte do Morro do Bonfim (duna que fornecia areia para os aterros) e avanço sobre os mangues.</span></div>
+    <div class="evento"><b>1995</b><span>Criação da Região Metropolitana de Aracaju (LCE nº 25/1995).</span></div>
+    <div class="evento"><b>2021</b><span>Lei municipal 5.373/2021 transforma localidades da Zona de Expansão em bairros.</span></div>
+  </div>
+
+  <div class="box bizu">
+    <div class="rotulo">BIZU</div>
+    <p>Se cair "quem fundou / quem projetou", não troque os dois: <strong>Inácio Barbosa manda, Pirro desenha</strong>. Inácio é o político (dá nome a bairro), Pirro é o engenheiro (dá nome ao quadrado).</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="limites">
+  <div class="cap-head"><span class="cap-num">CAP. 03</span><h2>Limites, lado por lado</h2></div>
+  <div class="barra"></div>
+
+  <p>Aracaju é praticamente uma <strong>ilha cercada de água</strong>: mar a leste, rio Sergipe a nordeste, rio do Sal ao norte e rio Vaza-Barris ao sul. Só o oeste é limite de terra firme.</p>
+
+  <div class="rosa">
+    <div class="vazio">NO</div>
+    <div><span class="ponto n-cor">NORTE</span>N. S. do Socorro<br>Santo Amaro das Brotas<br><small>(rio do Sal)</small></div>
+    <div><span class="ponto n-cor">NORDESTE</span>Barra dos Coqueiros<br><small>(rio Sergipe)</small></div>
+
+    <div><span class="ponto o-cor">OESTE</span>São Cristóvão<br>N. S. do Socorro</div>
+    <div class="miolo">ARACAJU</div>
+    <div><span class="ponto l-cor">LESTE</span>Oceano Atlântico</div>
+
+    <div class="vazio">SO</div>
+    <div><span class="ponto s-cor">SUL</span>São Cristóvão<br>Itaporanga d'Ajuda<br><small>(rio Vaza-Barris)</small></div>
+    <div class="vazio">SE</div>
+  </div>
+
+  <div class="tab-rolagem">
+    <table>
+      <tr><th>Lado</th><th>Com quem faz limite</th><th>Separado por</th></tr>
+      <tr><td><b>Norte</b></td><td>Nossa Senhora do Socorro e Santo Amaro das Brotas</td><td>Rio do Sal / estuário do rio Sergipe</td></tr>
+      <tr><td><b>Nordeste</b></td><td>Barra dos Coqueiros</td><td>Rio Sergipe (Ponte Construtor João Alves)</td></tr>
+      <tr><td><b>Leste</b></td><td>Oceano Atlântico</td><td>Faixa litorânea / praias</td></tr>
+      <tr><td><b>Sul</b></td><td>São Cristóvão e Itaporanga d'Ajuda</td><td>Rio Vaza-Barris e canal Santa Maria (Ponte Joel Silveira)</td></tr>
+      <tr><td><b>Oeste</b></td><td>São Cristóvão e Nossa Senhora do Socorro</td><td>Limite terrestre e rio Poxim</td></tr>
+    </table>
+  </div>
+  <p class="dica-rolar">Arraste a tabela para o lado se ela não couber na tela.</p>
+
+  <div class="box bizu">
+    <div class="rotulo">BIZU</div>
+    <p>Cinco municípios limítrofes: <strong>S</strong>ão Cristóvão, <strong>N</strong>ossa Senhora do Socorro, <strong>S</strong>anto Amaro das Brotas, <strong>B</strong>arra dos Coqueiros, <strong>I</strong>taporanga d'Ajuda.<br>Frase: <strong>"São Nossos Santos Bons Irmãos."</strong></p>
+  </div>
+
+  <div class="box atencao">
+    <div class="rotulo">ATENÇÃO</div>
+    <p>Muita banca cobra só os <strong>três limites terrestres clássicos</strong>: São Cristóvão, Nossa Senhora do Socorro e Santo Amaro das Brotas. Barra dos Coqueiros e Itaporanga d'Ajuda são vizinhas <strong>separadas por água</strong>, alcançadas por ponte. Leia o enunciado: se ele fala em "municípios limítrofes", as cinco entram; se fala em "divisa em terra", entram as de terra.</p>
+  </div>
+
+  <div class="box prova">
+    <div class="rotulo">NA PROVA</div>
+    <p>Erro campeão: dizer que Aracaju faz limite ao leste com Barra dos Coqueiros. <strong>Leste é sempre o Oceano Atlântico.</strong> Barra dos Coqueiros fica a nordeste, do outro lado da foz do rio Sergipe.</p>
+  </div>
+
+  <div class="box">
+    <div class="rotulo">A QUESTÃO DA ZONA DE EXPANSÃO</div>
+    <p>O limite sul com São Cristóvão é <strong>disputado judicialmente</strong>. A área da antiga Zona de Expansão (Mosqueiro, Robalo, Areia Branca e vizinhas) é reivindicada por São Cristóvão e o caso já chegou ao STF. Na prática e para a prova, <strong>essa área pertence a Aracaju</strong> — inclusive foi transformada em bairros pela Lei 5.373/2021.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="aguas">
+  <div class="cap-head"><span class="cap-num">CAP. 04</span><h2>Rios e águas</h2></div>
+  <div class="barra"></div>
+
+  <p>O território de Aracaju se estende <strong>entre dois rios</strong>: o rio do Sal ao norte e o Vaza-Barris ao sul. No meio deles corre o Poxim, e tudo desemboca no rio Sergipe ou direto no mar.</p>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-azul">PRINCIPAL</span>
+      <h4>Rio Sergipe</h4>
+      <p>Corta a cidade a leste/nordeste, é <b>salobro</b> no trecho urbano e sua foz separa Aracaju da Barra dos Coqueiros. Antigo nome do trecho final: <b>barra da Cotinguiba</b>.</p></div>
+    <div class="card"><span class="tag t-azul">CENTRAL</span>
+      <h4>Rio Poxim</h4>
+      <p>Atravessa a zona sul/oeste e <b>deságua no rio Sergipe</b>. Formado pelo Poxim-Açu e Poxim-Mirim. É o rio das pontes urbanas.</p></div>
+    <div class="card"><span class="tag t-verde">LIMITE SUL</span>
+      <h4>Rio Vaza-Barris</h4>
+      <p>Nasce na Bahia e faz o <b>limite sul</b> do município. Liga-se à bacia do Poxim pelo <b>canal Santa Maria</b>.</p></div>
+    <div class="card"><span class="tag t-verde">LIMITE NORTE</span>
+      <h4>Rio do Sal</h4>
+      <p>Penúltimo afluente do rio Sergipe. Faz o <b>limite norte</b> com Nossa Senhora do Socorro.</p></div>
+    <div class="card"><span class="tag t-laranja">COMPLEMENTAR</span>
+      <h4>Rio Pitanga</h4>
+      <p>Aparece nas listas oficiais de rios que banham o município. Costuma ser o "nome esquecido" da questão.</p></div>
+    <div class="card"><span class="tag t-roxo">ARTIFICIAL</span>
+      <h4>Canal Santa Maria</h4>
+      <p>Interliga a bacia do Poxim ao Vaza-Barris. Aparece como referência de limite ao sul.</p></div>
+  </div>
+
+  <div class="box bizu">
+    <div class="rotulo">BIZU</div>
+    <p>Os cinco rios que banham Aracaju: <strong>S</strong>ergipe, <strong>P</strong>oxim, <strong>V</strong>aza-Barris, <strong>R</strong>io do Sal, <strong>P</strong>itanga.<br>Frase: <strong>"Se Pescar, Vai Render Peixe."</strong></p>
+  </div>
+
+  <div class="box entenda">
+    <div class="rotulo">ENTENDA</div>
+    <p>Aracaju foi construída sobre uma <strong>planície fluviomarinha</strong>: terreno baixo formado pelo encontro do rio com o mar. Por isso a cidade tem tanto canal, tanto mangue e tanto alagamento. Aterro e terraplenagem não são detalhe histórico — foram a condição para a cidade existir.</p>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="pontes">
+  <div class="cap-head"><span class="cap-num">CAP. 05</span><h2>As pontes</h2></div>
+  <div class="barra"></div>
+
+  <p>Regra simples para não errar: <strong>toda ponte de Aracaju existe para vencer um rio</strong>. Se você souber sobre qual rio ela passa, sabe o que ela liga.</p>
+
+  <div class="grade">
+    <div class="card"><span class="tag t-laranja">RIO SERGIPE · A MAIS COBRADA</span>
+      <h4>Ponte Construtor João Alves</h4>
+      <p>Liga <b>Aracaju à Barra dos Coqueiros</b>. Inaugurada em <b>24 de setembro de 2006</b>, cerca de <b>1.800 m</b>, considerada a <b>maior ponte urbana do Nordeste</b>. Popularmente "Ponte da Barra". Abriu o acesso ao litoral norte e ao Terminal Marítimo Inácio Barbosa.</p></div>
+
+    <div class="card"><span class="tag t-verde">RIO VAZA-BARRIS</span>
+      <h4>Ponte Joel Silveira</h4>
+      <p>Inaugurada em <b>2010</b>, liga a Zona de Expansão de Aracaju (Mosqueiro) a <b>Itaporanga d'Ajuda</b> pela <b>SE-100 sul</b>, abrindo o litoral sul do estado.</p></div>
+
+    <div class="card"><span class="tag t-azul">RIO DO SAL</span>
+      <h4>Ponte José Rolemberg Leite</h4>
+      <p>Ligação da zona norte de Aracaju com <b>Nossa Senhora do Socorro</b> (conjunto João Alves). É a ponte do limite norte.</p></div>
+
+    <div class="card"><span class="tag t-roxo">RIO POXIM</span>
+      <h4>Ponte Godofredo Diniz</h4>
+      <p>Anos 1970, gestão João Alves Filho. Liga o bairro <b>13 de Julho à Coroa do Meio</b> — é a "ponte do shopping". Foi ela que viabilizou a ocupação da orla e o acesso à Atalaia.</p></div>
+
+    <div class="card"><span class="tag t-roxo">RIO POXIM</span>
+      <h4>Ponte Presidente Juscelino</h4>
+      <p>Ponte mais antiga sobre o Poxim, viabilizada após o desmonte do Morro do Bonfim. Ligou o centro ao caminho do mar e acabou com a travessia de balsas.</p></div>
+
+    <div class="card"><span class="tag t-roxo">RIO POXIM</span>
+      <h4>Ponte Gilberto Vila-Nova de Carvalho</h4>
+      <p>Entregue em <b>2013</b>, no aniversário de 158 anos da cidade. Liga o conjunto <b>Augusto Franco à avenida Tancredo Neves</b>, pelo bairro Inácio Barbosa.</p></div>
+  </div>
+
+  <div class="box ouro">
+    <div class="rotulo">REGRAS DE OURO</div>
+    <ul>
+      <li>Rio <strong>Sergipe</strong> → João Alves → <strong>Barra dos Coqueiros</strong> (norte)</li>
+      <li>Rio <strong>Vaza-Barris</strong> → Joel Silveira → <strong>Itaporanga d'Ajuda</strong> (sul)</li>
+      <li>Rio <strong>do Sal</strong> → José Rolemberg Leite → <strong>N. S. do Socorro</strong></li>
+      <li>Rio <strong>Poxim</strong> → pontes <strong>internas</strong>, ligam bairros de Aracaju entre si</li>
+    </ul>
+  </div>
+
+  <div class="box atencao">
+    <div class="rotulo">ATENÇÃO</div>
+    <p>Não confunda a <strong>ponte</strong> com o <strong>porto</strong>. O <strong>Terminal Marítimo Inácio Barbosa</strong> (porto de Sergipe) fica em <strong>Barra dos Coqueiros</strong>, não em Aracaju. A ponte só dá acesso a ele.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="zonas">
+  <div class="cap-head"><span class="cap-num">CAP. 06</span><h2>Zonas e bairros</h2></div>
+  <div class="barra"></div>
+
+  <p>Aracaju é <strong>um único distrito</strong>, sem zona rural, dividido informalmente em <strong>cinco grandes zonas</strong>.</p>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-azul">CENTRO</span>
+      <h4>Núcleo histórico</h4>
+      <p>Centro, Getúlio Vargas, Cirurgia, São José, Suíssa, Pereira Lobo, 13 de Julho. É o antigo Quadrado de Pirro e o comércio tradicional.</p></div>
+    <div class="card"><span class="tag t-verde">NORTE</span>
+      <h4>Berço e indústria</h4>
+      <p>Santo Antônio, Industrial, Cidade Nova, 18 do Forte, Palestina, Porto Dantas, Bugio, Soledade, Lamarão, Japãozinho. Área mais antiga e mais vulnerável socialmente.</p></div>
+    <div class="card"><span class="tag t-laranja">SUL</span>
+      <h4>Orla e verticalização</h4>
+      <p>Atalaia, Coroa do Meio, Farolândia, Aeroporto, Jardins, Grageru, Luzia, São Conrado, Inácio Barbosa. Zona mais valorizada.</p></div>
+    <div class="card"><span class="tag t-roxo">OESTE</span>
+      <h4>Expansão popular</h4>
+      <p>Siqueira Campos, América, Capucho, Jabotiana, Novo Paraíso, Olaria, Ponto Novo, Cidade Nova. Cresce pela margem do Poxim.</p></div>
+    <div class="card"><span class="tag t-vermelho">ZONA DE EXPANSÃO</span>
+      <h4>≈ 40% do território</h4>
+      <p>Cerca de <b>76,7 km²</b>: Mosqueiro, Robalo, Areia Branca, Gameleira, Matapuã, São José dos Náufragos, Aruana, Santa Maria, 17 de Março. Área de dunas, lagoas, restinga e mangue — <b>alta fragilidade ambiental</b>.</p></div>
+    <div class="card"><span class="tag t-azul">DIVISÃO</span>
+      <h4>Não existe zona leste</h4>
+      <p>E o motivo é simples: a leste está o <b>oceano</b>. Toda expansão urbana teve que ser norte, oeste ou sul.</p></div>
+  </div>
+
+  <h3>Quantos bairros?</h3>
+  <div class="box atencao">
+    <div class="rotulo">ATENÇÃO — PEGADINHA CLÁSSICA</div>
+    <ul>
+      <li><strong>Lei 873/1982:</strong> 35 bairros + a Zona de Expansão.</li>
+      <li><strong>Referência tradicional:</strong> 39 bairros (número que ainda aparece em muito material antigo).</li>
+      <li><strong>Lei municipal 5.373/2021:</strong> transformou 6 localidades da Zona de Expansão em bairros — <strong>Mosqueiro, Robalo, São José dos Náufragos, Areia Branca, Gameleira e Matapuã</strong> — dentro do projeto "Cidade Expansão", chegando a <strong>43 bairros</strong>.</li>
+    </ul>
+    <p>Se a banca não indicar a lei, o número mais atual é <strong>43</strong>. Guarde os dois (39 e 43) e leia o ano citado no enunciado.</p>
+  </div>
+
+  <div class="box bizu">
+    <div class="rotulo">BIZU</div>
+    <p>Os 6 bairros novos de 2021 são todos da <strong>Zona de Expansão</strong> e todos ficam <strong>ao sul</strong>, no caminho do Mosqueiro. Se o nome soa a praia ou povoado, é bairro novo.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="relevo">
+  <div class="cap-head"><span class="cap-num">CAP. 07</span><h2>Relevo, clima e vegetação</h2></div>
+  <div class="barra"></div>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-verde">RELEVO</span>
+      <h4>Planície fluviomarinha</h4>
+      <p>Terreno plano e baixo, altitude média de <b>4 m</b>. Ponto alto de referência: a <b>Colina de Santo Antônio</b>. Havia dunas — a maior, o <b>Morro do Bonfim</b>, foi desmontada para aterros.</p></div>
+    <div class="card"><span class="tag t-laranja">CLIMA</span>
+      <h4>Tropical litorâneo (As)</h4>
+      <p>Temperatura média em torno de <b>26 °C</b>, pouca variação. Chuvas concentradas de <b>março a agosto</b> (outono/inverno), média anual próxima de <b>1.590 mm</b>.</p></div>
+    <div class="card"><span class="tag t-verde">VEGETAÇÃO</span>
+      <h4>Mangue e restinga</h4>
+      <p>Manguezais nos estuários, <b>restinga</b> e remanescentes de <b>Mata Atlântica</b> nos tabuleiros costeiros, além de lagoas e cordões arenosos na Zona de Expansão.</p></div>
+    <div class="card"><span class="tag t-vermelho">PROBLEMA</span>
+      <h4>Ocupação sobre o mangue</h4>
+      <p>A expansão urbana avançou sobre <b>mangue e restinga</b>, gerando alagamentos, perda ambiental e ocupação irregular — tema recorrente em provas de atualidades.</p></div>
+  </div>
+
+  <div class="box entenda">
+    <div class="rotulo">ENTENDA</div>
+    <p>Chuva de <strong>outono/inverno</strong> é típica do <strong>litoral oriental do Nordeste</strong>, e é o contrário do sertão (que chove no verão). A causa é a atuação de massas de ar úmidas vindas do oceano nesse período. Se a questão disser que em Aracaju chove mais no verão, está errada.</p>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="litoral">
+  <div class="cap-head"><span class="cap-num">CAP. 08</span><h2>Litoral e orla</h2></div>
+  <div class="barra"></div>
+
+  <p>As praias de Aracaju seguem <strong>de norte para sul</strong>, começando na foz do rio Sergipe e terminando no Vaza-Barris.</p>
+
+  <div class="box">
+    <div class="rotulo">SEQUÊNCIA DAS PRAIAS (N → S)</div>
+    <p><strong>Coroa do Meio → Atalaia → Aruana → Robalo → Náufragos → Mosqueiro</strong></p>
+  </div>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-laranja">CARTÃO-POSTAL</span>
+      <h4>Orla de Atalaia</h4>
+      <p>Principal área de lazer e turismo, com a <b>Passarela do Caranguejo</b> e o Oceanário.</p></div>
+    <div class="card"><span class="tag t-azul">RIO, NÃO MAR</span>
+      <h4>Praia 13 de Julho</h4>
+      <p>Fica às margens do <b>rio Sergipe</b>, não do oceano. Dá nome ao bairro vizinho.</p></div>
+    <div class="card"><span class="tag t-roxo">SUL</span>
+      <h4>Orla Pôr do Sol</h4>
+      <p>No <b>Mosqueiro</b>, voltada para o rio Vaza-Barris — por isso o sol se põe sobre a água.</p></div>
+    <div class="card"><span class="tag t-verde">ACESSOS</span>
+      <h4>Rodovias</h4>
+      <p><b>BR-101</b> e <b>BR-235</b> no acesso federal; <b>SE-100</b> percorre o litoral (norte pela ponte João Alves, sul pela ponte Joel Silveira).</p></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section id="metropole">
+  <div class="cap-head"><span class="cap-num">CAP. 09</span><h2>Região Metropolitana</h2></div>
+  <div class="barra"></div>
+
+  <p>Criada pela <strong>Lei Complementar Estadual nº 25, de 1995</strong>, a Região Metropolitana de Aracaju é formada por <strong>4 municípios</strong>.</p>
+
+  <div class="grade duas">
+    <div class="card"><span class="tag t-azul">NÚCLEO</span><h4>Aracaju</h4><p>Capital e centro da conurbação.</p></div>
+    <div class="card"><span class="tag t-verde">NORTE</span><h4>Barra dos Coqueiros</h4><p>Ligada pela ponte João Alves; abriga o porto do estado.</p></div>
+    <div class="card"><span class="tag t-laranja">OESTE/NORTE</span><h4>Nossa Senhora do Socorro</h4><p>Grandes conjuntos habitacionais (complexo da Taiçoca).</p></div>
+    <div class="card"><span class="tag t-roxo">SUL/OESTE</span><h4>São Cristóvão</h4><p>Antiga capital de Sergipe; abriga o campus da UFS (Rosa Elze).</p></div>
+  </div>
+
+  <div class="box bizu">
+    <div class="rotulo">BIZU</div>
+    <p>A RMA tem <strong>4 municípios</strong> — e são exatamente as vizinhas de Aracaju <strong>menos</strong> Santo Amaro das Brotas e Itaporanga d'Ajuda. Alternativa que cita <strong>Itabaiana, Laranjeiras, Estância ou Lagarto</strong> está errada.</p>
+  </div>
+
+  <div class="box entenda">
+    <div class="rotulo">ENTENDA</div>
+    <p>A metropolização aconteceu porque, nos anos 1980, os <strong>conjuntos habitacionais</strong> foram construídos <strong>fora</strong> de Aracaju — em Socorro, São Cristóvão e Barra dos Coqueiros. As cidades vizinhas cresceram mais rápido que a capital e a mancha urbana virou uma só. Por isso hoje se fala em "Grande Aracaju".</p>
+  </div>
+</section>
+
+<!-- 10 -->
+<section id="quiz">
+  <div class="cap-head"><span class="cap-num">CAP. 10</span><h2>Simulado rápido</h2></div>
+  <div class="barra"></div>
+  <p>12 questões no estilo de banca. Toque na alternativa para conferir na hora.</p>
+
+  <div class="quiz" id="quiz"></div>
+  <div class="placar" id="placar">Acertos: 0 de 0 respondidas</div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Geografia de Aracaju</b> — resumão de estudo para concurso</p>
+    <p>Fontes: IBGE (Cidades), Prefeitura de Aracaju, Alese e legislação municipal citada.</p>
+    <p><b>@12.jgs</b></p>
+    <a class="voltar-topo" href="index.html">🗺️ Abrir o mapa interativo</a>
+    <a class="voltar-topo" href="#">Voltar ao topo</a>
+  </div>
+</footer>
+
+<script>
+var questoes = [
+  {
+    p: "Aracaju foi elevada à condição de cidade e recebeu a capital da província por meio de qual norma e em que data?",
+    o: ["Lei nº 413, de 17 de março de 1855","Lei nº 554, de 6 de fevereiro de 1954","Lei nº 873, de 1982","Lei Complementar nº 25, de 1995"],
+    c: 0,
+    e: "Resolução/Lei Provincial nº 413, de 17/03/1855, sancionada por Inácio Joaquim Barbosa. A 554/1954 trata de limites, a 873/82 de bairros e a LCE 25/95 da região metropolitana."
+  },
+  {
+    p: "O engenheiro responsável pelo traçado em tabuleiro de xadrez do núcleo original de Aracaju foi:",
+    o: ["Inácio Joaquim Barbosa","Sebastião José Basílio Pirro","Godofredo Diniz","José Rolemberg Leite"],
+    c: 1,
+    e: "Pirro desenhou o plano com 32 quadras de 110 x 110 m, o famoso Quadrado de Pirro. Inácio Barbosa foi o presidente da província que o contratou."
+  },
+  {
+    p: "O local considerado berço de Aracaju, onde se reuniu a Assembleia Provincial que aprovou a mudança da capital, é:",
+    o: ["A Praça da Bandeira","A Colina (Outeiro) de Santo Antônio","O Morro do Bonfim","A Coroa do Meio"],
+    c: 1,
+    e: "A Colina de Santo Antônio abrigava o povoado e a capela. O Morro do Bonfim era uma duna, depois desmontada para os aterros."
+  },
+  {
+    p: "A leste, Aracaju faz limite com:",
+    o: ["Barra dos Coqueiros","São Cristóvão","O Oceano Atlântico","Nossa Senhora do Socorro"],
+    c: 2,
+    e: "Leste é sempre o Atlântico. Barra dos Coqueiros fica a nordeste, separada pelo rio Sergipe."
+  },
+  {
+    p: "O rio que faz o limite NORTE de Aracaju com Nossa Senhora do Socorro é o:",
+    o: ["Rio Poxim","Rio Vaza-Barris","Rio Pitanga","Rio do Sal"],
+    c: 3,
+    e: "Rio do Sal ao norte; Vaza-Barris ao sul. O Poxim é interno e o Pitanga é complementar."
+  },
+  {
+    p: "A Ponte Construtor João Alves liga Aracaju a qual município e sobre qual rio?",
+    o: ["Itaporanga d'Ajuda, sobre o Vaza-Barris","Barra dos Coqueiros, sobre o rio Sergipe","N. S. do Socorro, sobre o rio do Sal","São Cristóvão, sobre o rio Poxim"],
+    c: 1,
+    e: "Inaugurada em 24/09/2006, cerca de 1.800 m, maior ponte urbana do Nordeste."
+  },
+  {
+    p: "A Ponte Joel Silveira, sobre o rio Vaza-Barris, abriu o acesso ao litoral sul ligando Aracaju a:",
+    o: ["Itaporanga d'Ajuda","Santo Amaro das Brotas","Estância","Laranjeiras"],
+    c: 0,
+    e: "Inaugurada em 2010, pela SE-100 sul, saindo da Zona de Expansão (Mosqueiro)."
+  },
+  {
+    p: "A ponte Godofredo Diniz, sobre o rio Poxim, liga quais bairros?",
+    o: ["Centro e Industrial","Jabotiana e Capucho","13 de Julho e Coroa do Meio","Santo Antônio e Cidade Nova"],
+    c: 2,
+    e: "Construída na década de 1970, foi a chave para a ocupação da orla e o acesso à Atalaia."
+  },
+  {
+    p: "Sobre a divisão territorial de Aracaju, é correto afirmar:",
+    o: ["Divide-se em três distritos e possui zona rural","É um distrito único, sem zona rural","Possui zona rural na Zona de Expansão","Divide-se em dois municípios-distrito"],
+    c: 1,
+    e: "Distrito único e totalmente urbano. É isso que explica sua densidade demográfica elevada."
+  },
+  {
+    p: "A Lei municipal 5.373/2021 é conhecida por:",
+    o: ["Criar a Região Metropolitana de Aracaju","Transferir a capital de São Cristóvão","Transformar localidades da Zona de Expansão em bairros","Definir o limite com Itaporanga d'Ajuda"],
+    c: 2,
+    e: "Criou Mosqueiro, Robalo, São José dos Náufragos, Areia Branca, Gameleira e Matapuã, no projeto Cidade Expansão."
+  },
+  {
+    p: "A Região Metropolitana de Aracaju (LCE 25/1995) é composta por:",
+    o: ["Aracaju, Barra dos Coqueiros, N. S. do Socorro e São Cristóvão","Aracaju, Itabaiana, Estância e Lagarto","Aracaju, Laranjeiras, Maruim e Riachuelo","Aracaju, São Cristóvão, Itaporanga d'Ajuda e Estância"],
+    c: 0,
+    e: "Quatro municípios. Itaporanga d'Ajuda e Santo Amaro das Brotas são vizinhas, mas não compõem a RMA atual."
+  },
+  {
+    p: "Quanto ao clima, em Aracaju as chuvas se concentram principalmente:",
+    o: ["No verão, de dezembro a fevereiro","De março a agosto, no outono e inverno","Durante todo o ano, sem estação seca","Apenas na primavera"],
+    c: 1,
+    e: "Padrão do litoral oriental do Nordeste: chuvas de outono/inverno, ao contrário do sertão."
+  }
+];
+
+(function(){
+  var quiz = document.getElementById("quiz");
+  var placar = document.getElementById("placar");
+  var acertos = 0;
+  var respondidas = 0;
+
+  function atualizarPlacar(){
+    placar.textContent = "Acertos: " + acertos + " de " + respondidas + " respondidas (total " + questoes.length + ")";
+  }
+
+  function montar(q, indice){
+    var bloco = document.createElement("div");
+    bloco.className = "q";
+
+    var titulo = document.createElement("div");
+    titulo.className = "pergunta";
+    titulo.textContent = (indice + 1) + ". " + q.p;
+    bloco.appendChild(titulo);
+
+    var caixa = document.createElement("div");
+    caixa.className = "opcoes";
+
+    var feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.textContent = q.e;
+
+    var letras = ["A) ", "B) ", "C) ", "D) "];
+    var botoes = [];
+
+    for (var i = 0; i < q.o.length; i++) {
+      (function(pos){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = letras[pos] + q.o[pos];
+        b.addEventListener("click", function(){
+          for (var j = 0; j < botoes.length; j++) {
+            botoes[j].disabled = true;
+          }
+          botoes[q.c].className = "certa";
+          if (pos !== q.c) {
+            b.className = "errada";
+          } else {
+            acertos = acertos + 1;
+          }
+          respondidas = respondidas + 1;
+          feedback.className = "feedback ver";
+          atualizarPlacar();
+        });
+        botoes.push(b);
+        caixa.appendChild(b);
+      })(i);
+    }
+
+    bloco.appendChild(caixa);
+    bloco.appendChild(feedback);
+    return bloco;
+  }
+
+  for (var k = 0; k < questoes.length; k++) {
+    quiz.appendChild(montar(questoes[k], k));
+  }
+  atualizarPlacar();
+})();
+</script>
+</body>
+</html>

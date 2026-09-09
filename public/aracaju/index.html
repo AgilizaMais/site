@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa Interativo de Aracaju — Geografia para Concurso</title>
+<meta name="description" content="Mapa desenhado e interativo de Aracaju/SE: limites, rios, pontes, marco zero, zonas e bairros. Passe o mouse para ver o resumo, clique para abrir os detalhes.">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">GEOGRAFIA DE ARACAJU · MAPA INTERATIVO</span>
+    <h1>O mapa de Aracaju, desenhado</h1>
+    <p class="sub-capa">Passe o mouse (ou toque) em qualquer parte do mapa para ver do que se trata. Clique para abrir os detalhes completos: limites, rios, pontes, marco zero, zonas e bairros.</p>
+    <div class="links-topo">
+      <a href="#mapa-secao">Ir para o mapa</a>
+      <a href="#limites">Limites lado a lado</a>
+      <a href="#como-usar">Como usar</a>
+      <a href="resumo.html">Resumão em texto →</a>
+    </div>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<main class="wrap">
+
+<section id="mapa-secao" style="padding-top:6px">
+  <div class="controles">
+    <div class="busca">
+      <input id="busca" type="text" placeholder="Buscar bairro, rio, ponte, vizinho…" autocomplete="off">
+      <div id="busca-lista"></div>
+    </div>
+    <div class="zoom">
+      <button id="zoom-mais" type="button" title="Aproximar">+</button>
+      <button id="zoom-menos" type="button" title="Afastar">−</button>
+      <button id="zoom-reset" class="txt" type="button" title="Ver o mapa inteiro">Mapa inteiro</button>
+    </div>
+  </div>
+  <div id="legenda"></div>
+
+  <div class="moldura" style="margin-top:12px">
+    <svg id="mapa" viewBox="0 0 900 1400" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Mapa esquemático interativo de Aracaju"></svg>
+  </div>
+  <p class="aviso-mapa">Mapa <b>esquemático</b>: as formas são simplificadas, mas as posições relativas (norte/sul/leste/oeste, rios, pontes e vizinhos) seguem a geografia real. Arraste para mover · role o mouse ou use + / − para aproximar.</p>
+</section>
+
+<section id="como-usar">
+  <div class="cap-head"><span class="cap-num">GUIA</span><h2>Como ler este mapa</h2></div>
+  <div class="barra"></div>
+  <div class="grade">
+    <div class="card"><h4>Cores por zona</h4><p>Cada cor é uma zona da cidade: norte, centro, oeste, sul e Zona de Expansão. Clique numa cor da legenda para isolar só aquela zona.</p></div>
+    <div class="card"><h4>Estrelas ★</h4><p>Marcam os pontos que mais caem em prova: Marco Zero (Santo Antônio), Centro/Quadrado de Pirro, 13 de Julho, Coroa do Meio e Atalaia.</p></div>
+    <div class="card"><h4>Quadrados vermelhos</h4><p>São as pontes. Clique para saber qual rio ela vence e o que ela liga — é assim que a banca cobra.</p></div>
+    <div class="card"><h4>Faixas azuis</h4><p>São os rios: Sergipe, do Sal, Poxim e Vaza-Barris. O azul do fundo, à direita, é o Oceano Atlântico — o limite leste.</p></div>
+  </div>
+  <div class="box">
+    <div class="rotulo">BIZU DO MAPA</div>
+    <p>Olhe o desenho e repita: <b>água em três lados</b>. Rio do Sal no norte, rio Sergipe no nordeste, oceano no leste, Vaza-Barris no sul. Só o <b>oeste</b> é divisa em terra firme (São Cristóvão e Nossa Senhora do Socorro).</p>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="cap-head"><span class="cap-num">SÍNTESE</span><h2>Limites, lado por lado</h2></div>
+  <div class="barra"></div>
+  <div class="tab-rolagem">
+    <table>
+      <thead><tr><th>Lado</th><th>Com quem faz limite</th><th>Separado por</th></tr></thead>
+      <tbody id="tab-limites"></tbody>
+    </table>
+  </div>
+  <div class="box">
+    <div class="rotulo">BIZU</div>
+    <p>Cinco municípios limítrofes: <b>S</b>ão Cristóvão, <b>N</b>ossa Senhora do Socorro, <b>S</b>anto Amaro das Brotas, <b>B</b>arra dos Coqueiros, <b>I</b>taporanga d'Ajuda → <b>“São Nossos Santos Bons Irmãos.”</b><br>Já a Região Metropolitana tem só <b>4</b>: Aracaju, Barra dos Coqueiros, N. S. do Socorro e São Cristóvão — ficam de fora Santo Amaro das Brotas e Itaporanga d'Ajuda.</p>
+  </div>
+</section>
+
+</main>
+
+<div id="tip" aria-hidden="true"></div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div id="modal-caixa" tabindex="-1">
+    <div class="modal-topo">
+      <div>
+        <span id="modal-zona"></span>
+        <h3 id="modal-titulo"></h3>
+      </div>
+      <button id="modal-fechar" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="modal-corpo">
+      <p id="modal-resumo"></p>
+      <div id="modal-corpo"></div>
+      <div class="modal-vizinhos-tit">Vizinhos no mapa</div>
+      <div id="modal-vizinhos"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><b>Geografia de Aracaju</b> — mapa interativo de estudo</p>
+    <p>Fontes: IBGE (Cidades), Prefeitura de Aracaju, Alese e legislação municipal citada.</p>
+    <p><a href="resumo.html">Ver o resumão em texto e o simulado</a></p>
+    <p><b>@12.jgs</b></p>
+  </div>
+</footer>
+
+<script src="dados.js"></script>
+<script src="mapa.js"></script>
+</body>
+</html>
