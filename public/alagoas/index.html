@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa Interativo de Alagoas — PM-AL</title>
+<meta name="description" content="Mapa desenhado e interativo de Alagoas: Litoral, Zona da Mata, Agreste, Sertão, rio São Francisco, divisas e cidades-chave. Material de estudo para a PM-AL.">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">CONHECIMENTOS DO ESTADO DE ALAGOAS · PM-AL</span>
+    <h1>O mapa de Alagoas, desenhado</h1>
+    <p class="sub-capa">Passe o mouse (ou toque) em qualquer parte do mapa para ver do que se trata. Clique para abrir os detalhes. Litoral, Zona da Mata, Agreste e Sertão, o rio São Francisco, as divisas e as cidades que caem em prova.</p>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<nav class="paginas">
+  <div class="nav-scroll">
+    <a href="index.html" class="atual">🗺️ Mapa</a>
+    <a href="historia.html">Formação histórica</a>
+    <a href="historia.html#palmares">Quilombo dos Palmares</a>
+    <a href="estado.html">Organização do Estado</a>
+    <a href="estado.html#economia">Economia</a>
+    <a href="estado.html#cultura">Cultura e patrimônio</a>
+    <a href="simulado.html">Simulado</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="mapa-secao" style="padding-top:6px">
+  <div class="controles">
+    <div class="busca">
+      <input id="busca" type="text" placeholder="Buscar cidade, zona, rio, estado vizinho…" autocomplete="off">
+      <div id="busca-lista"></div>
+    </div>
+    <div class="zoom">
+      <button id="zoom-mais" type="button" title="Aproximar">+</button>
+      <button id="zoom-menos" type="button" title="Afastar">−</button>
+      <button id="zoom-reset" class="txt" type="button">Mapa inteiro</button>
+    </div>
+  </div>
+
+  <div class="legenda-tit">Com quem Alagoas faz divisa — clique para isolar</div>
+  <div class="legenda-linha" id="leg-vizinhos"></div>
+
+  <div class="legenda-tit">As quatro zonas, de leste para oeste</div>
+  <div class="legenda-linha" id="leg-zonas"></div>
+
+  <div class="legenda-tit">Camadas de conteúdo — só os pontos daquele assunto</div>
+  <div class="legenda-linha" id="leg-camadas"></div>
+
+  <div class="moldura" style="margin-top:12px">
+    <svg id="mapa" viewBox="0 0 1200 780" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Mapa esquemático interativo de Alagoas"></svg>
+  </div>
+  <p class="aviso-mapa">Mapa <b>esquemático</b>: as formas são simplificadas, mas as posições relativas (norte/sul/leste/oeste, zonas, rio, divisas e cidades) seguem a geografia real. Arraste para mover · role o mouse ou use + / − para aproximar.</p>
+</section>
+
+<section id="ler">
+  <div class="cap-head"><span class="cap-num">GUIA</span><h2>Como ler este mapa</h2></div>
+  <div class="barra"></div>
+  <div class="grade">
+    <div class="card"><h4>Alagoas é uma faixa deitada</h4><p>O estado é alongado no sentido <b>leste–oeste</b>. Por isso as quatro zonas são faixas verticais: quanto mais você anda para o <b>oeste</b>, mais seco fica — Litoral → Zona da Mata → Agreste → Sertão.</p></div>
+    <div class="card"><h4>Cor dos vizinhos</h4><p><b>Pernambuco</b> (roxo) ao norte, <b>Sergipe</b> (magenta) ao sul, <b>Bahia</b> (marrom) a oeste e o <b>Atlântico</b> a leste. São só <b>três estados</b> vizinhos.</p></div>
+    <div class="card"><h4>A linha preta tracejada</h4><p>É a <b>divisa em terra</b>. Existe em todo o norte (Pernambuco) e num trecho curto do extremo oeste (Bahia). No sul não há: lá o limite é o rio.</p></div>
+    <div class="card"><h4>A faixa azul grossa</h4><p>É o <b>rio São Francisco</b>, que faz toda a borda sul e desemboca no mar em Piaçabuçu. Clique nele: é um dos assuntos mais cobrados.</p></div>
+    <div class="card"><h4>Bolinhas douradas ★</h4><p>Marcam os três pontos que mais caem: <b>Maceió</b> (capital), <b>Marechal Deodoro</b> (1ª capital) e <b>União dos Palmares / Serra da Barriga</b> (Quilombo).</p></div>
+    <div class="card"><h4>Camadas</h4><p>Os chips <b>Geografia, História, Economia e Cultura</b> acendem só os pontos daquele assunto. Útil para revisar um item do edital por vez.</p></div>
+  </div>
+
+  <div class="box ouro">
+    <div class="rotulo">O BIZU DAS DIVISAS</div>
+    <p><b>Norte = terra</b> (Pernambuco) · <b>Leste = mar</b> (Atlântico) · <b>Sul = rio</b> (São Francisco, divisa com Sergipe) · <b>Oeste = os dois</b> (Bahia: um trecho em terra e outro no rio/lago de Xingó).<br>
+    Frase: <b>“Pernambuco em cima, Sergipe embaixo, Bahia atrás, mar na frente.”</b></p>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="cap-head"><span class="cap-num">SÍNTESE</span><h2>Divisas, lado por lado</h2></div>
+  <div class="barra"></div>
+  <div class="tab-rolagem">
+    <table>
+      <thead><tr><th>Direção</th><th>Com quem</th><th>Separado por</th></tr></thead>
+      <tbody id="tab-limites"></tbody>
+    </table>
+  </div>
+  <div class="box atencao">
+    <div class="rotulo">PEGADINHA CLÁSSICA</div>
+    <p>Alagoas faz divisa com <b>três</b> estados: Pernambuco, Sergipe e Bahia. Se a alternativa citar <b>Paraíba, Ceará ou Rio Grande do Norte</b>, está errada. E a leste <b>nunca</b> há estado — é sempre o Oceano Atlântico.</p>
+  </div>
+</section>
+
+<section id="identidade-sec">
+  <div class="cap-head"><span class="cap-num">FICHA</span><h2>Cartão de identidade do estado</h2></div>
+  <div class="barra"></div>
+  <div id="identidade"></div>
+  <div class="box">
+    <div class="rotulo">NÚMEROS QUE CAEM</div>
+    <p><b>102</b> municípios · <b>27.830 km²</b> (2º menor estado do país, só maior que Sergipe) · <b>3.127.683</b> habitantes no Censo 2022 · capital <b>Maceió</b> desde <b>1839</b> · emancipação em <b>16/09/1817</b> · província em <b>28/02/1821</b>.</p>
+  </div>
+</section>
+
+</main>
+
+<div id="tip" aria-hidden="true"></div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div id="modal-caixa" tabindex="-1">
+    <div class="modal-topo">
+      <div><span id="modal-selo"></span><h3 id="modal-titulo"></h3></div>
+      <button id="modal-fechar" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="modal-corpo">
+      <p id="modal-resumo"></p>
+      <div id="modal-corpo"></div>
+      <div class="modal-links-tit">Veja também</div>
+      <div id="modal-links"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><b>Conhecimentos do Estado de Alagoas</b> — material de estudo para a PM-AL</p>
+    <p>Fontes: IBGE (Cidades), IPHAN, Governo de Alagoas, Assembleia Legislativa de Alagoas.</p>
+    <p><a href="historia.html">História</a> · <a href="estado.html">Estado e economia</a> · <a href="simulado.html">Simulado</a></p>
+    <p><b>@12.jgs</b></p>
+  </div>
+</footer>
+
+<script src="dados.js"></script>
+<script src="mapa.js"></script>
+</body>
+</html>

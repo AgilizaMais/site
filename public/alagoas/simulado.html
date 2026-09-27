@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulado — Conhecimentos do Estado de Alagoas | PM-AL</title>
+<meta name="description" content="Simulado com questões de história, geografia, organização, economia e cultura de Alagoas, no estilo de banca. Material de estudo para a PM-AL.">
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">SIMULADO · CONHECIMENTOS DO ESTADO DE ALAGOAS</span>
+    <h1>Teste o que você já fixou</h1>
+    <p class="sub-capa">Questões no estilo de banca, cobrindo os seis itens do edital. Toque na alternativa para conferir na hora — com a explicação do porquê.</p>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<nav class="paginas">
+  <div class="nav-scroll">
+    <a href="index.html">🗺️ Mapa</a>
+    <a href="historia.html">Formação histórica</a>
+    <a href="historia.html#palmares">Quilombo dos Palmares</a>
+    <a href="estado.html">Organização do Estado</a>
+    <a href="estado.html#economia">Economia</a>
+    <a href="estado.html#cultura">Cultura e patrimônio</a>
+    <a href="simulado.html" class="atual">Simulado</a>
+  </div>
+</nav>
+
+<main class="wrap">
+<section>
+  <div class="cap-head"><span class="cap-num">TREINO</span><h2>Simulado comentado</h2></div>
+  <div class="barra"></div>
+  <div class="quiz" id="quiz"></div>
+  <div class="placar" id="placar">Acertos: 0 de 0 respondidas</div>
+  <div class="box" style="margin-top:18px">
+    <div class="rotulo">ERROU ALGUMA?</div>
+    <p>Volte ao ponto certo: <a href="historia.html">formação histórica e Palmares</a>, <a href="estado.html">organização, economia e cultura</a> ou <a href="index.html">o mapa</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Simulado — Conhecimentos do Estado de Alagoas</b></p>
+    <p><a href="index.html">🗺️ Mapa</a> · <a href="historia.html">História</a> · <a href="estado.html">Estado e economia</a></p>
+    <p><b>@12.jgs</b></p>
+  </div>
+</footer>
+
+<script>
+var questoes = [
+ { t:"História", p:"A emancipação política de Alagoas em relação à Capitania de Pernambuco ocorreu por meio de:",
+   o:["Decreto do Imperador D. Pedro I, em 1822","Carta Régia de D. João VI, em 16 de setembro de 1817","Lei Provincial de 9 de dezembro de 1839","Ato das Cortes portuguesas, em 28 de fevereiro de 1821"],
+   c:1, e:"Carta Régia de D. João VI, de 16/09/1817, desmembrou a Comarca das Alagoas e criou a Capitania das Alagoas. 1821 é a elevação a província e 1839 é a mudança da capital para Maceió." },
+
+ { t:"História", p:"A criação da Capitania das Alagoas, em 1817, é explicada principalmente como:",
+   o:["Resultado de um movimento separatista liderado pelos alagoanos","Consequência da Revolução Pernambucana: punição a Pernambuco e recompensa à lealdade alagoana","Necessidade administrativa criada pela descoberta de ouro na região","Exigência da Coroa espanhola durante a União Ibérica"],
+   c:1, e:"A separação veio DE CIMA, por decisão do rei. Foi punição a Pernambuco pela revolta de 1817 e prêmio à comarca que se manteve leal." },
+
+ { t:"História", p:"Alagoas foi elevada à categoria de PROVÍNCIA em:",
+   o:["16 de setembro de 1817","28 de fevereiro de 1821","9 de dezembro de 1839","15 de novembro de 1889"],
+   c:1, e:"Em 28/02/1821, no contexto da Revolução do Porto, todas as capitanias do Brasil passaram a se chamar províncias. Bizu: 17 separa, 21 renomeia, 39 muda de casa." },
+
+ { t:"História", p:"A transferência da capital da Cidade das Alagoas para Maceió ocorreu em 1839 e teve como principal motivação:",
+   o:["A destruição da antiga capital por um terremoto","A maior importância do porto de Jaraguá e do comércio marítimo","A proximidade de Maceió com a Serra da Barriga","A determinação da Assembleia Geral do Império, sem motivo econômico"],
+   c:1, e:"Foi decisão econômica: o porto de Jaraguá era melhor e mais movimentado. A capital seguiu o açúcar e o comércio." },
+
+ { t:"História", p:"A antiga Cidade das Alagoas, primeira capital do estado, corresponde hoje ao município de:",
+   o:["Penedo","Porto Calvo","Marechal Deodoro","União dos Palmares"],
+   c:2, e:"Foi capital de 1817 a 1839 e recebeu o nome atual em 1939, em homenagem a Deodoro da Fonseca, ali nascido em 1827." },
+
+ { t:"História", p:"Sobre a economia açucareira alagoana no período colonial, é correto afirmar:",
+   o:["Desenvolveu-se sobretudo no Sertão, por causa da irrigação do São Francisco","Concentrou-se na Zona da Mata, favorecida pelo solo massapê e pelas chuvas regulares","Baseou-se em mão de obra assalariada europeia desde o século XVI","Teve papel secundário, já que a economia era voltada à pecuária"],
+   c:1, e:"Massapê + clima úmido + mão de obra escravizada = engenho. A Zona da Mata foi coberta por eles; o açúcar moldou a sociedade alagoana." },
+
+ { t:"História", p:"Domingos Fernandes Calabar, figura ligada às invasões holandesas, foi executado em 1635 na atual cidade alagoana de:",
+   o:["Penedo","Porto Calvo","Coruripe","Piranhas"],
+   c:1, e:"Calabar nasceu em Porto Calvo e ali foi executado, acusado de traição por servir aos neerlandeses." },
+
+ { t:"Palmares", p:"O Quilombo dos Palmares localizava-se:",
+   o:["Na Serra da Barriga, atual município de União dos Palmares, em Alagoas","No Recôncavo Baiano, atual município de Cachoeira","Na Chapada Diamantina, na Bahia","Na Serra da Onça, atual município de Mata Grande"],
+   c:0, e:"Serra da Barriga, em União dos Palmares, na Zona da Mata alagoana. Ali ficava o Mocambo do Macaco, a capital do quilombo." },
+
+ { t:"Palmares", p:"Sobre a liderança de Palmares, é correto afirmar:",
+   o:["Zumbi fundou o quilombo no fim do século XVI","Ganga Zumba e Zumbi são nomes diferentes do mesmo líder","Ganga Zumba aceitou o acordo de paz de 1678, e Zumbi o recusou, assumindo a liderança em 1680","Zumbi aceitou o acordo de paz com a Coroa e transferiu o quilombo para o Cucaú"],
+   c:2, e:"O acordo previa liberdade só para os nascidos em Palmares e devolução de novos fugitivos. Zumbi recusou: para ele não havia liberdade parcial enquanto houvesse escravidão." },
+
+ { t:"Palmares", p:"A destruição do Mocambo do Macaco, capital de Palmares, ocorreu em 1694 e foi conduzida pela expedição de:",
+   o:["Maurício de Nassau","Duarte Coelho","Domingos Jorge Velho","Sebastião Francisco de Melo e Póvoas"],
+   c:2, e:"Domingos Jorge Velho era um bandeirante paulista contratado pela Coroa — não um militar régio." },
+
+ { t:"Palmares", p:"A data de 20 de novembro, hoje Dia Nacional de Zumbi e da Consciência Negra, marca:",
+   o:["O nascimento de Zumbi, em 1655","A morte de Zumbi, em 1695","A assinatura do acordo de paz de Ganga Zumba, em 1678","A destruição do Mocambo do Macaco, em 1694"],
+   c:1, e:"Zumbi foi morto em 20 de novembro de 1695, na Serra Dois Irmãos. A data virou símbolo nacional da resistência negra." },
+
+ { t:"Palmares", p:"Um fator que ajuda a explicar o crescimento de Palmares no século XVII é:",
+   o:["O apoio militar aberto da Coroa portuguesa aos quilombolas","A desorganização provocada pelas invasões holandesas, que afrouxou a vigilância sobre os engenhos","O fim da escravidão no Nordeste, em 1650","A transferência da capital para Maceió"],
+   c:1, e:"Enquanto portugueses e neerlandeses guerreavam (1630–1654), Palmares recebeu sua maior onda de fugitivos e se consolidou como sociedade organizada." },
+
+ { t:"Geografia", p:"Alagoas faz divisa com quais unidades da federação?",
+   o:["Pernambuco, Sergipe e Bahia","Pernambuco, Paraíba e Sergipe","Sergipe, Bahia e Ceará","Pernambuco, Sergipe, Bahia e Rio Grande do Norte"],
+   c:0, e:"Apenas três: Pernambuco ao norte/noroeste, Sergipe ao sul e Bahia a oeste/sudoeste. A leste é o Oceano Atlântico." },
+
+ { t:"Geografia", p:"O limite SUL de Alagoas com o estado de Sergipe é feito:",
+   o:["Por divisa em terra firme","Pelo rio São Francisco","Pelo rio Mundaú","Pela Serra da Borborema"],
+   c:1, e:"O São Francisco corre por toda a borda sul do estado e desemboca no Atlântico entre Piaçabuçu/AL e Brejo Grande/SE." },
+
+ { t:"Geografia", p:"As zonas fisiográficas de Alagoas, do LESTE para o OESTE, seguem a ordem:",
+   o:["Sertão, Agreste, Zona da Mata e Litoral","Litoral, Zona da Mata, Agreste e Sertão","Zona da Mata, Litoral, Sertão e Agreste","Agreste, Sertão, Litoral e Zona da Mata"],
+   c:1, e:"Do mar para o interior, e do mais úmido para o mais seco: Litoral → Zona da Mata → Agreste → Sertão." },
+
+ { t:"Geografia", p:"O Agreste alagoano caracteriza-se por ser:",
+   o:["A faixa mais úmida do estado, coberta por Mata Atlântica","A zona de transição entre a Zona da Mata úmida e o Sertão semiárido","A faixa litorânea de praias e lagoas","A área de maior altitude e clima subtropical"],
+   c:1, e:"Transição: vegetação mista, nem a umidade da Mata nem a secura do Sertão. Sua principal cidade é Arapiraca." },
+
+ { t:"Geografia", p:"A foz do rio São Francisco, no litoral alagoano, situa-se no município de:",
+   o:["Coruripe","Penedo","Piaçabuçu","Marechal Deodoro"],
+   c:2, e:"O rio desemboca entre Piaçabuçu (AL) e Brejo Grande (SE). Penedo fica mais acima, no mesmo rio, mas não é a foz." },
+
+ { t:"Geografia", p:"O complexo lagunar Mundaú–Manguaba é importante porque:",
+   o:["É a maior represa artificial do Nordeste","Deu origem ao nome do estado e forma o entorno de Maceió e Marechal Deodoro","Marca a divisa de Alagoas com Pernambuco","É a nascente do rio São Francisco"],
+   c:1, e:"'Alagoas' vem justamente dessas lagoas — tecnicamente lagunas, pois se ligam ao mar. Sustentam a pesca do sururu e o bordado filé." },
+
+ { t:"Geografia", p:"O ponto mais alto do estado de Alagoas fica na Serra da Onça, no município de:",
+   o:["União dos Palmares","Mata Grande","Palmeira dos Índios","Quebrangulo"],
+   c:1, e:"Serra da Onça, em Mata Grande, no extremo oeste do Sertão, com cerca de 1.016 m." },
+
+ { t:"Estado", p:"Quanto à organização político-administrativa, Alagoas:",
+   o:["Possui 102 municípios e tem Maceió como capital","Possui 75 municípios e tem Arapiraca como segunda capital","Divide-se em 4 distritos administrativos, sem municípios","Possui 102 municípios e tem Marechal Deodoro como capital"],
+   c:0, e:"São 102 municípios. Maceió é capital desde 1839; Marechal Deodoro foi a primeira capital, até aquele ano." },
+
+ { t:"Estado", p:"A Assembleia Legislativa de Alagoas é composta por:",
+   o:["9 deputados estaduais","27 deputados estaduais","3 senadores e 9 deputados","52 vereadores"],
+   c:1, e:"27 deputados estaduais, mandato de 4 anos. Não confunda com os 9 deputados FEDERAIS e os 3 senadores que Alagoas elege para o Congresso." },
+
+ { t:"Estado", p:"O Tribunal de Contas do Estado de Alagoas (TCE/AL) integra:",
+   o:["O Poder Judiciário estadual","O Poder Executivo, como secretaria de controle","O auxílio ao Poder Legislativo no controle externo","O Ministério Público estadual"],
+   c:2, e:"Tribunal de Contas não é Judiciário: é órgão auxiliar do Legislativo no controle externo das contas públicas." },
+
+ { t:"Economia", p:"A atividade que historicamente estruturou a economia e a sociedade da Zona da Mata alagoana é:",
+   o:["A mineração de sal-gema","A agroindústria canavieira","A pecuária extensiva","A fruticultura irrigada"],
+   c:1, e:"Cana desde o século XVI: primeiro engenhos, depois usinas. É a herança colonial mais visível no estado." },
+
+ { t:"Economia", p:"Sobre a participação dos setores no PIB alagoano, é correto afirmar que:",
+   o:["A agropecuária é o maior setor, por causa da cana","O setor de serviços é o maior, seguido pela indústria","A indústria responde por mais da metade do PIB","O turismo sozinho supera indústria e serviços somados"],
+   c:1, e:"Serviços > indústria > agropecuária. A cana é a imagem mais forte do estado, mas não é o maior setor da economia." },
+
+ { t:"Economia", p:"A primeira usina hidrelétrica do Nordeste, construída em 1913 no sertão alagoano, foi:",
+   o:["A Usina de Xingó, em Piranhas","A Usina de Angiquinho, obra de Delmiro Gouveia","A Usina de Paulo Afonso, em Coruripe","A Usina de Jaraguá, em Maceió"],
+   c:1, e:"Angiquinho, construída por Delmiro Gouveia na cachoeira de Paulo Afonso, abasteceu a Fábrica de Linhas Estrela. Xingó é muito posterior." },
+
+ { t:"Economia", p:"A Área de Proteção Ambiental Costa dos Corais, que abrange o litoral norte alagoano, destaca-se por:",
+   o:["Ser a maior área de proteção marinha do Brasil","Proteger a nascente do rio São Francisco","Ser uma reserva de caatinga no sertão","Abrigar o Parque Memorial Quilombo dos Palmares"],
+   c:0, e:"Vai do norte de Alagoas ao sul de Pernambuco. Maragogi, com suas galés, é o destino mais procurado dentro dela." },
+
+ { t:"Cultura", p:"O folguedo considerado a manifestação popular mais característica de Alagoas é:",
+   o:["O frevo","O guerreiro alagoano","O maracatu de baque virado","A congada mineira"],
+   c:1, e:"Auto natalino com reis, embaixadores, música e cortejo. Reisado, pastoril, chegança e coco de roda também são alagoanos, mas o guerreiro é o mais típico." },
+
+ { t:"Cultura", p:"O bordado FILÉ, artesanato-símbolo de Alagoas, está tradicionalmente associado:",
+   o:["Ao sertão de Mata Grande","Às margens da lagoa Mundaú","Ao cânion do São Francisco","Ao agreste de Arapiraca"],
+   c:1, e:"Feito sobre rede de fios, é típico de Maceió, Coqueiro Seco e Santa Luzia do Norte, nas margens da Mundaú." },
+
+ { t:"Cultura", p:"São cidades alagoanas com conjunto histórico TOMBADO pelo IPHAN:",
+   o:["Maceió e Arapiraca","Marechal Deodoro, Penedo e Piranhas","Maragogi e São Miguel dos Milagres","Delmiro Gouveia e Santana do Ipanema"],
+   c:1, e:"Marechal Deodoro (1ª capital), Penedo (porto colonial do São Francisco) e Piranhas (era da navegação a vapor). A Serra da Barriga também é sítio tombado." },
+
+ { t:"Cultura", p:"O escritor Graciliano Ramos, autor de 'Vidas Secas', tem qual ligação com Alagoas?",
+   o:["Nasceu em Quebrangulo e foi prefeito de Palmeira dos Índios","Nasceu em Maceió e foi governador do estado","Nasceu em União dos Palmares e escreveu sobre Zumbi","Não tem ligação com Alagoas; era pernambucano"],
+   c:0, e:"Nasceu em Quebrangulo em 1892 e foi prefeito de Palmeira dos Índios entre 1928 e 1930 — seus relatórios de prefeito ficaram célebres." },
+
+ { t:"História", p:"Alagoas deu ao Brasil os dois primeiros presidentes da República. São eles:",
+   o:["Deodoro da Fonseca e Floriano Peixoto","Deodoro da Fonseca e Prudente de Morais","Floriano Peixoto e Campos Sales","Delmiro Gouveia e Teotônio Vilela"],
+   c:0, e:"Deodoro nasceu na Vila de Alagoas (hoje Marechal Deodoro) e Floriano em Ipioca, hoje distrito de Maceió." }
+];
+
+(function(){
+  var quiz = document.getElementById("quiz");
+  var placar = document.getElementById("placar");
+  var acertos = 0, respondidas = 0;
+
+  function atualizar(){
+    placar.textContent = "Acertos: " + acertos + " de " + respondidas +
+      " respondidas (total " + questoes.length + ")";
+  }
+
+  function montar(q, i){
+    var bloco = document.createElement("div");
+    bloco.className = "q";
+
+    var tema = document.createElement("span");
+    tema.className = "tema";
+    tema.textContent = q.t;
+    bloco.appendChild(tema);
+
+    var titulo = document.createElement("div");
+    titulo.className = "pergunta";
+    titulo.textContent = (i + 1) + ". " + q.p;
+    bloco.appendChild(titulo);
+
+    var caixa = document.createElement("div");
+    caixa.className = "opcoes";
+    var feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.textContent = q.e;
+
+    var letras = ["A) ", "B) ", "C) ", "D) "];
+    var botoes = [];
+    for (var k = 0; k < q.o.length; k++) {
+      (function(pos){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = letras[pos] + q.o[pos];
+        b.addEventListener("click", function(){
+          for (var j = 0; j < botoes.length; j++) botoes[j].disabled = true;
+          botoes[q.c].className = "certa";
+          if (pos !== q.c) b.className = "errada"; else acertos++;
+          respondidas++;
+          feedback.className = "feedback ver";
+          atualizar();
+        });
+        botoes.push(b);
+        caixa.appendChild(b);
+      })(k);
+    }
+    bloco.appendChild(caixa);
+    bloco.appendChild(feedback);
+    return bloco;
+  }
+
+  for (var n = 0; n < questoes.length; n++) quiz.appendChild(montar(questoes[n], n));
+  atualizar();
+})();
+</script>
+</body>
+</html>
