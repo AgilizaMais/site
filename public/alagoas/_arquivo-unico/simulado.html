@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulado — Conhecimentos do Estado de Alagoas | PM-AL</title>
+<meta name="description" content="Simulado com questões de história, geografia, organização, economia e cultura de Alagoas, no estilo de banca. Material de estudo para a PM-AL.">
+<style>
+:root{
+  --mar:#0B3C5D; --agua:#1273AF; --cana:#2E8B3D; --sertao:#C0492F;
+  --agreste:#D98A2B; --litoral:#1B9AAA; --roxo:#6A4C93;
+  --areia:#FFF8EF; --papel:#fff; --tinta:#16242C; --tinta-fraca:#54666F;
+  --linha:#E3DACD; --vermelho:#C63B32; --ouro:#B8860B;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{
+  margin:0;background:var(--areia);color:var(--tinta);
+  font-family:"Segoe UI",Roboto,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:16.5px;line-height:1.55;-webkit-text-size-adjust:100%;
+}
+body.travado{overflow:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px}
+[hidden]{display:none!important}
+
+/* ---------- topo ---------- */
+header.capa{
+  background:
+    radial-gradient(circle at 85% 15%, rgba(216,138,43,.4) 0%, rgba(216,138,43,0) 48%),
+    linear-gradient(155deg,#123B2A 0%,#0E5A6B 52%,#1B9AAA 100%);
+  color:#fff;padding:24px 0 0;position:relative;overflow:hidden;
+}
+.faixa-topo{
+  background:#D98A2B;color:#2A1500;font-weight:800;font-size:12.5px;
+  letter-spacing:.9px;padding:7px 13px;border-radius:999px;display:inline-block;
+}
+h1{font-size:38px;line-height:1.04;margin:15px 0 6px;font-weight:900;letter-spacing:-.8px}
+.sub-capa{color:#D6EFF2;font-size:15.5px;margin:0 0 16px;max-width:60ch}
+.onda{display:block;width:100%;height:34px;margin-bottom:-6px}
+
+/* ---------- navegação entre páginas ---------- */
+nav.paginas{position:sticky;top:0;z-index:60;background:rgba(255,248,239,.97);
+  border-bottom:2px solid var(--linha);backdrop-filter:blur(6px)}
+.nav-scroll{display:flex;gap:7px;overflow-x:auto;padding:10px 14px;max-width:1180px;
+  margin:0 auto;scrollbar-width:none}
+.nav-scroll::-webkit-scrollbar{display:none}
+.nav-scroll a{flex:0 0 auto;text-decoration:none;color:var(--mar);background:#fff;
+  border:1.5px solid var(--linha);border-radius:999px;padding:6px 13px;font-size:13.5px;
+  font-weight:700;white-space:nowrap}
+.nav-scroll a:hover{background:var(--litoral);border-color:var(--litoral);color:#fff}
+.nav-scroll a.atual{background:var(--mar);border-color:var(--mar);color:#fff}
+
+/* ---------- controles ---------- */
+.controles{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:14px 0 6px}
+.busca{position:relative;flex:1 1 240px;min-width:200px}
+.busca input{width:100%;padding:9px 13px;border:2px solid var(--linha);border-radius:10px;
+  font-size:14.5px;font-family:inherit;background:#fff;color:var(--tinta)}
+.busca input:focus{outline:none;border-color:var(--litoral)}
+#busca-lista{display:none;position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;
+  background:#fff;border:1.5px solid var(--linha);border-radius:10px;overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,.14)}
+#busca-lista.ver{display:block}
+#busca-lista button{display:block;width:100%;text-align:left;background:none;border:none;
+  padding:9px 13px;font-size:14px;font-family:inherit;cursor:pointer;color:var(--tinta);
+  border-bottom:1px solid var(--linha)}
+#busca-lista button:last-child{border-bottom:none}
+#busca-lista button:hover{background:#F1F8F9}
+.zoom{display:flex;gap:5px}
+.zoom button{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--linha);
+  background:#fff;font-size:17px;font-weight:900;cursor:pointer;color:var(--mar);
+  font-family:inherit;line-height:1}
+.zoom button:hover{background:var(--mar);color:#fff;border-color:var(--mar)}
+.zoom button.txt{width:auto;padding:0 12px;font-size:13px}
+
+.legenda-tit{font-size:11.5px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  color:var(--tinta-fraca);margin:12px 0 6px}
+.legenda-linha{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:7px;cursor:pointer;background:#fff;
+  border:1.5px solid var(--linha);border-radius:999px;padding:6px 12px;font-size:13px;
+  font-weight:700;font-family:inherit;color:var(--tinta)}
+.chip i{width:12px;height:12px;border-radius:3px;background:var(--cor);flex:0 0 auto}
+.chip b{background:var(--cor);color:#fff;border-radius:5px;padding:1px 6px;font-size:11px;letter-spacing:.8px}
+.chip:hover{border-color:var(--cor)}
+.chip.on{background:var(--cor);border-color:var(--cor);color:#fff}
+.chip.on i{background:rgba(255,255,255,.85)}
+.chip.on b{background:rgba(255,255,255,.9);color:#16242C}
+.chip-camada i{border-radius:50%}
+
+/* ---------- mapa ---------- */
+.moldura{position:relative;background:#0E5A83;border:3px solid var(--mar);
+  border-radius:16px;overflow:hidden;box-shadow:0 12px 34px rgba(11,60,93,.18)}
+#mapa{display:block;width:100%;height:auto;touch-action:none;cursor:grab;background:#0E5A83}
+#mapa.arrastando{cursor:grabbing}
+.alvo{cursor:pointer}
+.apagado{opacity:.2;pointer-events:none}
+
+.mar{fill:#1273AF}
+.vizinho{fill:var(--cor);stroke:#FFF6E8;stroke-width:2.5;transition:filter .15s}
+.vizinho:hover,.vizinho.ativo{filter:brightness(1.2) saturate(1.1)}
+.vizinho.foco{stroke:#fff;stroke-width:5}
+
+.zona{fill:var(--cor);stroke:#FFF6E8;stroke-width:2.5;transition:filter .15s}
+.zona:hover,.zona.ativo{filter:brightness(1.18) saturate(1.1)}
+.zona.foco{stroke:#FFD24A;stroke-width:6}
+
+.rio-borda{fill:none;stroke:#07456E;stroke-linecap:round;stroke-linejoin:round}
+.rio{fill:none;stroke:#3FB0EC;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.rio:hover,.rio.ativo,.rio.foco{stroke:#9FE0FF}
+.laguna{fill:#2FA8E0;stroke:#07456E;stroke-width:2.5;transition:fill .15s}
+.laguna:hover,.laguna.ativo{fill:#8FD6FF}
+
+.divisa{cursor:pointer}
+.divisa-halo{fill:none;stroke:#fff;stroke-width:15;stroke-linecap:round;stroke-linejoin:round;opacity:.45}
+.divisa-base{fill:none;stroke:#2B1D0E;stroke-width:8.5;stroke-linecap:round;stroke-linejoin:round}
+.divisa-traco{fill:none;stroke:var(--cor);stroke-width:4.2;stroke-dasharray:14 11;transition:stroke-width .15s}
+.divisa:hover .divisa-traco,.divisa.ativo .divisa-traco{stroke:#fff;stroke-width:6}
+.divisa.foco .divisa-halo{stroke:#FFD24A;opacity:1;stroke-width:21}
+
+.pino{fill:#FFF3DA;stroke:#3A2308;stroke-width:2.6}
+.pino-halo{fill:rgba(0,0,0,.18)}
+.pino-miolo{fill:#C0392B}
+.destaque .pino{fill:#FFC531;stroke:#6B3B00;stroke-width:3}
+.ponto:hover .pino,.ponto.ativo .pino{fill:#fff;stroke:#C0392B}
+.ponto.foco .pino{fill:#FFD24A;stroke:#fff;stroke-width:3.4}
+
+/* rótulos */
+text{pointer-events:none;font-family:"Segoe UI",Arial,sans-serif}
+.rot-zona{font-size:26px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:3px;
+  paint-order:stroke;stroke:rgba(0,0,0,.32);stroke-width:4.5px}
+.rot-zona-sub{font-size:12.5px;font-weight:700;fill:#FFF6E8;text-anchor:middle;
+  paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:3px}
+.rot-vizinho{font-size:20px;font-weight:900;fill:#fff;text-anchor:middle;
+  paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:4px}
+.selo-dir{font-size:13px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:2.4px;
+  paint-order:stroke;stroke:rgba(0,0,0,.4);stroke-width:3.5px}
+.selo-mar{fill:#DFF1FF;letter-spacing:4px;stroke:rgba(8,60,95,.7)}
+.rot-rio{font-size:15px;font-weight:900;fill:#EAF7FF;text-anchor:middle;letter-spacing:.8px;
+  paint-order:stroke;stroke:rgba(6,50,80,.8);stroke-width:4px}
+.rot-laguna{font-size:11px;font-weight:900;fill:#EAF7FF;text-anchor:middle;
+  paint-order:stroke;stroke:rgba(6,50,80,.85);stroke-width:3px}
+.rot-ponto{font-size:12.5px;font-weight:800;fill:#1B1208;paint-order:stroke;
+  stroke:rgba(255,255,255,.9);stroke-width:3.4px}
+.rot-ponto.forte{font-size:14.5px;font-weight:900}
+.rot-ponto.fim{text-anchor:end}
+.rot-ponto.inicio{text-anchor:start}
+.rot-divisa{font-size:11px;font-weight:900;fill:#2B1D0E;text-anchor:middle;letter-spacing:1.6px;
+  paint-order:stroke;stroke:rgba(255,255,255,.85);stroke-width:3.2px}
+.rot-oceano{font-size:24px;font-weight:900;fill:#BEE6FF;text-anchor:middle;letter-spacing:6px;opacity:.75}
+.rot-oceano.foco{opacity:1;fill:#fff}
+
+.bussola-fundo{fill:rgba(255,255,255,.92);stroke:var(--mar);stroke-width:2.5}
+.bussola-agulha{fill:#C0392B}
+.bussola-txt{font-size:14px;font-weight:900;fill:#0B3C5D;text-anchor:middle}
+.seta-umid{stroke:rgba(255,255,255,.75);stroke-width:2.5;stroke-dasharray:7 6;fill:none}
+.seta-ponta{fill:rgba(255,255,255,.75)}
+.txt-umid{font-size:12px;font-weight:800;fill:#fff;opacity:.85}
+.txt-umid.fim{text-anchor:end}
+.txt-umid.inicio{text-anchor:start}
+
+.aviso-mapa{font-size:12.5px;color:var(--tinta-fraca);margin:9px 0 0;text-align:center}
+
+/* ---------- tooltip ---------- */
+#tip{position:fixed;z-index:80;pointer-events:none;opacity:0;transform:translateY(4px);
+  transition:opacity .12s,transform .12s;max-width:280px;background:#12222C;color:#fff;
+  border-radius:11px;padding:10px 12px;box-shadow:0 12px 30px rgba(0,0,0,.32);
+  font-size:13.5px;line-height:1.4}
+#tip.ver{opacity:1;transform:translateY(0)}
+#tip strong{display:block;font-size:15px;margin:6px 0 3px}
+.tip-selo{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.8px;
+  text-transform:uppercase;color:#fff;padding:2px 7px;border-radius:5px}
+.tip-txt{display:block;color:#BCD3DE}
+.tip-dica{display:block;margin-top:7px;font-size:11px;color:#7FA6B8;letter-spacing:.4px}
+
+/* ---------- modal ---------- */
+#modal{position:fixed;inset:0;z-index:100;display:none;background:rgba(9,28,40,.62);
+  backdrop-filter:blur(3px);align-items:flex-end;justify-content:center}
+#modal.ver{display:flex}
+@media(min-width:700px){#modal{align-items:center;padding:24px}}
+#modal-caixa{background:var(--papel);width:100%;max-width:640px;max-height:88vh;overflow-y:auto;
+  border-radius:18px 18px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.3);outline:none}
+@media(min-width:700px){#modal-caixa{border-radius:18px}}
+.modal-topo{position:sticky;top:0;background:var(--papel);border-bottom:2px solid var(--linha);
+  padding:16px 18px 12px;display:flex;gap:12px;align-items:flex-start}
+.modal-topo h3{margin:6px 0 0;font-size:21px;font-weight:900;color:var(--mar);
+  letter-spacing:-.4px;line-height:1.15}
+#modal-selo{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.9px;
+  text-transform:uppercase;color:#fff;padding:3px 8px;border-radius:6px}
+#modal-fechar{margin-left:auto;flex:0 0 auto;border:none;background:#F0EAE0;color:var(--tinta);
+  width:34px;height:34px;border-radius:50%;font-size:19px;cursor:pointer;line-height:1;font-family:inherit}
+#modal-fechar:hover{background:var(--vermelho);color:#fff}
+.modal-corpo{padding:14px 18px 20px}
+#modal-resumo{font-size:15.5px;color:var(--tinta-fraca);margin:0 0 14px}
+.linha{border-left:5px solid var(--litoral);background:#F2F9FA;border-radius:0 10px 10px 0;
+  padding:10px 13px;margin-bottom:10px}
+.linha h4{margin:0 0 3px;font-size:11.5px;font-weight:900;letter-spacing:.9px;
+  text-transform:uppercase;color:#0E7C8B}
+.linha p{margin:0;font-size:14.8px}
+.modal-links-tit{font-size:11.5px;font-weight:900;letter-spacing:.9px;color:var(--tinta-fraca);
+  text-transform:uppercase;margin:18px 0 7px}
+#modal-links{display:flex;flex-wrap:wrap;gap:6px}
+.chip-rel{border:1.5px solid var(--cor);background:#fff;color:var(--tinta);border-radius:999px;
+  padding:5px 11px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit}
+.chip-rel:hover{background:var(--cor);color:#fff}
+
+/* ---------- seções ---------- */
+section{padding:28px 0 4px}
+.cap-head{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+.cap-num{background:#D98A2B;color:#fff;font-weight:900;font-size:12px;padding:6px 9px;
+  border-radius:7px;letter-spacing:.5px;flex:0 0 auto}
+.cap-head h2{margin:0;font-size:23px;font-weight:900;letter-spacing:-.4px;color:var(--mar)}
+.barra{height:5px;background:var(--mar);border-radius:3px;margin-bottom:16px}
+h3.sub-tit{font-size:17.5px;font-weight:900;color:var(--mar);margin:26px 0 6px;
+  display:flex;align-items:center;gap:8px}
+h3.sub-tit::before{content:"";width:11px;height:11px;background:#D98A2B;border-radius:2.5px;flex:0 0 auto}
+p{margin:0 0 11px}
+ul{margin:0 0 12px;padding-left:19px}
+li{margin-bottom:5px}
+strong,b{color:#0A2E45}
+
+.tab-rolagem{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;background:#fff;font-size:14px}
+th{background:var(--mar);color:#fff;text-align:left;padding:9px 11px;font-size:13px}
+td{border-bottom:1px solid var(--linha);padding:9px 11px;vertical-align:top}
+tr:nth-child(even) td{background:#FCF9F4}
+tbody tr:hover td{background:#F1F8F9}
+
+.box{border-left:6px solid #D98A2B;background:#FFF6EA;border-radius:0 12px 12px 0;
+  padding:13px 15px;margin:14px 0}
+.box .rotulo{font-size:11.5px;font-weight:900;letter-spacing:1px;color:#A35E00;margin-bottom:5px}
+.box p:last-child,.box ul:last-child{margin-bottom:0}
+.box.atencao{border-color:var(--vermelho);background:#FFF1F0}
+.box.atencao .rotulo{color:var(--vermelho)}
+.box.ouro{border-color:var(--cana);background:#EFFAF2}
+.box.ouro .rotulo{color:#186B2C}
+.box.entenda{border-color:var(--mar);background:#F1F7FB}
+.box.entenda .rotulo{color:var(--mar)}
+.box.prova{border-color:var(--roxo);background:#F5F1FC}
+.box.prova .rotulo{color:var(--roxo)}
+
+.grade{display:grid;gap:11px;grid-template-columns:1fr;margin:14px 0}
+@media(min-width:700px){.grade{grid-template-columns:1fr 1fr}
+  .grade.tres{grid-template-columns:repeat(3,1fr)}}
+.card{background:#fff;border:1.5px solid var(--linha);border-radius:13px;padding:13px 15px}
+.card h4{margin:0 0 5px;font-size:16px;font-weight:800;color:var(--mar)}
+.card p{margin:0;font-size:14.5px;color:var(--tinta-fraca)}
+.card p b{color:var(--tinta)}
+.card .tag{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.8px;
+  padding:3px 8px;border-radius:6px;margin-bottom:7px;background:#E7F3F5;color:#0E7C8B}
+
+/* cartão de identidade */
+#identidade{display:grid;gap:8px;grid-template-columns:1fr;margin:14px 0}
+@media(min-width:620px){#identidade{grid-template-columns:1fr 1fr}}
+.id-item{background:#fff;border:1.5px solid var(--linha);border-radius:11px;padding:9px 13px;
+  display:flex;flex-direction:column}
+.id-item span{font-size:11px;font-weight:900;letter-spacing:.9px;text-transform:uppercase;
+  color:var(--tinta-fraca)}
+.id-item b{font-size:15px;color:var(--mar)}
+
+/* linha do tempo */
+.linha-tempo{border-left:3px solid #D98A2B;margin:16px 0 16px 8px;padding-left:18px}
+.evento{margin-bottom:16px;position:relative}
+.evento::before{content:"";position:absolute;left:-25px;top:6px;width:11px;height:11px;
+  background:#D98A2B;border:2.5px solid var(--areia);border-radius:50%}
+.evento b{color:var(--mar);display:block;font-size:15.5px}
+.evento span{font-size:14.8px;color:var(--tinta-fraca)}
+.evento.forte::before{background:var(--vermelho);width:15px;height:15px;left:-27px}
+
+/* quiz */
+.quiz{background:#fff;border:2px solid var(--mar);border-radius:15px;padding:16px;margin:18px 0}
+.q{margin-bottom:18px;padding-bottom:16px;border-bottom:1px dashed var(--linha)}
+.q:last-of-type{border-bottom:none}
+.q .pergunta{font-weight:700;margin-bottom:9px;font-size:15.5px}
+.q .tema{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.8px;
+  text-transform:uppercase;background:#EDE5FA;color:#59409E;padding:2px 7px;border-radius:5px;margin-bottom:6px}
+.opcoes button{display:block;width:100%;text-align:left;background:#FCF9F4;
+  border:1.5px solid var(--linha);border-radius:9px;padding:9px 12px;margin-bottom:6px;
+  font-size:14.5px;cursor:pointer;font-family:inherit;color:var(--tinta);line-height:1.4}
+.opcoes button:hover:not(:disabled){border-color:var(--litoral)}
+.opcoes button:disabled{cursor:default;opacity:1}
+.opcoes button.certa{background:#E4F6EA;border-color:var(--cana);font-weight:700}
+.opcoes button.errada{background:#FDECEA;border-color:var(--vermelho)}
+.feedback{font-size:14px;margin-top:7px;color:var(--tinta-fraca);display:none}
+.feedback.ver{display:block}
+.placar{position:sticky;bottom:10px;background:var(--mar);color:#fff;border-radius:11px;
+  padding:11px 14px;font-weight:800;text-align:center;font-size:15px;z-index:20}
+
+footer{background:var(--mar);color:#BEDCEC;margin-top:34px;padding:22px 0;
+  font-size:13.5px;text-align:center}
+footer b{color:#D98A2B}
+footer a{color:#fff}
+
+@media(max-width:560px){
+  h1{font-size:30px}
+  .rot-zona{font-size:34px}
+  .rot-zona-sub{font-size:16px}
+  .rot-vizinho{font-size:26px}
+  .rot-ponto{font-size:17px}
+  .rot-ponto.forte{font-size:19px}
+  .rot-rio{font-size:19px}
+  .selo-dir{font-size:17px}
+  .rot-divisa{font-size:14px}
+}
+
+.rot-zona-p{font-size:19px;letter-spacing:2px}
+
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">SIMULADO · CONHECIMENTOS DO ESTADO DE ALAGOAS</span>
+    <h1>Teste o que você já fixou</h1>
+    <p class="sub-capa">Questões no estilo de banca, cobrindo os seis itens do edital. Toque na alternativa para conferir na hora — com a explicação do porquê.</p>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<nav class="paginas">
+  <div class="nav-scroll">
+    <a href="index.html">🗺️ Mapa</a>
+    <a href="historia.html">Formação histórica</a>
+    <a href="historia.html#palmares">Quilombo dos Palmares</a>
+    <a href="estado.html">Organização do Estado</a>
+    <a href="estado.html#economia">Economia</a>
+    <a href="estado.html#cultura">Cultura e patrimônio</a>
+    <a href="simulado.html" class="atual">Simulado</a>
+  </div>
+</nav>
+
+<main class="wrap">
+<section>
+  <div class="cap-head"><span class="cap-num">TREINO</span><h2>Simulado comentado</h2></div>
+  <div class="barra"></div>
+  <div class="quiz" id="quiz"></div>
+  <div class="placar" id="placar">Acertos: 0 de 0 respondidas</div>
+  <div class="box" style="margin-top:18px">
+    <div class="rotulo">ERROU ALGUMA?</div>
+    <p>Volte ao ponto certo: <a href="historia.html">formação histórica e Palmares</a>, <a href="estado.html">organização, economia e cultura</a> ou <a href="index.html">o mapa</a>.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Simulado — Conhecimentos do Estado de Alagoas</b></p>
+    <p><a href="index.html">🗺️ Mapa</a> · <a href="historia.html">História</a> · <a href="estado.html">Estado e economia</a></p>
+    <p><b>@12.jgs</b></p>
+  </div>
+</footer>
+
+<script>
+var questoes = [
+ { t:"História", p:"A emancipação política de Alagoas em relação à Capitania de Pernambuco ocorreu por meio de:",
+   o:["Decreto do Imperador D. Pedro I, em 1822","Carta Régia de D. João VI, em 16 de setembro de 1817","Lei Provincial de 9 de dezembro de 1839","Ato das Cortes portuguesas, em 28 de fevereiro de 1821"],
+   c:1, e:"Carta Régia de D. João VI, de 16/09/1817, desmembrou a Comarca das Alagoas e criou a Capitania das Alagoas. 1821 é a elevação a província e 1839 é a mudança da capital para Maceió." },
+
+ { t:"História", p:"A criação da Capitania das Alagoas, em 1817, é explicada principalmente como:",
+   o:["Resultado de um movimento separatista liderado pelos alagoanos","Consequência da Revolução Pernambucana: punição a Pernambuco e recompensa à lealdade alagoana","Necessidade administrativa criada pela descoberta de ouro na região","Exigência da Coroa espanhola durante a União Ibérica"],
+   c:1, e:"A separação veio DE CIMA, por decisão do rei. Foi punição a Pernambuco pela revolta de 1817 e prêmio à comarca que se manteve leal." },
+
+ { t:"História", p:"Alagoas foi elevada à categoria de PROVÍNCIA em:",
+   o:["16 de setembro de 1817","28 de fevereiro de 1821","9 de dezembro de 1839","15 de novembro de 1889"],
+   c:1, e:"Em 28/02/1821, no contexto da Revolução do Porto, todas as capitanias do Brasil passaram a se chamar províncias. Bizu: 17 separa, 21 renomeia, 39 muda de casa." },
+
+ { t:"História", p:"A transferência da capital da Cidade das Alagoas para Maceió ocorreu em 1839 e teve como principal motivação:",
+   o:["A destruição da antiga capital por um terremoto","A maior importância do porto de Jaraguá e do comércio marítimo","A proximidade de Maceió com a Serra da Barriga","A determinação da Assembleia Geral do Império, sem motivo econômico"],
+   c:1, e:"Foi decisão econômica: o porto de Jaraguá era melhor e mais movimentado. A capital seguiu o açúcar e o comércio." },
+
+ { t:"História", p:"A antiga Cidade das Alagoas, primeira capital do estado, corresponde hoje ao município de:",
+   o:["Penedo","Porto Calvo","Marechal Deodoro","União dos Palmares"],
+   c:2, e:"Foi capital de 1817 a 1839 e recebeu o nome atual em 1939, em homenagem a Deodoro da Fonseca, ali nascido em 1827." },
+
+ { t:"História", p:"Sobre a economia açucareira alagoana no período colonial, é correto afirmar:",
+   o:["Desenvolveu-se sobretudo no Sertão, por causa da irrigação do São Francisco","Concentrou-se na Zona da Mata, favorecida pelo solo massapê e pelas chuvas regulares","Baseou-se em mão de obra assalariada europeia desde o século XVI","Teve papel secundário, já que a economia era voltada à pecuária"],
+   c:1, e:"Massapê + clima úmido + mão de obra escravizada = engenho. A Zona da Mata foi coberta por eles; o açúcar moldou a sociedade alagoana." },
+
+ { t:"História", p:"Domingos Fernandes Calabar, figura ligada às invasões holandesas, foi executado em 1635 na atual cidade alagoana de:",
+   o:["Penedo","Porto Calvo","Coruripe","Piranhas"],
+   c:1, e:"Calabar nasceu em Porto Calvo e ali foi executado, acusado de traição por servir aos neerlandeses." },
+
+ { t:"Palmares", p:"O Quilombo dos Palmares localizava-se:",
+   o:["Na Serra da Barriga, atual município de União dos Palmares, em Alagoas","No Recôncavo Baiano, atual município de Cachoeira","Na Chapada Diamantina, na Bahia","Na Serra da Onça, atual município de Mata Grande"],
+   c:0, e:"Serra da Barriga, em União dos Palmares, na Zona da Mata alagoana. Ali ficava o Mocambo do Macaco, a capital do quilombo." },
+
+ { t:"Palmares", p:"Sobre a liderança de Palmares, é correto afirmar:",
+   o:["Zumbi fundou o quilombo no fim do século XVI","Ganga Zumba e Zumbi são nomes diferentes do mesmo líder","Ganga Zumba aceitou o acordo de paz de 1678, e Zumbi o recusou, assumindo a liderança em 1680","Zumbi aceitou o acordo de paz com a Coroa e transferiu o quilombo para o Cucaú"],
+   c:2, e:"O acordo previa liberdade só para os nascidos em Palmares e devolução de novos fugitivos. Zumbi recusou: para ele não havia liberdade parcial enquanto houvesse escravidão." },
+
+ { t:"Palmares", p:"A destruição do Mocambo do Macaco, capital de Palmares, ocorreu em 1694 e foi conduzida pela expedição de:",
+   o:["Maurício de Nassau","Duarte Coelho","Domingos Jorge Velho","Sebastião Francisco de Melo e Póvoas"],
+   c:2, e:"Domingos Jorge Velho era um bandeirante paulista contratado pela Coroa — não um militar régio." },
+
+ { t:"Palmares", p:"A data de 20 de novembro, hoje Dia Nacional de Zumbi e da Consciência Negra, marca:",
+   o:["O nascimento de Zumbi, em 1655","A morte de Zumbi, em 1695","A assinatura do acordo de paz de Ganga Zumba, em 1678","A destruição do Mocambo do Macaco, em 1694"],
+   c:1, e:"Zumbi foi morto em 20 de novembro de 1695, na Serra Dois Irmãos. A data virou símbolo nacional da resistência negra." },
+
+ { t:"Palmares", p:"Um fator que ajuda a explicar o crescimento de Palmares no século XVII é:",
+   o:["O apoio militar aberto da Coroa portuguesa aos quilombolas","A desorganização provocada pelas invasões holandesas, que afrouxou a vigilância sobre os engenhos","O fim da escravidão no Nordeste, em 1650","A transferência da capital para Maceió"],
+   c:1, e:"Enquanto portugueses e neerlandeses guerreavam (1630–1654), Palmares recebeu sua maior onda de fugitivos e se consolidou como sociedade organizada." },
+
+ { t:"Geografia", p:"Alagoas faz divisa com quais unidades da federação?",
+   o:["Pernambuco, Sergipe e Bahia","Pernambuco, Paraíba e Sergipe","Sergipe, Bahia e Ceará","Pernambuco, Sergipe, Bahia e Rio Grande do Norte"],
+   c:0, e:"Apenas três: Pernambuco ao norte/noroeste, Sergipe ao sul e Bahia a oeste/sudoeste. A leste é o Oceano Atlântico." },
+
+ { t:"Geografia", p:"O limite SUL de Alagoas com o estado de Sergipe é feito:",
+   o:["Por divisa em terra firme","Pelo rio São Francisco","Pelo rio Mundaú","Pela Serra da Borborema"],
+   c:1, e:"O São Francisco corre por toda a borda sul do estado e desemboca no Atlântico entre Piaçabuçu/AL e Brejo Grande/SE." },
+
+ { t:"Geografia", p:"As zonas fisiográficas de Alagoas, do LESTE para o OESTE, seguem a ordem:",
+   o:["Sertão, Agreste, Zona da Mata e Litoral","Litoral, Zona da Mata, Agreste e Sertão","Zona da Mata, Litoral, Sertão e Agreste","Agreste, Sertão, Litoral e Zona da Mata"],
+   c:1, e:"Do mar para o interior, e do mais úmido para o mais seco: Litoral → Zona da Mata → Agreste → Sertão." },
+
+ { t:"Geografia", p:"O Agreste alagoano caracteriza-se por ser:",
+   o:["A faixa mais úmida do estado, coberta por Mata Atlântica","A zona de transição entre a Zona da Mata úmida e o Sertão semiárido","A faixa litorânea de praias e lagoas","A área de maior altitude e clima subtropical"],
+   c:1, e:"Transição: vegetação mista, nem a umidade da Mata nem a secura do Sertão. Sua principal cidade é Arapiraca." },
+
+ { t:"Geografia", p:"A foz do rio São Francisco, no litoral alagoano, situa-se no município de:",
+   o:["Coruripe","Penedo","Piaçabuçu","Marechal Deodoro"],
+   c:2, e:"O rio desemboca entre Piaçabuçu (AL) e Brejo Grande (SE). Penedo fica mais acima, no mesmo rio, mas não é a foz." },
+
+ { t:"Geografia", p:"O complexo lagunar Mundaú–Manguaba é importante porque:",
+   o:["É a maior represa artificial do Nordeste","Deu origem ao nome do estado e forma o entorno de Maceió e Marechal Deodoro","Marca a divisa de Alagoas com Pernambuco","É a nascente do rio São Francisco"],
+   c:1, e:"'Alagoas' vem justamente dessas lagoas — tecnicamente lagunas, pois se ligam ao mar. Sustentam a pesca do sururu e o bordado filé." },
+
+ { t:"Geografia", p:"O ponto mais alto do estado de Alagoas fica na Serra da Onça, no município de:",
+   o:["União dos Palmares","Mata Grande","Palmeira dos Índios","Quebrangulo"],
+   c:1, e:"Serra da Onça, em Mata Grande, no extremo oeste do Sertão, com cerca de 1.016 m." },
+
+ { t:"Estado", p:"Quanto à organização político-administrativa, Alagoas:",
+   o:["Possui 102 municípios e tem Maceió como capital","Possui 75 municípios e tem Arapiraca como segunda capital","Divide-se em 4 distritos administrativos, sem municípios","Possui 102 municípios e tem Marechal Deodoro como capital"],
+   c:0, e:"São 102 municípios. Maceió é capital desde 1839; Marechal Deodoro foi a primeira capital, até aquele ano." },
+
+ { t:"Estado", p:"A Assembleia Legislativa de Alagoas é composta por:",
+   o:["9 deputados estaduais","27 deputados estaduais","3 senadores e 9 deputados","52 vereadores"],
+   c:1, e:"27 deputados estaduais, mandato de 4 anos. Não confunda com os 9 deputados FEDERAIS e os 3 senadores que Alagoas elege para o Congresso." },
+
+ { t:"Estado", p:"O Tribunal de Contas do Estado de Alagoas (TCE/AL) integra:",
+   o:["O Poder Judiciário estadual","O Poder Executivo, como secretaria de controle","O auxílio ao Poder Legislativo no controle externo","O Ministério Público estadual"],
+   c:2, e:"Tribunal de Contas não é Judiciário: é órgão auxiliar do Legislativo no controle externo das contas públicas." },
+
+ { t:"Economia", p:"A atividade que historicamente estruturou a economia e a sociedade da Zona da Mata alagoana é:",
+   o:["A mineração de sal-gema","A agroindústria canavieira","A pecuária extensiva","A fruticultura irrigada"],
+   c:1, e:"Cana desde o século XVI: primeiro engenhos, depois usinas. É a herança colonial mais visível no estado." },
+
+ { t:"Economia", p:"Sobre a participação dos setores no PIB alagoano, é correto afirmar que:",
+   o:["A agropecuária é o maior setor, por causa da cana","O setor de serviços é o maior, seguido pela indústria","A indústria responde por mais da metade do PIB","O turismo sozinho supera indústria e serviços somados"],
+   c:1, e:"Serviços > indústria > agropecuária. A cana é a imagem mais forte do estado, mas não é o maior setor da economia." },
+
+ { t:"Economia", p:"A primeira usina hidrelétrica do Nordeste, construída em 1913 no sertão alagoano, foi:",
+   o:["A Usina de Xingó, em Piranhas","A Usina de Angiquinho, obra de Delmiro Gouveia","A Usina de Paulo Afonso, em Coruripe","A Usina de Jaraguá, em Maceió"],
+   c:1, e:"Angiquinho, construída por Delmiro Gouveia na cachoeira de Paulo Afonso, abasteceu a Fábrica de Linhas Estrela. Xingó é muito posterior." },
+
+ { t:"Economia", p:"A Área de Proteção Ambiental Costa dos Corais, que abrange o litoral norte alagoano, destaca-se por:",
+   o:["Ser a maior área de proteção marinha do Brasil","Proteger a nascente do rio São Francisco","Ser uma reserva de caatinga no sertão","Abrigar o Parque Memorial Quilombo dos Palmares"],
+   c:0, e:"Vai do norte de Alagoas ao sul de Pernambuco. Maragogi, com suas galés, é o destino mais procurado dentro dela." },
+
+ { t:"Cultura", p:"O folguedo considerado a manifestação popular mais característica de Alagoas é:",
+   o:["O frevo","O guerreiro alagoano","O maracatu de baque virado","A congada mineira"],
+   c:1, e:"Auto natalino com reis, embaixadores, música e cortejo. Reisado, pastoril, chegança e coco de roda também são alagoanos, mas o guerreiro é o mais típico." },
+
+ { t:"Cultura", p:"O bordado FILÉ, artesanato-símbolo de Alagoas, está tradicionalmente associado:",
+   o:["Ao sertão de Mata Grande","Às margens da lagoa Mundaú","Ao cânion do São Francisco","Ao agreste de Arapiraca"],
+   c:1, e:"Feito sobre rede de fios, é típico de Maceió, Coqueiro Seco e Santa Luzia do Norte, nas margens da Mundaú." },
+
+ { t:"Cultura", p:"São cidades alagoanas com conjunto histórico TOMBADO pelo IPHAN:",
+   o:["Maceió e Arapiraca","Marechal Deodoro, Penedo e Piranhas","Maragogi e São Miguel dos Milagres","Delmiro Gouveia e Santana do Ipanema"],
+   c:1, e:"Marechal Deodoro (1ª capital), Penedo (porto colonial do São Francisco) e Piranhas (era da navegação a vapor). A Serra da Barriga também é sítio tombado." },
+
+ { t:"Cultura", p:"O escritor Graciliano Ramos, autor de 'Vidas Secas', tem qual ligação com Alagoas?",
+   o:["Nasceu em Quebrangulo e foi prefeito de Palmeira dos Índios","Nasceu em Maceió e foi governador do estado","Nasceu em União dos Palmares e escreveu sobre Zumbi","Não tem ligação com Alagoas; era pernambucano"],
+   c:0, e:"Nasceu em Quebrangulo em 1892 e foi prefeito de Palmeira dos Índios entre 1928 e 1930 — seus relatórios de prefeito ficaram célebres." },
+
+ { t:"História", p:"Alagoas deu ao Brasil os dois primeiros presidentes da República. São eles:",
+   o:["Deodoro da Fonseca e Floriano Peixoto","Deodoro da Fonseca e Prudente de Morais","Floriano Peixoto e Campos Sales","Delmiro Gouveia e Teotônio Vilela"],
+   c:0, e:"Deodoro nasceu na Vila de Alagoas (hoje Marechal Deodoro) e Floriano em Ipioca, hoje distrito de Maceió." }
+];
+
+(function(){
+  var quiz = document.getElementById("quiz");
+  var placar = document.getElementById("placar");
+  var acertos = 0, respondidas = 0;
+
+  function atualizar(){
+    placar.textContent = "Acertos: " + acertos + " de " + respondidas +
+      " respondidas (total " + questoes.length + ")";
+  }
+
+  function montar(q, i){
+    var bloco = document.createElement("div");
+    bloco.className = "q";
+
+    var tema = document.createElement("span");
+    tema.className = "tema";
+    tema.textContent = q.t;
+    bloco.appendChild(tema);
+
+    var titulo = document.createElement("div");
+    titulo.className = "pergunta";
+    titulo.textContent = (i + 1) + ". " + q.p;
+    bloco.appendChild(titulo);
+
+    var caixa = document.createElement("div");
+    caixa.className = "opcoes";
+    var feedback = document.createElement("div");
+    feedback.className = "feedback";
+    feedback.textContent = q.e;
+
+    var letras = ["A) ", "B) ", "C) ", "D) "];
+    var botoes = [];
+    for (var k = 0; k < q.o.length; k++) {
+      (function(pos){
+        var b = document.createElement("button");
+        b.type = "button";
+        b.textContent = letras[pos] + q.o[pos];
+        b.addEventListener("click", function(){
+          for (var j = 0; j < botoes.length; j++) botoes[j].disabled = true;
+          botoes[q.c].className = "certa";
+          if (pos !== q.c) b.className = "errada"; else acertos++;
+          respondidas++;
+          feedback.className = "feedback ver";
+          atualizar();
+        });
+        botoes.push(b);
+        caixa.appendChild(b);
+      })(k);
+    }
+    bloco.appendChild(caixa);
+    bloco.appendChild(feedback);
+    return bloco;
+  }
+
+  for (var n = 0; n < questoes.length; n++) quiz.appendChild(montar(questoes[n], n));
+  atualizar();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa Interativo de Aracaju — Geografia para Concurso</title>
+<meta name="description" content="Mapa desenhado e interativo de Aracaju/SE: limites, rios, pontes, marco zero, zonas e bairros. Passe o mouse para ver o resumo, clique para abrir os detalhes.">
+<style>
+:root{
+  --mar:#0B3C5D; --rio:#1276A8; --mangue:#17876B; --caju:#F07E13;
+  --areia:#FFF8EF; --papel:#fff; --tinta:#16242C; --tinta-fraca:#54666F;
+  --linha:#E3DACD; --vermelho:#C63B32; --roxo:#6B4E9B;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--areia);color:var(--tinta);
+  font-family:"Segoe UI",Roboto,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:16.5px;line-height:1.55;-webkit-text-size-adjust:100%;
+}
+body.travado{overflow:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px}
+
+/* ---------- topo ---------- */
+header.capa{
+  background:
+    radial-gradient(circle at 88% 12%, rgba(240,126,19,.35) 0%, rgba(240,126,19,0) 45%),
+    linear-gradient(160deg,#0B3C5D 0%,#0E5A83 55%,#1276A8 100%);
+  color:#fff;padding:24px 0 0;position:relative;overflow:hidden;
+}
+.faixa-topo{
+  background:var(--caju);color:#2A1500;font-weight:800;font-size:12.5px;
+  letter-spacing:.9px;padding:7px 13px;border-radius:999px;display:inline-block;
+}
+h1{font-size:38px;line-height:1.04;margin:15px 0 6px;font-weight:900;letter-spacing:-.8px}
+.sub-capa{color:#CDE7F5;font-size:15.5px;margin:0 0 16px;max-width:58ch}
+.links-topo{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.links-topo a{
+  text-decoration:none;color:#fff;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:7px 14px;
+  font-size:13.5px;font-weight:700;
+}
+.links-topo a:hover{background:var(--caju);border-color:var(--caju);color:#fff}
+.onda{display:block;width:100%;height:34px;margin-bottom:-6px}
+
+/* ---------- barra de controle ---------- */
+.controles{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  padding:14px 0 10px;
+}
+.busca{position:relative;flex:1 1 240px;min-width:200px}
+.busca input{
+  width:100%;padding:9px 13px;border:2px solid var(--linha);border-radius:10px;
+  font-size:14.5px;font-family:inherit;background:#fff;color:var(--tinta);
+}
+.busca input:focus{outline:none;border-color:var(--rio)}
+#busca-lista{
+  display:none;position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;
+  background:#fff;border:1.5px solid var(--linha);border-radius:10px;overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,.14);
+}
+#busca-lista.ver{display:block}
+#busca-lista button{
+  display:block;width:100%;text-align:left;background:none;border:none;
+  padding:9px 13px;font-size:14px;font-family:inherit;cursor:pointer;color:var(--tinta);
+  border-bottom:1px solid var(--linha);
+}
+#busca-lista button:last-child{border-bottom:none}
+#busca-lista button:hover{background:#F3F8FB}
+
+#legenda{display:flex;flex-wrap:wrap;gap:6px}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;cursor:pointer;
+  background:#fff;border:1.5px solid var(--linha);border-radius:999px;
+  padding:6px 12px;font-size:13px;font-weight:700;font-family:inherit;color:var(--tinta);
+}
+.chip i{width:12px;height:12px;border-radius:3px;background:var(--cor);flex:0 0 auto}
+.chip-mun b{background:var(--cor);color:#fff;border-radius:5px;padding:1px 6px;font-size:11px;letter-spacing:.8px}
+.chip.on b{background:rgba(255,255,255,.9);color:#16242C}
+.legenda-tit{font-size:11.5px;font-weight:900;letter-spacing:1px;text-transform:uppercase;
+  color:var(--tinta-fraca);margin:12px 0 6px}
+.legenda-linha{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+#modo-zonas{border:1.5px dashed var(--linha);background:#fff;border-radius:999px;padding:6px 12px;
+  font-size:12.5px;font-weight:700;font-family:inherit;color:var(--tinta-fraca);cursor:pointer}
+#modo-zonas:hover{border-color:var(--roxo);color:var(--roxo)}
+#modo-zonas.on{background:var(--roxo);border-color:var(--roxo);border-style:solid;color:#fff}
+.chip:hover{border-color:var(--cor)}
+.chip.on{background:var(--cor);border-color:var(--cor);color:#fff}
+.chip.on i{background:rgba(255,255,255,.85)}
+
+.zoom{display:flex;gap:5px}
+.zoom button{
+  width:38px;height:38px;border-radius:10px;border:1.5px solid var(--linha);
+  background:#fff;font-size:17px;font-weight:900;cursor:pointer;color:var(--mar);
+  font-family:inherit;line-height:1;
+}
+.zoom button:hover{background:var(--mar);color:#fff;border-color:var(--mar)}
+.zoom button.txt{width:auto;padding:0 12px;font-size:13px}
+
+/* ---------- mapa ---------- */
+.moldura{
+  position:relative;background:#0E5A83;border:3px solid var(--mar);
+  border-radius:16px;overflow:hidden;box-shadow:0 12px 34px rgba(11,60,93,.18);
+}
+#mapa{display:block;width:100%;height:auto;touch-action:none;cursor:grab;background:#0E5A83}
+#mapa.arrastando{cursor:grabbing}
+
+.mar{fill:#1273AF}
+.terra-base{fill:#EDE1CA}
+.camada-terra.apagado{opacity:.25}
+/* municípios vizinhos: são eles que carregam a cor */
+.vizinho{fill:var(--cor);stroke:#FFF6E8;stroke-width:2.5;transition:fill .15s,filter .15s}
+.vizinho:hover,.vizinho.ativo{filter:brightness(1.22) saturate(1.15)}
+.vizinho.foco{stroke:#fff;stroke-width:5}
+
+/* Aracaju: neutra por padrão, para os vizinhos saltarem aos olhos */
+.bairro{
+  fill:#F6EEDD;stroke:#CBB894;stroke-width:1.4;
+  transition:fill .14s,stroke-width .14s;
+}
+.bairro:hover,.bairro.ativo{fill:#fff;stroke:#16242C;stroke-width:3.2}
+body.modo-zonas .bairro{fill:var(--cor);stroke:#FFF6E8;stroke-width:2}
+body.modo-zonas .bairro:hover,body.modo-zonas .bairro.ativo{fill:#fff;stroke:var(--cor);stroke-width:4}
+.alvo{cursor:pointer}
+.apagado{opacity:.22;pointer-events:none}
+
+.rio-borda{fill:none;stroke:#0A4F7A;stroke-linecap:round;stroke-linejoin:round}
+.rio{fill:none;stroke:#31A0DE;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s}
+.rio:hover,.rio.ativo{stroke:#8FD6FF}
+
+/* rótulos */
+text{pointer-events:none;font-family:"Segoe UI",Arial,sans-serif}
+.rot-bairro{font-size:12.5px;font-weight:800;fill:#1B1208;text-anchor:middle;paint-order:stroke;
+  stroke:rgba(255,255,255,.75);stroke-width:2.6px;stroke-linejoin:round}
+.rot-mini{font-size:10.5px}
+.rot-vizinho{font-size:17px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:.3px;
+  paint-order:stroke;stroke:rgba(0,0,0,.35);stroke-width:3.5px}
+.selo-dir{font-size:13px;font-weight:900;fill:#fff;text-anchor:middle;letter-spacing:2.5px;
+  paint-order:stroke;stroke:rgba(0,0,0,.4);stroke-width:3.5px;opacity:.95}
+.selo-mar{fill:#DFF1FF;letter-spacing:4px;stroke:rgba(8,60,95,.7)}
+.rot-oceano.foco{opacity:1;fill:#fff}
+.rot-rio{font-size:14px;font-weight:900;fill:#EAF7FF;text-anchor:middle;letter-spacing:.6px;
+  paint-order:stroke;stroke:rgba(8,60,95,.75);stroke-width:3.5px}
+.rot-ponto{font-size:11.5px;font-weight:800;fill:#26160A;paint-order:stroke;
+  stroke:rgba(255,255,255,.85);stroke-width:3px}
+.rot-ponto.fim{text-anchor:end}
+.rot-saida{font-size:13px;fill:#4A2800}
+.rot-destino{font-size:11.5px;font-weight:900;fill:#1B1208;letter-spacing:.3px;
+  stroke:#fff;stroke-width:3.4px;paint-order:stroke}
+.rot-divisa{font-size:10.5px;font-weight:900;fill:#2B1D0E;text-anchor:middle;letter-spacing:1.6px;
+  paint-order:stroke;stroke:rgba(255,255,255,.85);stroke-width:3.2px}
+.rot-ponto.inicio{text-anchor:start}
+
+/* divisas em terra */
+.divisa{cursor:pointer}
+.divisa-halo{fill:none;stroke:#fff;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;opacity:.55}
+.divisa-base{fill:none;stroke:#2B1D0E;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.divisa-traco{fill:none;stroke:var(--cor);stroke-width:4.5;stroke-linecap:butt;
+  stroke-dasharray:13 11;transition:stroke-width .15s}
+.divisa:hover .divisa-traco,.divisa.ativo .divisa-traco{stroke:#fff;stroke-width:6}
+.divisa:hover .divisa-halo,.divisa.ativo .divisa-halo{opacity:1}
+.divisa.foco .divisa-halo{stroke:#FFD24A;opacity:1;stroke-width:22}
+
+/* pontes desenhadas sobre o rio */
+.tabuleiro{fill:#C0392B;stroke:#5C160E;stroke-width:2}
+.travessa{stroke:rgba(255,255,255,.7);stroke-width:1.6}
+.pilar{fill:#5C160E}
+.ponte-saida .tabuleiro{fill:#F0A500;stroke:#6B3B00;stroke-width:2.6}
+.ponte-saida .travessa{stroke:rgba(90,50,0,.55);stroke-width:2}
+.ponte-saida .pilar{fill:#6B3B00}
+.selo-saida{fill:#fff;stroke:#6B3B00;stroke-width:2.4}
+.ponte-saida:hover .tabuleiro,.ponte-saida.ativo .tabuleiro{fill:#fff}
+.ponte-interna:hover .tabuleiro,.ponte-interna.ativo .tabuleiro{fill:#8E1F14}
+.ponte-saida.foco .tabuleiro{stroke-width:4;stroke:#fff}
+
+.pino-ponte{fill:#C0392B;stroke:#fff;stroke-width:2.4}
+.pino-marco{fill:#F0A500;stroke:#7A3B00;stroke-width:2.6}
+.icone{fill:none;stroke:#fff;stroke-width:2.1;stroke-linecap:round}
+.icone-cheio{fill:#7A3B00}
+.ponto{cursor:pointer}
+.ponto:hover .pino-ponte{fill:#8E1F14}
+.chip-limite{border-style:dashed}
+.chip-limite.on{border-style:solid}
+.ponto:hover .pino-marco{fill:#fff}
+
+.bussola-fundo{fill:rgba(255,255,255,.9);stroke:var(--mar);stroke-width:2.5}
+.bussola-agulha{fill:#C0392B}
+.bussola-txt{font-size:15px;font-weight:900;fill:#0B3C5D;text-anchor:middle}
+
+.aviso-mapa{
+  font-size:12.5px;color:var(--tinta-fraca);margin:9px 0 0;text-align:center;
+}
+
+/* ---------- tooltip ---------- */
+#tip{
+  position:fixed;z-index:80;pointer-events:none;opacity:0;transform:translateY(4px);
+  transition:opacity .12s,transform .12s;max-width:270px;
+  background:#12222C;color:#fff;border-radius:11px;padding:10px 12px;
+  box-shadow:0 12px 30px rgba(0,0,0,.32);font-size:13.5px;line-height:1.4;
+}
+#tip.ver{opacity:1;transform:translateY(0)}
+#tip strong{display:block;font-size:15px;margin:6px 0 3px}
+.tip-zona{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.8px;
+  text-transform:uppercase;color:#fff;padding:2px 7px;border-radius:5px}
+.tip-txt{display:block;color:#BCD3DE}
+.tip-dica{display:block;margin-top:7px;font-size:11px;color:#7FA6B8;letter-spacing:.4px}
+
+/* ---------- modal ---------- */
+#modal{
+  position:fixed;inset:0;z-index:100;display:none;
+  background:rgba(9,28,40,.62);backdrop-filter:blur(3px);
+  align-items:flex-end;justify-content:center;padding:0;
+}
+#modal.ver{display:flex}
+@media(min-width:700px){#modal{align-items:center;padding:24px}}
+#modal-caixa{
+  background:var(--papel);width:100%;max-width:620px;max-height:88vh;overflow-y:auto;
+  border-radius:18px 18px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.3);outline:none;
+}
+@media(min-width:700px){#modal-caixa{border-radius:18px}}
+.modal-topo{
+  position:sticky;top:0;background:var(--papel);border-bottom:2px solid var(--linha);
+  padding:16px 18px 12px;display:flex;gap:12px;align-items:flex-start;
+}
+.modal-topo h3{margin:6px 0 0;font-size:21px;font-weight:900;color:var(--mar);letter-spacing:-.4px;line-height:1.15}
+#modal-zona{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.9px;
+  text-transform:uppercase;color:#fff;padding:3px 8px;border-radius:6px}
+#modal-fechar{
+  margin-left:auto;flex:0 0 auto;border:none;background:#F0EAE0;color:var(--tinta);
+  width:34px;height:34px;border-radius:50%;font-size:19px;cursor:pointer;line-height:1;font-family:inherit;
+}
+#modal-fechar:hover{background:var(--vermelho);color:#fff}
+.modal-corpo{padding:14px 18px 20px}
+#modal-resumo{font-size:15.5px;color:var(--tinta-fraca);margin:0 0 14px}
+.linha{border-left:5px solid var(--rio);background:#F4F9FC;border-radius:0 10px 10px 0;
+  padding:10px 13px;margin-bottom:10px}
+.linha h4{margin:0 0 3px;font-size:11.5px;font-weight:900;letter-spacing:.9px;
+  text-transform:uppercase;color:var(--rio)}
+.linha p{margin:0;font-size:14.8px}
+.modal-vizinhos-tit{font-size:11.5px;font-weight:900;letter-spacing:.9px;color:var(--tinta-fraca);
+  text-transform:uppercase;margin:18px 0 7px}
+#modal-vizinhos{display:flex;flex-wrap:wrap;gap:6px}
+.chip-vizinho{
+  border:1.5px solid var(--cor);background:#fff;color:var(--tinta);border-radius:999px;
+  padding:5px 11px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;
+}
+.chip-vizinho:hover{background:var(--cor);color:#fff}
+
+/* ---------- seções abaixo do mapa ---------- */
+section{padding:28px 0 4px}
+.cap-head{display:flex;align-items:center;gap:11px;margin-bottom:6px}
+.cap-num{background:var(--caju);color:#fff;font-weight:900;font-size:12px;
+  padding:6px 9px;border-radius:7px;letter-spacing:.5px;flex:0 0 auto}
+.cap-head h2{margin:0;font-size:23px;font-weight:900;letter-spacing:-.4px;color:var(--mar)}
+.barra{height:5px;background:var(--mar);border-radius:3px;margin-bottom:16px}
+.tab-rolagem{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;background:#fff;font-size:14px}
+th{background:var(--mar);color:#fff;text-align:left;padding:9px 11px;font-size:13px}
+td{border-bottom:1px solid var(--linha);padding:9px 11px;vertical-align:top}
+tr:nth-child(even) td{background:#FCF9F4}
+.box{border-left:6px solid var(--caju);background:#FFF6EA;border-radius:0 12px 12px 0;
+  padding:13px 15px;margin:14px 0}
+.box .rotulo{font-size:11.5px;font-weight:900;letter-spacing:1px;color:#B85B00;margin-bottom:5px}
+.box p{margin:0}
+.grade{display:grid;gap:11px;grid-template-columns:1fr;margin:14px 0}
+@media(min-width:700px){.grade{grid-template-columns:1fr 1fr}}
+.card{background:#fff;border:1.5px solid var(--linha);border-radius:13px;padding:13px 15px}
+.card h4{margin:0 0 5px;font-size:16px;font-weight:800;color:var(--mar)}
+.card p{margin:0;font-size:14.5px;color:var(--tinta-fraca)}
+
+footer{background:var(--mar);color:#BEDCEC;margin-top:34px;padding:22px 0;
+  font-size:13.5px;text-align:center}
+footer b{color:var(--caju)}
+footer a{color:#fff}
+
+@media(max-width:520px){
+  h1{font-size:30px}
+  .rot-vizinho{font-size:18px}
+  .rot-bairro{font-size:15px}
+  .rot-mini{font-size:13px}
+  .rot-ponto{font-size:13.5px}
+}
+
+.rot-oceano{font-size:26px;font-weight:900;fill:#BEE6FF;text-anchor:middle;
+  letter-spacing:7px;opacity:.75}
+.rot-marco{font-size:13px;fill:#7A3B00;letter-spacing:.8px}
+
+/* rosa dos ventos */
+.rosa{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:16px 0;text-align:center}
+.rosa .cel{background:#fff;border:1.5px solid var(--linha);border-radius:11px;padding:10px 7px;
+  font-size:13px;display:flex;flex-direction:column;justify-content:center;min-height:96px;
+  border-top:5px solid var(--cor)}
+.rosa .cel .ponto{font-weight:900;font-size:11.5px;letter-spacing:1.2px;margin-bottom:4px;color:var(--cor)}
+.rosa .cel small{color:var(--tinta-fraca)}
+.rosa .miolo{background:linear-gradient(150deg,#0B3C5D,#1276A8);color:#fff;border:none;
+  font-weight:900;font-size:17px;letter-spacing:-.3px;display:flex;align-items:center;justify-content:center}
+.rosa .vazio{background:transparent;border:1.5px dashed #DCD2C4;color:#A79C8E;font-size:11.5px;
+  display:flex;align-items:center;justify-content:center}
+
+[hidden]{display:none!important}
+
+.sub-tit{font-size:17px;font-weight:900;color:var(--mar);margin:26px 0 4px}
+.pilula{display:inline-block;color:#fff;font-size:11.5px;font-weight:900;letter-spacing:.6px;
+  padding:3px 9px;border-radius:999px;white-space:nowrap}
+#tab-travessias tr:hover td{background:#F1F7FB}
+
+.rot-rio-mini{font-size:11px;letter-spacing:.3px;stroke-width:3px}
+
+</style>
+</head>
+<body>
+
+<header class="capa">
+  <div class="wrap">
+    <span class="faixa-topo">GEOGRAFIA DE ARACAJU · MAPA INTERATIVO</span>
+    <h1>O mapa de Aracaju, desenhado</h1>
+    <p class="sub-capa">Passe o mouse (ou toque) em qualquer parte do mapa para ver do que se trata. Clique para abrir os detalhes completos: limites, rios, pontes, marco zero, zonas e bairros.</p>
+    <div class="links-topo">
+      <a href="#mapa-secao">Ir para o mapa</a>
+      <a href="#limites">Limites lado a lado</a>
+      <a href="#como-usar">Como usar</a>
+      <a href="resumo.html">Resumão em texto →</a>
+    </div>
+  </div>
+  <svg class="onda" viewBox="0 0 1440 60" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 C180,60 320,0 520,22 C740,46 900,4 1120,26 C1280,42 1380,20 1440,28 L1440,60 L0,60 Z" fill="#FFF8EF"/>
+  </svg>
+</header>
+
+<main class="wrap">
+
+<section id="mapa-secao" style="padding-top:6px">
+  <div class="controles">
+    <div class="busca">
+      <input id="busca" type="text" placeholder="Buscar bairro, rio, ponte, vizinho…" autocomplete="off">
+      <div id="busca-lista"></div>
+    </div>
+    <div class="zoom">
+      <button id="zoom-mais" type="button" title="Aproximar">+</button>
+      <button id="zoom-menos" type="button" title="Afastar">−</button>
+      <button id="zoom-reset" class="txt" type="button" title="Ver o mapa inteiro">Mapa inteiro</button>
+    </div>
+  </div>
+  <div class="legenda-tit">Municípios e água que fazem limite — clique para isolar no mapa</div>
+  <div class="legenda-linha" id="legenda-mun"></div>
+
+  <div class="legenda-tit">Como esse limite é feito</div>
+  <div class="legenda-linha" id="legenda-limite"></div>
+
+  <div class="legenda-linha" style="margin-top:10px">
+    <button id="modo-zonas" type="button">Colorir bairros por zona</button>
+    <div class="legenda-linha" id="legenda-zona" hidden></div>
+  </div>
+
+  <div class="moldura" style="margin-top:12px">
+    <svg id="mapa" viewBox="0 0 900 1400" preserveAspectRatio="xMidYMid meet"
+         role="img" aria-label="Mapa esquemático interativo de Aracaju"></svg>
+  </div>
+  <p class="aviso-mapa">Mapa <b>esquemático</b>: as formas são simplificadas, mas as posições relativas (norte/sul/leste/oeste, rios, pontes e vizinhos) seguem a geografia real. Arraste para mover · role o mouse ou use + / − para aproximar.</p>
+</section>
+
+<section id="como-usar">
+  <div class="cap-head"><span class="cap-num">GUIA</span><h2>Como ler este mapa</h2></div>
+  <div class="barra"></div>
+  <div class="grade">
+    <div class="card"><h4>A cor é do vizinho</h4><p>Cada município limítrofe tem sua própria cor, e o oceano é o azul da direita. Aracaju fica em bege claro no meio — é ela que está cercada. Clique numa cor da legenda para isolar aquele limite.</p></div>
+    <div class="card"><h4>O selo de direção</h4><p>Em cima do nome de cada vizinho vai a direção em que ele fica: <b>N</b>, <b>NE</b>, <b>L</b>, <b>O</b>, <b>S</b>. É exatamente assim que a banca pergunta.</p></div>
+    <div class="card"><h4>A linha preta tracejada</h4><p>É a <b>divisa em terra</b> — o único jeito de sair de Aracaju a pé. Só existe a oeste e sudoeste, com São Cristóvão e um trecho de Nossa Senhora do Socorro. Clique nela para ver o detalhe.</p></div>
+    <div class="card"><h4>Pontes douradas × vermelhas</h4><p>As <b>douradas</b> atravessam um limite e saem do município (João Alves, Rolemberg Leite e Joel Silveira) — cada uma traz o vizinho de destino escrito embaixo. As <b>vermelhas</b> são internas, todas sobre o rio Poxim.</p></div>
+    <div class="card"><h4>Estrelas ★</h4><p>Marcam o que mais cai em prova: marco zero, Centro, 13 de Julho, Coroa do Meio e Atalaia.</p></div>
+    <div class="card"><h4>Quer ver os bairros?</h4><p>O botão <b>“Colorir bairros por zona”</b> pinta Aracaju por dentro (norte, centro, oeste, sul e Zona de Expansão) quando você quiser estudar a divisão interna.</p></div>
+  </div>
+
+  <div class="box">
+    <div class="rotulo">BIZU DO MAPA</div>
+    <p>Olhe o desenho e repita: <b>água em três lados</b>. Rio do Sal no norte, rio Sergipe no nordeste, oceano no leste, Vaza-Barris no sul. Só o <b>oeste</b> é divisa em terra firme (São Cristóvão e Nossa Senhora do Socorro).</p>
+  </div>
+
+  <div class="box">
+    <div class="rotulo">OS 5 RIOS QUE BANHAM ARACAJU</div>
+    <p><b>S</b>ergipe · <b>P</b>oxim · <b>V</b>aza-Barris · <b>R</b>io do Sal · <b>P</b>itanga → <b>“Se Pescar, Vai Render Peixe.”</b><br>
+    Quatro deles fazem limite ou cortam a cidade. O <b>Pitanga</b> é o pequeno do oeste e é o nome que costuma faltar na sua lista — no mapa ele é o azul mais fino, descendo da divisa com São Cristóvão até o Poxim.<br>
+    <b>Atenção à bacia:</b> Pitanga e Poxim são da <b>bacia do rio Sergipe</b>. O Poxim é formado pelo <b>Poxim-Açu, Poxim-Mirim e Pitanga</b>, e deságua no Sergipe. Só o <b>Vaza-Barris</b> tem bacia própria — ele limita a sub-bacia do Poxim ao sul.</p>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="cap-head"><span class="cap-num">SÍNTESE</span><h2>Limites, lado por lado</h2></div>
+  <div class="barra"></div>
+  <div class="rosa" id="rosa"></div>
+
+  <h3 class="sub-tit">Água ou terra? E precisa de ponte?</h3>
+  <div class="tab-rolagem">
+    <table>
+      <thead><tr><th>Vizinho</th><th>Natureza do limite</th><th>Separado por</th><th>Travessia</th></tr></thead>
+      <tbody id="tab-travessias"></tbody>
+    </table>
+  </div>
+  <div class="box">
+    <div class="rotulo">O RESUMO DO MAPA</div>
+    <p>Só <b>São Cristóvão</b> tem divisa <b>em terra de ponta a ponta</b> com Aracaju — é a única linha preta e tracejada longa do mapa. <b>Nossa Senhora do Socorro</b> é mista: rio do Sal ao norte, divisa seca a oeste. Todos os outros vizinhos são alcançados <b>por ponte</b>, e por isso as três pontes douradas do mapa são as que realmente saem do município.</p>
+  </div>
+  <div class="tab-rolagem">
+    <table>
+      <thead><tr><th>Lado</th><th>Com quem faz limite</th><th>Separado por</th></tr></thead>
+      <tbody id="tab-limites"></tbody>
+    </table>
+  </div>
+  <div class="box">
+    <div class="rotulo">BIZU</div>
+    <p>Cinco municípios limítrofes: <b>S</b>ão Cristóvão, <b>N</b>ossa Senhora do Socorro, <b>S</b>anto Amaro das Brotas, <b>B</b>arra dos Coqueiros, <b>I</b>taporanga d'Ajuda → <b>“São Nossos Santos Bons Irmãos.”</b><br>Já a Região Metropolitana tem só <b>4</b>: Aracaju, Barra dos Coqueiros, N. S. do Socorro e São Cristóvão — ficam de fora Santo Amaro das Brotas e Itaporanga d'Ajuda.</p>
+  </div>
+</section>
+
+</main>
+
+<div id="tip" aria-hidden="true"></div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+  <div id="modal-caixa" tabindex="-1">
+    <div class="modal-topo">
+      <div>
+        <span id="modal-zona"></span>
+        <h3 id="modal-titulo"></h3>
+      </div>
+      <button id="modal-fechar" type="button" aria-label="Fechar">×</button>
+    </div>
+    <div class="modal-corpo">
+      <p id="modal-resumo"></p>
+      <div id="modal-corpo"></div>
+      <div class="modal-vizinhos-tit">Vizinhos no mapa</div>
+      <div id="modal-vizinhos"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><b>Geografia de Aracaju</b> — mapa interativo de estudo</p>
+    <p>Fontes: IBGE (Cidades), Prefeitura de Aracaju, Alese e legislação municipal citada.</p>
+    <p><a href="resumo.html">Ver o resumão em texto e o simulado</a></p>
+    <p><b>@12.jgs</b></p>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   Geografia de Aracaju — base de dados do mapa desenhado
+   Coordenadas em um sistema próprio (viewBox 0 0 900 1400),
+   orientado como o mapa real: Norte em cima, Leste (oceano)
+   à direita, Sul embaixo.
+   ========================================================= */
+
+/* --- malha (lattice) do território de Aracaju ------------
+   Cada linha vai de Oeste (col 0) para Leste (col 5).
+   As linhas descem do Norte (A) para o Sul (M).
+   Bairros são células entre duas linhas e duas colunas,
+   por isso o desenho fecha sem buracos.                     */
+const MALHA = {
+  A: [[250,300],[335,320],[415,342],[490,372],[548,412],[600,462]],
+  B: [[238,378],[325,398],[405,420],[480,450],[538,488],[592,534]],
+  C: [[226,456],[315,476],[396,498],[470,528],[528,564],[584,606]],
+  D: [[214,600],[305,596],[388,592],[462,596],[528,614],[600,606]],
+  F: [[206,668],[300,660],[385,656],[465,656],[545,676],[645,620]],
+  G: [[218,748],[310,742],[400,740],[485,746],[560,756],[650,700]],
+  H: [[240,828],[330,824],[418,822],[500,828],[572,838],[642,790]],
+  I: [[275,900],[358,900],[438,902],[512,908],[578,914],[634,876]],
+  J: [[305,978],[378,978],[448,980],[518,984],[572,990],[622,960]],
+  K: [[330,1060],[398,1062],[462,1064],[524,1068],[574,1072],[612,1044]],
+  L: [[352,1145],[414,1147],[472,1149],[526,1151],[570,1154],[600,1128]],
+  M: [[375,1228],[430,1230],[482,1232],[530,1234],[568,1236],[588,1212]]
+};
+
+/* --- zonas ---------------------------------------------- */
+const ZONAS = {
+  norte:    { nome: "Zona Norte",        cor: "#E08A3C", texto: "Berço da cidade, área industrial e portuária." },
+  centro:   { nome: "Centro",            cor: "#C0563A", texto: "O Quadrado de Pirro e o comércio tradicional." },
+  oeste:    { nome: "Zona Oeste",        cor: "#8465B0", texto: "Expansão popular ao longo do rio Poxim." },
+  sul:      { nome: "Zona Sul",          cor: "#2F9E8F", texto: "Orla, verticalização e área mais valorizada." },
+  expansao: { nome: "Zona de Expansão",  cor: "#C9A227", texto: "≈40% do território: dunas, lagoas, restinga e mangue." },
+  terra:    { nome: "Divisa em terra",   cor: "#2B1D0E", texto: "Os trechos secos do limite — só a oeste e sudoeste." },
+  agua:     { nome: "Rios e oceano",     cor: "#1B84C4", texto: "As águas que definem os limites do município." },
+  vizinho:  { nome: "Municípios vizinhos",cor: "#B9AC96", texto: "Os cinco municípios limítrofes." }
+};
+
+/* --- bairros / setores ---------------------------------- */
+const AREAS = [
+  /* ---------------- ZONA NORTE / CENTRO (faixa do rio Sergipe) */
+  { id:"porto-dantas", curto:"Porto Dantas", nome:"Porto Dantas · Coqueiral", zona:"norte", cel:["A","B",0,1],
+    resumo:"Ponta norte da cidade, na margem do rio Sergipe.",
+    itens:[
+      ["Onde fica","Extremo norte do município, de frente para o estuário do rio Sergipe, junto ao rio do Sal."],
+      ["Por que importa","Área portuária e industrial antiga; ali a cidade encosta no limite com Nossa Senhora do Socorro."],
+      ["Ambiente","Manguezais do estuário — vegetação típica da planície fluviomarinha."]
+    ]},
+  { id:"santo-antonio", curto:"Santo Antônio", nome:"Santo Antônio — MARCO ZERO", zona:"norte", cel:["A","B",1,2], estrela:true,
+    resumo:"A Colina de Santo Antônio: o berço de Aracaju.",
+    itens:[
+      ["Marco zero","No alto da Colina (Outeiro) de Santo Antônio a Assembleia Provincial aprovou a mudança da capital, em 17 de março de 1855."],
+      ["Antes de 1855","Ali existia o povoado de Santo Antônio do Aracaju, na Barra da Cotinguiba, com capela documentada desde 1778."],
+      ["Relevo","É o ponto alto de referência de uma cidade com altitude média de apenas 4 m."],
+      ["Norma","Resolução (Lei Provincial) nº 413/1855, de Inácio Joaquim Barbosa."]
+    ]},
+  { id:"industrial", nome:"Industrial", zona:"norte", cel:["A","B",2,3],
+    resumo:"Antiga zona fabril, entre a colina e o Centro.",
+    itens:[
+      ["Onde fica","Margem do rio Sergipe, descendo da colina de Santo Antônio para o Centro."],
+      ["Origem","Nasceu das fábricas têxteis e do movimento do porto no fim do século XIX."]
+    ]},
+  { id:"getulio-vargas", nome:"Getúlio Vargas", zona:"centro", cel:["A","B",3,4],
+    resumo:"Bairro de transição entre o norte antigo e o Centro.",
+    itens:[
+      ["Onde fica","Encostado no Centro, a noroeste do Quadrado de Pirro."],
+      ["Marca","Bairro tradicional, residencial e de serviços, do primeiro anel de expansão do plano de 1855."]
+    ]},
+  { id:"centro", curto:"Centro", nome:"Centro — Quadrado de Pirro", zona:"centro", cel:["A","B",4,5], estrela:true,
+    resumo:"O tabuleiro de xadrez projetado em 1855.",
+    itens:[
+      ["Quem desenhou","O engenheiro Sebastião José Basílio Pirro."],
+      ["O traçado","32 quadras de 110 m × 110 m, ruas retas se cruzando em ângulo reto. Por isso Aracaju é a 2ª capital planejada do Brasil (depois de Teresina, 1852)."],
+      ["Limites do plano original","Norte: base da colina de Santo Antônio · Sul: av. Desembargador Maynard · Leste: rio Sergipe (aterro da av. Ivo do Prado) · Oeste: cadeia de dunas, hoje av. Pedro Calazans."],
+      ["Por que aqui","Terreno de mangue e alagado, mas na margem do rio Sergipe — onde ficavam a Alfândega e a Mesa de Rendas. Aracaju nasceu por causa do porto."]
+    ]},
+
+  { id:"cidade-nova", curto:"Cidade Nova", nome:"Cidade Nova · Japãozinho", zona:"norte", cel:["B","C",0,1],
+    resumo:"Ocupação popular da zona norte.",
+    itens:[
+      ["Onde fica","Interior da zona norte, atrás da faixa do rio Sergipe."],
+      ["Perfil","Área de ocupação antiga e alta vulnerabilidade social, tema recorrente em provas de atualidades."]
+    ]},
+  { id:"18-do-forte", curto:"18 do Forte", nome:"18 do Forte · Palestina", zona:"norte", cel:["B","C",1,2],
+    resumo:"Bairros do miolo da zona norte.",
+    itens:[
+      ["Nome","'18 do Forte' lembra os 18 do Forte de Copacabana (1922)."],
+      ["Onde fica","Entre Santo Antônio e o eixo da av. Gonçalo Rollemberg Leite."]
+    ]},
+  { id:"bugio", curto:"Bugio · Soledade", nome:"Soledade · Bugio · Lamarão", zona:"norte", cel:["B","C",2,3],
+    resumo:"Conjuntos habitacionais da zona norte.",
+    itens:[
+      ["Origem","Conjuntos construídos a partir dos anos 1970/80 para abrigar a população que crescia fora do Centro."],
+      ["Perfil","Densamente povoados, com os piores indicadores sociais do município."]
+    ]},
+  { id:"cirurgia", nome:"Cirurgia · Suíssa", zona:"centro", cel:["B","C",3,4],
+    resumo:"Primeiro anel de expansão do Centro.",
+    itens:[
+      ["Onde fica","Logo a oeste/sul do Quadrado de Pirro."],
+      ["Marca","Bairros residenciais antigos, formados quando a cidade transbordou as 32 quadras originais."]
+    ]},
+  { id:"sao-jose", curto:"São José", nome:"São José · Pereira Lobo", zona:"centro", cel:["B","C",4,5],
+    resumo:"Área nobre tradicional, colada ao Centro.",
+    itens:[
+      ["Onde fica","Ao sul do Centro, entre a av. Ivo do Prado (rio Sergipe) e a av. Hermes Fontes."],
+      ["Marca","Praça Fausto Cardoso, Palácio Olímpio Campos e o casario histórico do São José."]
+    ]},
+
+  { id:"olaria", curto:"Olaria", nome:"Olaria · Novo Paraíso", zona:"oeste", cel:["C","D",0,1],
+    resumo:"Zona oeste, margem norte do rio Poxim.",
+    itens:[
+      ["Nome","'Olaria' lembra os fornos de barro do antigo povoado — barro tirado das margens do rio."],
+      ["Onde fica","Oeste da cidade, no rumo de Nossa Senhora do Socorro."]
+    ]},
+  { id:"siqueira-campos", curto:"Siqueira Campos", nome:"Siqueira Campos · América", zona:"oeste", cel:["C","D",1,2],
+    resumo:"O maior polo comercial fora do Centro.",
+    itens:[
+      ["Marca","Siqueira Campos tem a feira e o comércio popular mais movimentado da zona oeste."],
+      ["Onde fica","A oeste do Centro, no eixo da av. Coelho e Campos / João Ribeiro."]
+    ]},
+  { id:"capucho", curto:"Capucho", nome:"Capucho · Ponto Novo", zona:"oeste", cel:["C","D",2,3],
+    resumo:"Bairros de classe média a oeste, junto ao Poxim.",
+    itens:[
+      ["Onde fica","Entre a av. Hermes Fontes e a margem do rio Poxim."],
+      ["Ambiente","Área sujeita a alagamento nas cheias do Poxim."]
+    ]},
+  { id:"luzia-grageru", curto:"Luzia · Jardins", nome:"Luzia · Grageru · Jardins", zona:"sul", cel:["C","D",3,4],
+    resumo:"Eixo de verticalização e serviços.",
+    itens:[
+      ["Marca","Bairro Jardins concentra shoppings, torres residenciais e o setor de serviços mais caro da cidade."],
+      ["Onde fica","Entre a av. Hermes Fontes e a av. Beira-Mar / rio Poxim."]
+    ]},
+  { id:"13-de-julho", curto:"13 de Julho", nome:"13 de Julho — praia de rio", zona:"centro", cel:["C","D",4,5], estrela:true,
+    resumo:"Orla do rio Sergipe, não do oceano.",
+    itens:[
+      ["Pegadinha clássica","A Praia 13 de Julho fica às margens do RIO SERGIPE, e não do Oceano Atlântico."],
+      ["Onde fica","Sul do Centro, na av. Beira-Mar, olhando para a Barra dos Coqueiros do outro lado do rio."],
+      ["Marca","Área mais valorizada do município; ponto de partida da ponte Godofredo Diniz para a Coroa do Meio."]
+    ]},
+
+  /* ---------------- ZONA SUL (ao sul do rio Poxim) */
+  { id:"jabotiana", nome:"Jabotiana", zona:"oeste", cel:["F","G",0,1],
+    resumo:"Fronteira de expansão imobiliária às margens do Poxim.",
+    itens:[
+      ["Onde fica","Sudoeste do município, acompanhando o rio Poxim rumo a São Cristóvão."],
+      ["Problema","Ocupação acelerada sobre área de várzea e mata ciliar — alagamentos frequentes."]
+    ]},
+  { id:"inacio-barbosa", nome:"Inácio Barbosa", zona:"sul", cel:["F","G",1,2],
+    resumo:"Bairro que homenageia o fundador da cidade.",
+    itens:[
+      ["Nome","Inácio Joaquim Barbosa, presidente da província que transferiu a capital em 1855."],
+      ["Ligação","A ponte Gilberto Vila-Nova de Carvalho (2013) liga o conjunto Augusto Franco à av. Tancredo Neves por aqui."]
+    ]},
+  { id:"sao-conrado", curto:"São Conrado", nome:"São Conrado · Augusto Franco", zona:"sul", cel:["F","G",2,3],
+    resumo:"Grandes conjuntos habitacionais da zona sul.",
+    itens:[
+      ["Origem","Conjuntos dos anos 1980 que empurraram a cidade para o sul do rio Poxim."],
+      ["Onde fica","Entre o Poxim e a av. Tancredo Neves."]
+    ]},
+  { id:"salgado-filho", curto:"Salgado Filho", nome:"Salgado Filho · Coroa do Meio (interior)", zona:"sul", cel:["F","G",3,4],
+    resumo:"Miolo da zona sul, entre o Poxim e a orla.",
+    itens:[
+      ["Onde fica","Entre a foz do Poxim e a av. Beira-Mar."],
+      ["Marca","Área de aterro conquistada sobre o mangue nas décadas de 1970/80."]
+    ]},
+  { id:"coroa-do-meio", curto:"Coroa do Meio", nome:"Coroa do Meio — onde o rio encontra o mar", zona:"sul", cel:["F","G",4,5], estrela:true,
+    resumo:"Primeira praia oceânica de Aracaju, na foz do Sergipe.",
+    itens:[
+      ["Posição-chave","É aqui que a orla deixa de ser rio e passa a ser oceano: a foz do rio Sergipe fica logo ao norte."],
+      ["Origem","Bairro inteiramente criado por aterro sobre mangue e coroa de areia, a partir dos anos 1970."],
+      ["Acesso","Chegou-se a ela pela ponte Godofredo Diniz, sobre o rio Poxim, vinda do 13 de Julho."],
+      ["Sequência das praias (N→S)","Coroa do Meio → Atalaia → Aruana → Robalo → Náufragos → Mosqueiro."]
+    ]},
+
+  { id:"farolandia", nome:"Farolândia", zona:"sul", cel:["G","H",0,2],
+    resumo:"Bairro universitário e residencial da zona sul.",
+    itens:[
+      ["Nome","Vem do farol da Coroa do Meio, referência para a navegação na foz do Sergipe."],
+      ["Marca","Concentra campus universitário e forte comércio de bairro."]
+    ]},
+  { id:"aeroporto", curto:"Aeroporto", nome:"Aeroporto · Santa Maria (interior)", zona:"sul", cel:["G","H",2,4],
+    resumo:"Bairro do aeroporto Santa Maria.",
+    itens:[
+      ["Equipamento","Aeroporto Internacional de Aracaju — Santa Maria, na zona sul, a caminho da Zona de Expansão."],
+      ["Ambiente","Cercado por manguezais do Poxim e do canal Santa Maria."]
+    ]},
+  { id:"atalaia", curto:"Atalaia", nome:"Atalaia — cartão-postal", zona:"sul", cel:["G","H",4,5], estrela:true,
+    resumo:"A principal praia e área de lazer da capital.",
+    itens:[
+      ["Marca","Orla de Atalaia: Passarela do Caranguejo, Oceanário e o maior complexo de lazer da cidade."],
+      ["Onde fica","Litoral leste, ao sul da Coroa do Meio, voltada para o Oceano Atlântico."],
+      ["Bizu","Atalaia é MAR. 13 de Julho é RIO. Não troque as duas."]
+    ]},
+  { id:"santa-maria", curto:"Santa Maria", nome:"Santa Maria · canal Santa Maria", zona:"sul", cel:["H","I",0,3],
+    resumo:"Interior sul, junto ao canal que liga o Poxim ao Vaza-Barris.",
+    itens:[
+      ["Canal Santa Maria","Ligação artificial entre a bacia do rio Poxim e o rio Vaza-Barris; aparece como referência do limite sul."],
+      ["Perfil","Área de mangue, ocupação popular e do aterro sanitário da capital."]
+    ]},
+  { id:"orla-sul", curto:"Orla Nova", nome:"Orla Nova · saída para a Expansão", zona:"sul", cel:["H","I",3,5],
+    resumo:"Trecho da SE-100 que leva à Zona de Expansão.",
+    itens:[
+      ["Eixo","A rodovia SE-100 sul corre paralela ao mar e organiza toda a ocupação da Zona de Expansão."],
+      ["Ambiente","Cordões de dunas e restinga entre a estrada e o mar."]
+    ]},
+
+  /* ---------------- ZONA DE EXPANSÃO */
+  { id:"aruana", nome:"Aruana", zona:"expansao", cel:["I","J",0,5],
+    resumo:"Porta de entrada da Zona de Expansão.",
+    itens:[
+      ["Onde fica","Logo ao sul da Atalaia, primeira praia da Zona de Expansão."],
+      ["Ambiente","Restinga, dunas e lagoas costeiras — área de alta fragilidade ambiental."]
+    ]},
+  { id:"17-de-marco", curto:"17 de Março", nome:"17 de Março · Santa Maria (expansão)", zona:"expansao", cel:["J","K",0,3],
+    resumo:"Lado interior da Zona de Expansão, voltado ao Vaza-Barris.",
+    itens:[
+      ["Nome","17 de Março é a data de fundação de Aracaju (1855)."],
+      ["Ocupação","Loteamentos populares afastados da orla, no rumo do rio Vaza-Barris."]
+    ]},
+  { id:"areia-branca", nome:"Areia Branca · Gameleira", zona:"expansao", cel:["J","K",3,5],
+    resumo:"Dois dos bairros criados pela Lei 5.373/2021.",
+    itens:[
+      ["Lei 5.373/2021","Transformou 6 localidades da Zona de Expansão em bairros: Mosqueiro, Robalo, São José dos Náufragos, Areia Branca, Gameleira e Matapuã — projeto 'Cidade Expansão'."],
+      ["Efeito","Com isso Aracaju passou a contar 43 bairros (antes a referência tradicional era 39)."]
+    ]},
+  { id:"matapua", nome:"Matapuã", zona:"expansao", cel:["K","L",0,3],
+    resumo:"Bairro criado em 2021, no interior da Expansão.",
+    itens:[
+      ["Onde fica","Entre a orla e o rio Vaza-Barris, a caminho do Mosqueiro."],
+      ["Ambiente","Lagoas, coqueirais e áreas de restinga."]
+    ]},
+  { id:"robalo", nome:"Robalo", zona:"expansao", cel:["K","L",3,5],
+    resumo:"Praia e povoado transformado em bairro em 2021.",
+    itens:[
+      ["Litoral","Quarta praia na sequência norte→sul: depois de Aruana, antes de Náufragos."],
+      ["Perfil","Antiga colônia de pescadores, hoje sob forte pressão imobiliária."]
+    ]},
+  { id:"mosqueiro", nome:"Mosqueiro — ponta sul", zona:"expansao", cel:["L","M",0,3],
+    resumo:"O extremo sul de Aracaju, na margem do Vaza-Barris.",
+    itens:[
+      ["Orla Pôr do Sol","Voltada para o rio Vaza-Barris — por isso o sol se põe sobre a água, e não sobre o mar."],
+      ["Ponte Joel Silveira","Inaugurada em 2010, sai do Mosqueiro sobre o Vaza-Barris e liga Aracaju a Itaporanga d'Ajuda pela SE-100 sul."],
+      ["Disputa judicial","Toda essa área é reivindicada por São Cristóvão; o caso chegou ao STF. Para a prova, pertence a Aracaju."]
+    ]},
+  { id:"naufragos", nome:"São José dos Náufragos", zona:"expansao", cel:["L","M",3,5],
+    resumo:"Última praia antes da foz do Vaza-Barris.",
+    itens:[
+      ["Litoral","Quinta praia na sequência norte→sul; depois dela só o Mosqueiro, já voltado para o rio."],
+      ["Bairro desde 2021","Criado pela Lei municipal 5.373/2021."]
+    ]}
+];
+
+/* --- águas ---------------------------------------------- */
+const AGUAS = [
+  { id:"oceano", nome:"Oceano Atlântico", tipo:"mar", lado:"Leste", cor:"#1273AF", dir:"L",
+    rotulo:[795,830], largura:0,
+    resumo:"O limite LESTE de Aracaju — sempre.",
+    itens:[
+      ["Regra de ouro","A leste, Aracaju faz limite com o Oceano Atlântico. Nunca com Barra dos Coqueiros (que fica a NORDESTE, do outro lado da foz do rio Sergipe)."],
+      ["Extensão","O litoral vai da foz do rio Sergipe (norte) à foz do rio Vaza-Barris (sul)."],
+      ["Praias (N→S)","Coroa do Meio · Atalaia · Aruana · Robalo · Náufragos · Mosqueiro."]
+    ]},
+  { id:"rio-sergipe", nome:"Rio Sergipe", tipo:"rio",
+    d:"M 30 186 L 180 250 L 300 275 L 420 300 L 520 340 L 592 402 L 642 470 L 664 548",
+    largura:26, rotulo:[400,268], rotAng:12,
+    resumo:"O rio da fundação: nordeste e leste do Centro.",
+    itens:[
+      ["Onde corre","Desce do noroeste, contorna o norte da cidade e desemboca no Atlântico a nordeste."],
+      ["Foz","A foz separa Aracaju de Barra dos Coqueiros. O trecho final era chamado barra da Cotinguiba."],
+      ["Característica","Salobro no trecho urbano; foi a via do açúcar que justificou a criação da capital em 1855."],
+      ["Ponte","Ponte Construtor João Alves (2006), ~1.800 m, maior ponte urbana do Nordeste."]
+    ]},
+  { id:"rio-do-sal", nome:"Rio do Sal", tipo:"rio",
+    d:"M 34 398 L 108 422 L 178 446 L 226 456 L 238 378 L 258 300",
+    largura:16, rotulo:[92,428], rotAng:16,
+    resumo:"O limite NORTE, com Nossa Senhora do Socorro.",
+    itens:[
+      ["Função","Faz o limite norte de Aracaju com Nossa Senhora do Socorro."],
+      ["Bacia","É um dos últimos afluentes do rio Sergipe, no qual deságua."],
+      ["Ponte","Ponte José Rolemberg Leite, ligando a zona norte ao conjunto João Alves, em Socorro."]
+    ]},
+  { id:"rio-poxim", nome:"Rio Poxim", tipo:"rio",
+    d:"M 70 646 L 210 640 L 330 628 L 430 622 L 510 632 L 570 652 L 615 620 L 645 560 L 662 510",
+    largura:18, rotulo:[330,612], rotAng:-4,
+    resumo:"O rio interno: corta a cidade e cria as pontes urbanas.",
+    itens:[
+      ["Onde corre","Entra pelo oeste, atravessa a cidade e deságua no rio Sergipe, perto da Coroa do Meio. É um dos principais afluentes da margem direita do Sergipe."],
+      ["Formação","Formado pelo Poxim-Açu, pelo Poxim-Mirim e pelo Pitanga. Toda essa sub-bacia pertence à bacia do rio Sergipe."],
+      ["Pontes internas","Presidente Juscelino, Godofredo Diniz e Gilberto Vila-Nova de Carvalho — todas ligam bairros de Aracaju entre si."],
+      ["Bizu","Poxim = ponte INTERNA. Sergipe, do Sal e Vaza-Barris = pontes que saem do município."]
+    ]},
+  { id:"rio-pitanga", nome:"Rio Pitanga", tipo:"rio", pequeno:true,
+    d:"M 118 826 L 158 780 L 198 730 L 238 682 L 274 638",
+    largura:11, rotulo:[152,762], rotAng:-50,
+    resumo:"Afluente do Poxim — logo, bacia do rio SERGIPE.",
+    itens:[
+      ["Bacia","Integra a sub-bacia do rio Poxim, que por sua vez pertence à BACIA DO RIO SERGIPE. O Poxim é um dos principais afluentes da margem direita do Sergipe."],
+      ["Quem forma o Poxim","Poxim-Açu, Poxim-Mirim e Pitanga. Se a questão listar só os dois primeiros, está incompleta."],
+      ["Onde fica","Vem do oeste/sudoeste, na divisa com São Cristóvão, e desemboca no Poxim antes de a água chegar ao rio Sergipe."],
+      ["Pegadinha","A sub-bacia do Poxim é limitada AO SUL pela bacia do Vaza-Barris — mas o Pitanga não é dela. Ele é bacia do Sergipe."],
+      ["Bizu","Os 5 rios de Aracaju: Sergipe, Poxim, Vaza-Barris, rio do Sal e Pitanga — 'Se Pescar, Vai Render Peixe.'"],
+      ["Sobre o desenho","O traçado aqui é aproximado; o que importa para a prova é o nome, a bacia (Sergipe) e o fato de ele formar o Poxim."]
+    ]},
+  { id:"vaza-barris", nome:"Rio Vaza-Barris", tipo:"rio",
+    d:"M 60 1176 L 110 1200 L 250 1225 L 370 1252 L 470 1272 L 545 1288 L 600 1262",
+    largura:22, rotulo:[300,1252], rotAng:12,
+    resumo:"O limite SUL, com Itaporanga d'Ajuda.",
+    itens:[
+      ["Nascente","Nasce na Bahia e faz o limite sul do município."],
+      ["Ligação","Conecta-se à bacia do Poxim pelo canal Santa Maria."],
+      ["Ponte","Ponte Joel Silveira (2010), da Zona de Expansão para Itaporanga d'Ajuda, pela SE-100 sul."],
+      ["Curiosidade","A Orla Pôr do Sol, no Mosqueiro, é voltada para este rio."]
+    ]}
+];
+
+/* --- municípios vizinhos -------------------------------- */
+const VIZINHOS = [
+  { id:"santo-amaro", nome:"Santo Amaro das Brotas", lado:"Norte", cor:"#7B4FA8", dir:"N",
+    pol:[[0,0],[300,0],[380,120],[440,235],[300,275],[180,250],[30,186],[0,170]],
+    rotulo:[190,110],
+    resumo:"Vizinho ao norte, do outro lado do rio Sergipe.",
+    itens:[["Separado por","Estuário do rio Sergipe / rio do Sal."],
+           ["Atenção","É limítrofe, mas NÃO faz parte da Região Metropolitana de Aracaju."]]},
+  { id:"barra-dos-coqueiros", nome:"Barra dos Coqueiros", lado:"Nordeste", cor:"#E4572E", dir:"NE",
+    pol:[[664,548],[642,470],[592,402],[520,340],[440,235],[380,120],[300,0],[640,0],[790,175],[830,320],[785,445],[722,508]],
+    rotulo:[690,230],
+    resumo:"Vizinho a NORDESTE, alcançado por ponte.",
+    itens:[
+      ["Separado por","A foz do rio Sergipe."],
+      ["Ponte","Ponte Construtor João Alves, inaugurada em 24/09/2006, com cerca de 1.800 m."],
+      ["Porto","O Terminal Marítimo Inácio Barbosa (porto de Sergipe) fica AQUI, não em Aracaju."],
+      ["RMA","Integra a Região Metropolitana de Aracaju."]
+    ]},
+  { id:"socorro", nome:"Nossa Senhora do Socorro", lado:"Norte e Oeste", cor:"#1F9E6E", dir:"N / O",
+    pol:[[0,170],[30,186],[180,250],[258,300],[238,378],[226,456],[214,600],[100,478],[0,480]],
+    rotulo:[105,330],
+    resumo:"Vizinho ao norte e a oeste, separado pelo rio do Sal.",
+    itens:[
+      ["Separado por","Rio do Sal (norte) e limite terrestre (oeste)."],
+      ["Marca","Abriga os grandes conjuntos habitacionais do complexo da Taiçoca."],
+      ["RMA","Integra a Região Metropolitana de Aracaju."]
+    ]},
+  { id:"sao-cristovao", nome:"São Cristóvão", lado:"Oeste e Sul", cor:"#C98A1E", dir:"O / S",
+    pol:[[0,480],[100,478],[214,600],[206,668],[218,748],[240,828],[275,900],[305,978],[330,1060],[352,1145],[375,1228],[250,1225],[110,1200],[0,1180]],
+    rotulo:[120,880],
+    resumo:"Vizinho a oeste e ao sul — a antiga capital.",
+    itens:[
+      ["História","Foi a capital de Sergipe até 1855, quando Aracaju foi criada."],
+      ["Separado por","Limite terrestre e o rio Poxim."],
+      ["Disputa","Reivindica judicialmente a área da Zona de Expansão (Mosqueiro, Robalo, Areia Branca…). O caso chegou ao STF."],
+      ["Marca","Abriga o campus da UFS, no Rosa Elze. Integra a RMA."]
+    ]},
+  { id:"itaporanga", nome:"Itaporanga d'Ajuda", lado:"Sul", cor:"#B23A6F", dir:"S",
+    pol:[[0,1180],[110,1200],[250,1225],[370,1252],[470,1272],[545,1288],[600,1262],[620,1400],[0,1400]],
+    rotulo:[230,1330],
+    resumo:"Vizinho ao SUL, do outro lado do Vaza-Barris.",
+    itens:[
+      ["Separado por","Rio Vaza-Barris."],
+      ["Ponte","Ponte Joel Silveira (2010), pela SE-100 sul."],
+      ["Atenção","É limítrofe, mas NÃO integra a Região Metropolitana de Aracaju."]
+    ]}
+];
+
+/* --- pontos: pontes e marcos ---------------------------- */
+const PONTOS = [
+  { id:"p-joao-alves", tipo:"ponte", curto:"Ponte João Alves", nome:"Ponte Construtor João Alves", xy:[634,456], anc:"dir",
+    ang:-36, vao:96, saida:"barra-dos-coqueiros",
+    resumo:"Rio Sergipe · Aracaju ⇄ Barra dos Coqueiros",
+    itens:[
+      ["Rio","Rio Sergipe (foz)."],
+      ["Liga","Aracaju à Barra dos Coqueiros."],
+      ["Data","24 de setembro de 2006."],
+      ["Tamanho","Cerca de 1.800 m — a maior ponte urbana do Nordeste."],
+      ["Efeito","Abriu o litoral norte e o acesso ao Terminal Marítimo Inácio Barbosa."]
+    ]},
+  { id:"p-rolemberg", tipo:"ponte", nome:"Ponte José Rolemberg Leite", curto:"P. Rolemberg Leite", xy:[237,394], anc:"esq",
+    ang:9, vao:60, saida:"socorro",
+    resumo:"Rio do Sal · Aracaju ⇄ N. S. do Socorro",
+    itens:[
+      ["Rio","Rio do Sal."],
+      ["Liga","Zona norte de Aracaju ao conjunto João Alves, em Nossa Senhora do Socorro."],
+      ["Papel","É a ponte do limite norte."]
+    ]},
+  { id:"p-godofredo", tipo:"ponte", curto:"Ponte Godofredo Diniz", nome:"Ponte Godofredo Diniz", xy:[620,610], anc:"dir", ang:27, vao:52,
+    resumo:"Rio Poxim · 13 de Julho ⇄ Coroa do Meio",
+    itens:[
+      ["Rio","Rio Poxim."],
+      ["Liga","Bairro 13 de Julho à Coroa do Meio — a 'ponte do shopping'."],
+      ["Época","Anos 1970, gestão João Alves Filho."],
+      ["Efeito","Viabilizou a ocupação da orla e o acesso à Atalaia."]
+    ]},
+  { id:"p-juscelino", tipo:"ponte", curto:"P. Pres. Juscelino", nome:"Ponte Presidente Juscelino", xy:[556,652], anc:"esq", ang:-72, vao:48,
+    resumo:"Rio Poxim · a mais antiga sobre o Poxim",
+    itens:[
+      ["Rio","Rio Poxim."],
+      ["História","Viabilizada após o desmonte do Morro do Bonfim, a duna que forneceu areia para os aterros."],
+      ["Efeito","Ligou o Centro ao caminho do mar e acabou com a travessia de balsas."]
+    ]},
+  { id:"p-gilberto", tipo:"ponte", curto:"P. Gilberto Vila-Nova", nome:"Ponte Gilberto Vila-Nova de Carvalho", xy:[432,622], anc:"esq", ang:-83, vao:48,
+    resumo:"Rio Poxim · Augusto Franco ⇄ av. Tancredo Neves",
+    itens:[
+      ["Rio","Rio Poxim."],
+      ["Data","Entregue em 2013, no aniversário de 158 anos da cidade."],
+      ["Liga","Conjunto Augusto Franco à avenida Tancredo Neves, pelo bairro Inácio Barbosa."]
+    ]},
+  { id:"p-joel", tipo:"ponte", curto:"Ponte Joel Silveira", nome:"Ponte Joel Silveira", xy:[470,1272], anc:"dir",
+    ang:-79, vao:86, saida:"itaporanga",
+    resumo:"Rio Vaza-Barris · Mosqueiro ⇄ Itaporanga d'Ajuda",
+    itens:[
+      ["Rio","Rio Vaza-Barris."],
+      ["Data","2010."],
+      ["Liga","Zona de Expansão (Mosqueiro) a Itaporanga d'Ajuda, pela SE-100 sul."],
+      ["Efeito","Abriu o litoral sul do estado."]
+    ]},
+  { id:"marco-zero", tipo:"marco", curto:"MARCO ZERO", nome:"Marco Zero — Colina de Santo Antônio", xy:[400,344], anc:"dir",
+    resumo:"Onde Aracaju nasceu, em 17/03/1855",
+    itens:[
+      ["O que é","O Outeiro (Colina) de Santo Antônio, ponto alto onde ficava o povoado e onde a Assembleia Provincial aprovou a transferência da capital."],
+      ["Data","17 de março de 1855 — aniversário da cidade."],
+      ["Norma","Resolução (Lei Provincial) nº 413."],
+      ["Fundador","Inácio Joaquim Barbosa, presidente da província."],
+      ["Projetista","Sebastião José Basílio Pirro, engenheiro do Quadrado."],
+      ["Detalhe","A cidade nova foi implantada cerca de 500 m ao SUL da colina, em terreno de mangue, para ficar na margem do rio."]
+    ]},
+  { id:"aeroporto-pt", tipo:"marco", curto:"Aeroporto Santa Maria", nome:"Aeroporto Santa Maria", xy:[520,800], anc:"dir",
+    resumo:"Aeroporto Internacional de Aracaju",
+    itens:[["Onde","Zona sul, entre a Atalaia e a Zona de Expansão."],
+           ["Ambiente","Cercado pelos manguezais do Poxim e do canal Santa Maria."]]},
+  { id:"foz-sergipe", tipo:"marco", curto:"Foz do Sergipe", nome:"Foz do rio Sergipe", xy:[672,556], anc:"dir",
+    resumo:"Onde o rio Sergipe encontra o Atlântico",
+    itens:[["Divisa","Separa Aracaju (oeste) de Barra dos Coqueiros (leste/nordeste)."],
+           ["Antigo nome","Barra da Cotinguiba."]]},
+  { id:"foz-vb", tipo:"marco", curto:"", nome:"Foz do rio Vaza-Barris", xy:[600,1262], anc:"esq",
+    resumo:"Ponto mais ao sul do litoral de Aracaju",
+    itens:[["Divisa","Separa Aracaju de Itaporanga d'Ajuda."]]}
+];
+
+/* --- rosa dos ventos / síntese dos limites -------------- */
+const LIMITES = [
+  ["Norte","Nossa Senhora do Socorro e Santo Amaro das Brotas","Rio do Sal / estuário do rio Sergipe"],
+  ["Nordeste","Barra dos Coqueiros","Rio Sergipe (Ponte Construtor João Alves)"],
+  ["Leste","Oceano Atlântico","Faixa litorânea / praias"],
+  ["Sul","São Cristóvão e Itaporanga d'Ajuda","Rio Vaza-Barris e canal Santa Maria (Ponte Joel Silveira)"],
+  ["Oeste","São Cristóvão e Nossa Senhora do Socorro","Limite terrestre e rio Poxim"]
+];
+
+/* --- divisas em TERRA (o único lado de Aracaju que não é água) --- */
+const DIVISAS = [
+  { id:"divisa-socorro", nome:"Divisa em terra com Nossa Senhora do Socorro",
+    tipo:"terra", cor:"#1F9E6E", vizinho:"socorro",
+    linha:[[226,456],[214,600]], rotulo:[172,552],
+    resumo:"Trecho seco do limite oeste, ao sul do rio do Sal.",
+    itens:[
+      ["O que é","Depois que o rio do Sal termina, o limite com Nossa Senhora do Socorro deixa de ser água e vira uma linha em terra firme."],
+      ["Onde passa","No rumo oeste da zona norte/oeste — bairros como Olaria, Novo Paraíso e Capucho encostam nesse trecho."],
+      ["Na prova","Socorro aparece nas DUAS naturezas: ao NORTE separado pelo rio do Sal, a OESTE por divisa terrestre. Se a questão disser que o limite com Socorro é só fluvial, está incompleta."]
+    ]},
+  { id:"divisa-sao-cristovao", nome:"Divisa em terra com São Cristóvão",
+    tipo:"terra", cor:"#C98A1E", vizinho:"sao-cristovao",
+    linha:[[214,600],[206,668],[218,748],[240,828],[275,900],[305,978],[330,1060],[352,1145],[375,1228]],
+    rotulo:[236,1010],
+    resumo:"A maior divisa seca de Aracaju, do Poxim até o Vaza-Barris.",
+    itens:[
+      ["O que é","Desce por todo o flanco oeste e sudoeste da cidade, do rio Poxim até a margem do rio Vaza-Barris."],
+      ["Onde passa","Jabotiana, Santa Maria e a borda oeste da Zona de Expansão fazem fundo com São Cristóvão."],
+      ["Rio Poxim","Parte do traçado acompanha o rio Poxim, que entra em Aracaju vindo de São Cristóvão — por isso ele às vezes é citado como referência do limite oeste."],
+      ["Disputa","É justamente esse trecho que São Cristóvão questiona na Justiça: o município reivindica a área da antiga Zona de Expansão. O caso chegou ao STF; para a prova, a área é de Aracaju."]
+    ]}
+];
+
+/* --- síntese: como Aracaju se separa de cada vizinho --- */
+const TRAVESSIAS = [
+  { vizinho:"socorro",            natureza:"Água + terra", como:"Rio do Sal (norte) e divisa terrestre (oeste)", ponte:"Ponte José Rolemberg Leite" },
+  { vizinho:"santo-amaro",        natureza:"Água",         como:"Estuário do rio Sergipe",                       ponte:"— (sem ponte direta)" },
+  { vizinho:"barra-dos-coqueiros",natureza:"Água",         como:"Foz do rio Sergipe",                            ponte:"Ponte Construtor João Alves" },
+  { vizinho:"sao-cristovao",      natureza:"Terra",        como:"Divisa terrestre (e rio Poxim como referência)",ponte:"— (não precisa de ponte)" },
+  { vizinho:"itaporanga",         natureza:"Água",         como:"Rio Vaza-Barris",                               ponte:"Ponte Joel Silveira" }
+];
+
+/* =========================================================
+   Desenho e interação do mapa de Aracaju
+   ========================================================= */
+const SVGNS = "http://www.w3.org/2000/svg";
+const VIEW = { x:0, y:0, w:900, h:1400 };
+const VIEW0 = { ...VIEW };
+
+/* contorno do continente (tudo que não é oceano) */
+const CONTINENTE = [
+  [0,0],[300,0],[380,120],[440,235],[520,340],[592,402],[642,470],[664,548],
+  [660,600],[648,700],[634,800],[618,910],[600,1020],[580,1140],[556,1262],[530,1400],[0,1400]
+];
+
+const svg = document.getElementById("mapa");
+const tip = document.getElementById("tip");
+const camadas = {};
+
+function el(tag, attrs, pai){
+  const n = document.createElementNS(SVGNS, tag);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  (pai || svg).appendChild(n);
+  return n;
+}
+function pts(arr){ return arr.map(p => p[0] + "," + p[1]).join(" "); }
+
+/* célula da malha -> polígono */
+function celula(rTop, rBot, c0, c1){
+  const top = MALHA[rTop], bot = MALHA[rBot], p = [];
+  for (let c = c0; c <= c1; c++) p.push(top[c]);
+  for (let c = c1; c >= c0; c--) p.push(bot[c]);
+  return p;
+}
+function centro(p){
+  let x = 0, y = 0;
+  p.forEach(q => { x += q[0]; y += q[1]; });
+  return [x / p.length, y / p.length];
+}
+function area(p){
+  let a = 0;
+  for (let i = 0; i < p.length; i++){
+    const j = (i + 1) % p.length;
+    a += p[i][0] * p[j][1] - p[j][0] * p[i][1];
+  }
+  return Math.abs(a / 2);
+}
+
+/* ---------- registro de tudo que é clicável ---------- */
+const REGISTRO = {};
+
+function registrar(node, dado){
+  REGISTRO[dado.id] = dado;
+  node.classList.add("alvo");
+  node.setAttribute("tabindex", "0");
+  node.setAttribute("role", "button");
+  node.setAttribute("aria-label", dado.nome);
+  node.dataset.id = dado.id;
+  node.addEventListener("mouseenter", e => mostrarTip(e, dado));
+  node.addEventListener("mousemove", e => posTip(e));
+  node.addEventListener("mouseleave", esconderTip);
+  node.addEventListener("click", () => abrirModal(dado));
+  node.addEventListener("focus", () => destacar(dado.id, true));
+  node.addEventListener("blur", () => destacar(dado.id, false));
+  node.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); abrirModal(dado); }
+  });
+}
+
+/* ---------- desenho ---------- */
+function desenhar(){
+  ["mar","terra","vizinhos","bairros","aguas","divisas","rotulos","pontos","enfeites"]
+    .forEach(n => camadas[n] = el("g", { class: "camada-" + n }));
+
+  /* oceano = fundo */
+  const mar = el("rect", { x:-50, y:-50, width:1000, height:1500, class:"mar", id:"f-oceano" }, camadas.mar);
+  registrar(mar, Object.assign({ zona:"agua" }, AGUAS.find(a => a.id === "oceano")));
+
+  /* continente */
+  el("polygon", { points: pts(CONTINENTE), class:"terra-base" }, camadas.terra);
+
+  /* municípios vizinhos */
+  VIZINHOS.forEach(v => {
+    const g = el("g", { class:"grupo" }, camadas.vizinhos);
+    const p = el("polygon", {
+      points: pts(v.pol), class:"vizinho", id:"f-" + v.id,
+      style:"--cor:" + v.cor
+    }, g);
+    registrar(p, Object.assign({ zona:"vizinho" }, v));
+
+    const [rx, ry] = v.rotulo;
+    const gr = el("g", { class:"rot-mun", id:"r-" + v.id }, camadas.rotulos);
+    const selo = el("text", { x:rx, y:ry - 22, class:"selo-dir" }, gr);
+    selo.textContent = v.dir;
+    const t = el("text", { x:rx, y:ry + 4, class:"rot-vizinho" }, gr);
+    quebrar(t, v.nome, rx, ry + 4, 17);
+  });
+
+  /* bairros de Aracaju */
+  AREAS.forEach(a => {
+    const poly = celula(a.cel[0], a.cel[1], a.cel[2], a.cel[3]);
+    a._pol = poly;
+    const n = el("polygon", {
+      points: pts(poly),
+      class: "bairro z-" + a.zona,
+      id: "f-" + a.id,
+      style: "--cor:" + ZONAS[a.zona].cor
+    }, camadas.bairros);
+    registrar(n, a);
+
+    const c = centro(poly);
+    a._c = c;
+    const grande = area(poly) > 5200;
+    const t = el("text", {
+      x:c[0], y:c[1], class:"rot-bairro" + (grande ? "" : " rot-mini"),
+      id:"r-" + a.id
+    }, camadas.rotulos);
+    quebrar(t, (a.estrela ? "★ " : "") + (a.curto || a.nome.split(" — ")[0]), c[0], c[1], grande ? 13 : 11);
+  });
+
+  /* rios */
+  AGUAS.filter(a => a.tipo === "rio").forEach(r => {
+    const g = el("g", { class:"grupo" }, camadas.aguas);
+    el("path", { d:r.d, class:"rio-borda", "stroke-width": r.largura + 6 }, g);
+    const p = el("path", { d:r.d, class:"rio", "stroke-width": r.largura, id:"f-" + r.id }, g);
+    registrar(p, Object.assign({ zona:"agua" }, r));
+    const t = el("text", {
+      x:r.rotulo[0], y:r.rotulo[1], class:"rot-rio" + (r.pequeno ? " rot-rio-mini" : ""),
+      transform:`rotate(${r.rotAng || 0} ${r.rotulo[0]} ${r.rotulo[1]})`
+    }, camadas.rotulos);
+    t.textContent = r.nome;
+  });
+
+  /* divisas em terra */
+  DIVISAS.forEach(v => {
+    const g = el("g", { class:"grupo divisa", id:"f-" + v.id, style:"--cor:" + v.cor }, camadas.divisas);
+    const d = "M " + v.linha.map(p => p[0] + " " + p[1]).join(" L ");
+    el("path", { d, class:"divisa-halo" }, g);
+    el("path", { d, class:"divisa-base" }, g);
+    el("path", { d, class:"divisa-traco" }, g);
+    registrar(g, Object.assign({ zona:"terra" }, v));
+    const t = el("text", { x:v.rotulo[0], y:v.rotulo[1], class:"rot-divisa" }, camadas.rotulos);
+    t.textContent = "DIVISA EM TERRA";
+  });
+
+  /* pontes e marcos */
+  PONTOS.forEach(p => {
+    const g = el("g", { class:"grupo ponto p-" + p.tipo, id:"f-" + p.id }, camadas.pontos);
+    if (p.tipo === "ponte"){
+      const saida = !!p.saida;
+      g.classList.add(saida ? "ponte-saida" : "ponte-interna");
+      /* tabuleiro atravessando o rio */
+      const v = p.vao || 48, esp = saida ? 17 : 11;
+      const tab = el("g", { transform:`rotate(${p.ang || 0} ${p.xy[0]} ${p.xy[1]})` }, g);
+      el("rect", { x:p.xy[0]-v/2, y:p.xy[1]-esp/2, width:v, height:esp, rx:3,
+                   class:"tabuleiro" }, tab);
+      /* travessas do tabuleiro */
+      const n = saida ? 5 : 3;
+      for (let i = 1; i <= n; i++){
+        const px = p.xy[0] - v/2 + (v * i) / (n + 1);
+        el("line", { x1:px, y1:p.xy[1]-esp/2, x2:px, y2:p.xy[1]+esp/2, class:"travessa" }, tab);
+      }
+      /* pilares nas duas margens */
+      [-v/2, v/2].forEach(dx => el("circle", {
+        cx:p.xy[0]+dx, cy:p.xy[1], r:saida ? 5 : 3.5, class:"pilar" }, tab));
+      if (saida) el("circle", { cx:p.xy[0], cy:p.xy[1], r:6, class:"selo-saida" }, g);
+    } else {
+      el("circle", { cx:p.xy[0], cy:p.xy[1], r:11, class:"pino pino-marco" }, g);
+      el("circle", { cx:p.xy[0], cy:p.xy[1], r:4, class:"icone-cheio" }, g);
+    }
+    const texto = p.curto !== undefined ? p.curto : p.nome.split(" — ")[0];
+    if (texto){
+      const rec = p.vao ? p.vao / 2 + 9 : 16;
+      const dx = p.anc === "esq" ? -rec : rec;
+      const t = el("text", {
+        x:p.xy[0]+dx, y:p.xy[1]+4,
+        class:"rot-ponto " + (p.anc === "esq" ? "fim" : "inicio") +
+              (p.saida ? "" : " rot-secundario") +
+              (p.id === "marco-zero" ? " rot-marco" : "")
+      }, camadas.rotulos);
+      t.textContent = texto;
+      if (p.saida){
+        t.classList.add("rot-saida");
+        const viz = VIZINHOS.find(v => v.id === p.saida);
+        const t2 = el("text", {
+          x:p.xy[0] + dx, y:p.xy[1] + 19,
+          class:"rot-ponto rot-destino " + (p.anc === "esq" ? "fim" : "inicio"),
+          style:"--cor:" + (viz ? viz.cor : "#888")
+        }, camadas.rotulos);
+        t2.textContent = "→ " + (viz ? viz.nome : "");
+      }
+    }
+    registrar(g, p);
+  });
+
+  const oc = el("text", { x:800, y:900, class:"rot-oceano",
+    transform:"rotate(90 800 900)" }, camadas.rotulos);
+  oc.textContent = "OCEANO ATLÂNTICO";
+  const ocd = el("text", { x:846, y:900, class:"selo-dir selo-mar",
+    transform:"rotate(90 846 900)" }, camadas.rotulos);
+  ocd.textContent = "LESTE";
+
+  bussola();
+}
+
+/* rótulo com quebra de linha */
+function quebrar(t, texto, x, y, tam){
+  const palavras = texto.split(" ");
+  const linhas = [];
+  let atual = "";
+  palavras.forEach(p => {
+    if ((atual + " " + p).trim().length > 16 && atual){ linhas.push(atual); atual = p; }
+    else atual = (atual + " " + p).trim();
+  });
+  if (atual) linhas.push(atual);
+  const alt = tam * 1.05;
+  const y0 = y - ((linhas.length - 1) * alt) / 2;
+  linhas.forEach((l, i) => {
+    const ts = el("tspan", { x, y: y0 + i * alt }, t);
+    ts.textContent = l;
+  });
+}
+
+/* rosa dos ventos */
+function bussola(){
+  const g = el("g", { class:"bussola" }, camadas.enfeites);
+  const cx = 795, cy = 1250, r = 46;
+  el("circle", { cx, cy, r, class:"bussola-fundo" }, g);
+  el("path", { d:`M ${cx} ${cy-r+6} L ${cx+11} ${cy} L ${cx} ${cy+r-6} L ${cx-11} ${cy} Z`, class:"bussola-agulha" }, g);
+  const rot = [["N",cx,cy-r-6],["S",cx,cy+r+16],["L",cx+r+12,cy+5],["O",cx-r-12,cy+5]];
+  rot.forEach(([txt,x,y]) => {
+    const t = el("text", { x, y, class:"bussola-txt" }, g);
+    t.textContent = txt;
+  });
+}
+
+/* ---------- tooltip ---------- */
+function seloDe(d){
+  const z = ZONAS[d.zona || "vizinho"];
+  if (d.lado) return { txt:"Limite " + d.lado, cor:d.cor || (z && z.cor) || "#888" };
+  if (d.tipo === "ponte") return d.saida
+    ? { txt:"Ponte intermunicipal", cor:"#F0A500" }
+    : { txt:"Ponte interna (rio Poxim)", cor:"#C0392B" };
+  if (d.tipo === "marco") return { txt:"Ponto de referência", cor:"#F0A500" };
+  return { txt:z ? z.nome : "", cor:d.cor || (z && z.cor) || "#888" };
+}
+
+function mostrarTip(e, d){
+  const s = seloDe(d);
+  tip.innerHTML =
+    `<span class="tip-zona" style="background:${s.cor}">${s.txt}</span>` +
+    `<strong>${d.nome}</strong><span class="tip-txt">${d.resumo || ""}</span>` +
+    `<span class="tip-dica">clique para abrir os detalhes</span>`;
+  tip.classList.add("ver");
+  posTip(e);
+  destacar(d.id, true);
+}
+function posTip(e){
+  const m = 16;
+  let x = e.clientX + m, y = e.clientY + m;
+  const c = tip.getBoundingClientRect();
+  if (x + c.width > window.innerWidth - 8) x = e.clientX - c.width - m;
+  if (y + c.height > window.innerHeight - 8) y = e.clientY - c.height - m;
+  tip.style.left = x + "px";
+  tip.style.top = y + "px";
+}
+function esconderTip(){
+  tip.classList.remove("ver");
+  document.querySelectorAll(".ativo").forEach(n => n.classList.remove("ativo"));
+}
+function destacar(id, on){
+  const n = document.getElementById("f-" + id);
+  if (n) n.classList.toggle("ativo", on);
+}
+
+/* ---------- modal ---------- */
+const modal    = document.getElementById("modal");
+const mCaixa   = document.getElementById("modal-caixa");
+const mTitulo  = document.getElementById("modal-titulo");
+const mZona    = document.getElementById("modal-zona");
+const mResumo  = document.getElementById("modal-resumo");
+const mCorpo   = document.getElementById("modal-corpo");
+const mVizinho = document.getElementById("modal-vizinhos");
+
+function abrirModal(d){
+  esconderTip();
+  const s = seloDe(d);
+  mTitulo.textContent = d.nome;
+  mZona.textContent = s.txt;
+  mZona.style.background = s.cor;
+  mResumo.textContent = d.resumo || "";
+  mCorpo.innerHTML = "";
+  const extra = [];
+  if (d.saida){
+    const viz = VIZINHOS.find(v => v.id === d.saida);
+    if (viz) extra.push(["Limite que ela vence",
+      `É por esta ponte que se sai de Aracaju para <b>${viz.nome}</b> — vizinho a <b>${viz.lado}</b>, separado por água. Sem ela, não há ligação por terra.`]);
+  }
+  if (d.vizinho){
+    const viz = VIZINHOS.find(v => v.id === d.vizinho);
+    if (viz) extra.push(["Vizinho deste trecho",
+      `<b>${viz.nome}</b> — a <b>${viz.lado}</b> de Aracaju.`]);
+  }
+  [...extra, ...(d.itens || [])].forEach(([h, p]) => {
+    const bloco = document.createElement("div");
+    bloco.className = "linha";
+    bloco.innerHTML = `<h4>${h}</h4><p>${p}</p>`;
+    mCorpo.appendChild(bloco);
+  });
+  mVizinho.innerHTML = "";
+  vizinhosDe(d).forEach(v => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip-vizinho";
+    b.style.setProperty("--cor", ZONAS[v.zona || "vizinho"].cor);
+    b.textContent = v.nome.split(" — ")[0];
+    b.addEventListener("click", () => abrirModal(v));
+    mVizinho.appendChild(b);
+  });
+  modal.classList.add("ver");
+  document.body.classList.add("travado");
+  mCaixa.focus();
+}
+function fecharModal(){
+  modal.classList.remove("ver");
+  document.body.classList.remove("travado");
+}
+modal.addEventListener("click", e => { if (e.target === modal) fecharModal(); });
+document.getElementById("modal-fechar").addEventListener("click", fecharModal);
+document.addEventListener("keydown", e => { if (e.key === "Escape") fecharModal(); });
+
+/* vizinhança simples: distância entre centroides */
+function vizinhosDe(d){
+  if (!d._c) return [];
+  return AREAS
+    .filter(a => a.id !== d.id)
+    .map(a => ({ a, dist: Math.hypot(a._c[0]-d._c[0], a._c[1]-d._c[1]) }))
+    .sort((x, y) => x.dist - y.dist)
+    .slice(0, 4)
+    .map(o => o.a);
+}
+
+/* ---------- legenda: municípios (foco) + zonas ---------- */
+let foco = null; /* {tipo:"mun"|"zona", id} */
+
+function montarLegenda(){
+  const cxM = document.getElementById("legenda-mun");
+  const alvos = [
+    ...VIZINHOS.map(v => ({ id:v.id, nome:v.nome, dir:v.dir, cor:v.cor })),
+    (() => { const o = AGUAS.find(a => a.id === "oceano");
+             return { id:o.id, nome:o.nome, dir:o.dir, cor:o.cor }; })()
+  ];
+  alvos.forEach(a => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip chip-mun";
+    b.dataset.alvo = a.id;
+    b.style.setProperty("--cor", a.cor);
+    b.innerHTML = `<i></i><b>${a.dir}</b> ${a.nome}`;
+    b.addEventListener("click", () => alternarFoco("mun", a.id, b));
+    cxM.appendChild(b);
+  });
+
+  const cxL = document.getElementById("legenda-limite");
+  [
+    { tipo:"terra", id:"terra", cor:"#2B1D0E", txt:"Divisa em terra",
+      dica:"os trechos secos do limite oeste" },
+    { tipo:"ponte", id:"ponte", cor:"#F0A500", txt:"Pontes que saem de Aracaju",
+      dica:"as travessias sobre os limites de água" }
+  ].forEach(o => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip chip-limite";
+    b.dataset.alvo = o.id;
+    b.title = o.dica;
+    b.style.setProperty("--cor", o.cor);
+    b.innerHTML = `<i></i>${o.txt}`;
+    b.addEventListener("click", () => alternarFoco(o.tipo, o.id, b));
+    cxL.appendChild(b);
+  });
+
+  const cxZ = document.getElementById("legenda-zona");
+  ["norte","centro","oeste","sul","expansao"].forEach(id => {
+    const z = ZONAS[id];
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip chip-zona";
+    b.dataset.alvo = id;
+    b.style.setProperty("--cor", z.cor);
+    b.innerHTML = `<i></i>${z.nome}`;
+    b.addEventListener("click", () => alternarFoco("zona", id, b));
+    cxZ.appendChild(b);
+  });
+
+  const bt = document.getElementById("modo-zonas");
+  bt.addEventListener("click", () => {
+    const on = document.body.classList.toggle("modo-zonas");
+    bt.classList.toggle("on", on);
+    bt.textContent = on ? "Colorir bairros: ligado" : "Colorir bairros por zona";
+    document.getElementById("legenda-zona").hidden = !on;
+    if (!on && foco && foco.tipo === "zona") limparFoco();
+  });
+}
+
+function limparFoco(){
+  foco = null;
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("on"));
+  document.querySelectorAll(".apagado, .foco").forEach(n => n.classList.remove("apagado", "foco"));
+  svg.classList.remove("filtrando");
+}
+
+function alternarFoco(tipo, id, botao){
+  if (foco && foco.tipo === tipo && foco.id === id) { limparFoco(); return; }
+  limparFoco();
+  foco = { tipo, id };
+  botao.classList.add("on");
+  svg.classList.add("filtrando");
+
+  const apagar = n => n && n.classList.add("apagado");
+  const focar  = n => n && n.classList.add("foco");
+
+  if (tipo === "mun"){
+    /* municípios: apaga os bairros e os outros vizinhos */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    VIZINHOS.forEach(v => {
+      const alvo = v.id === id;
+      if (alvo) { focar(document.getElementById("f-" + v.id)); }
+      else { apagar(document.getElementById("f-" + v.id));
+             apagar(document.getElementById("r-" + v.id)); }
+    });
+    if (id === "oceano"){
+      document.querySelector(".camada-terra").classList.add("apagado");
+      document.querySelectorAll(".camada-vizinhos .vizinho, .rot-mun")
+        .forEach(n => n.classList.add("apagado"));
+      document.querySelector(".rot-oceano").classList.add("foco");
+    }
+  } else if (tipo === "terra"){
+    /* divisas secas: só São Cristóvão e Socorro têm trecho em terra */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    VIZINHOS.forEach(v => {
+      if (v.id === "sao-cristovao" || v.id === "socorro") return;
+      apagar(document.getElementById("f-" + v.id));
+      apagar(document.getElementById("r-" + v.id));
+    });
+    document.querySelectorAll(".camada-aguas .grupo").forEach(apagar);
+    document.querySelectorAll(".ponto").forEach(apagar);
+    document.querySelectorAll(".rot-ponto, .rot-destino").forEach(apagar);
+    DIVISAS.forEach(v => focar(document.getElementById("f-" + v.id)));
+  } else if (tipo === "ponte"){
+    /* travessias intermunicipais */
+    AREAS.forEach(a => { apagar(document.getElementById("f-" + a.id));
+                         apagar(document.getElementById("r-" + a.id)); });
+    document.querySelectorAll(".ponte-interna, .p-marco").forEach(apagar);
+    document.querySelectorAll(".camada-divisas .divisa, .rot-divisa, .rot-secundario")
+      .forEach(apagar);
+    document.querySelectorAll(".ponte-saida").forEach(focar);
+  } else {
+    /* zonas: apaga os bairros das outras zonas */
+    AREAS.forEach(a => {
+      if (a.zona === id) return;
+      apagar(document.getElementById("f-" + a.id));
+      apagar(document.getElementById("r-" + a.id));
+    });
+    document.querySelectorAll(".camada-vizinhos .vizinho, .rot-mun")
+      .forEach(n => n.classList.add("apagado"));
+  }
+}
+
+/* ---------- busca ---------- */
+function montarBusca(){
+  const campo = document.getElementById("busca");
+  const lista = document.getElementById("busca-lista");
+  const tudo = [...AREAS, ...AGUAS, ...VIZINHOS, ...PONTOS];
+  campo.addEventListener("input", () => {
+    const q = campo.value.trim().toLowerCase();
+    lista.innerHTML = "";
+    if (q.length < 2) { lista.classList.remove("ver"); return; }
+    const achados = tudo.filter(d => d.nome.toLowerCase().includes(q)).slice(0, 8);
+    achados.forEach(d => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = d.nome;
+      b.addEventListener("click", () => {
+        campo.value = "";
+        lista.classList.remove("ver");
+        abrirModal(REGISTRO[d.id] || d);
+      });
+      lista.appendChild(b);
+    });
+    lista.classList.toggle("ver", achados.length > 0);
+  });
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".busca")) lista.classList.remove("ver");
+  });
+}
+
+/* ---------- zoom e arrasto ---------- */
+function aplicarView(){
+  svg.setAttribute("viewBox", `${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`);
+}
+function zoom(fator, cx, cy){
+  const nw = Math.min(VIEW0.w, Math.max(VIEW0.w * 0.28, VIEW.w * fator));
+  const k = nw / VIEW.w;
+  VIEW.x = cx - (cx - VIEW.x) * k;
+  VIEW.y = cy - (cy - VIEW.y) * k;
+  VIEW.w = nw;
+  VIEW.h = VIEW0.h * (nw / VIEW0.w);
+  limitar();
+  aplicarView();
+}
+function limitar(){
+  VIEW.x = Math.min(Math.max(VIEW.x, -40), VIEW0.w - VIEW.w + 40);
+  VIEW.y = Math.min(Math.max(VIEW.y, -40), VIEW0.h - VIEW.h + 40);
+}
+function paraSVG(e){
+  const r = svg.getBoundingClientRect();
+  return [
+    VIEW.x + ((e.clientX - r.left) / r.width) * VIEW.w,
+    VIEW.y + ((e.clientY - r.top) / r.height) * VIEW.h
+  ];
+}
+function ligarNavegacao(){
+  document.getElementById("zoom-mais").addEventListener("click", () => zoom(0.75, VIEW.x + VIEW.w/2, VIEW.y + VIEW.h/2));
+  document.getElementById("zoom-menos").addEventListener("click", () => zoom(1.33, VIEW.x + VIEW.w/2, VIEW.y + VIEW.h/2));
+  document.getElementById("zoom-reset").addEventListener("click", () => {
+    Object.assign(VIEW, VIEW0); aplicarView();
+  });
+  svg.addEventListener("wheel", e => {
+    e.preventDefault();
+    const [x, y] = paraSVG(e);
+    zoom(e.deltaY > 0 ? 1.12 : 0.89, x, y);
+  }, { passive:false });
+
+  let arrastando = false, ini = null, viewIni = null, moveu = 0;
+  svg.addEventListener("pointerdown", e => {
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    arrastando = true; moveu = 0;
+    ini = paraSVG(e); viewIni = { x:VIEW.x, y:VIEW.y };
+  });
+  document.addEventListener("pointermove", e => {
+    if (!arrastando) return;
+    const r = svg.getBoundingClientRect();
+    const atual = [
+      viewIni.x + ((e.clientX - r.left) / r.width) * VIEW.w,
+      viewIni.y + ((e.clientY - r.top) / r.height) * VIEW.h
+    ];
+    const dx = ini[0] - atual[0], dy = ini[1] - atual[1];
+    moveu = Math.max(moveu, Math.abs(dx) + Math.abs(dy));
+    if (moveu <= 6) return;
+    svg.classList.add("arrastando");
+    esconderTip();
+    VIEW.x = viewIni.x + dx; VIEW.y = viewIni.y + dy;
+    limitar(); aplicarView();
+  });
+  document.addEventListener("pointerup", () => {
+    arrastando = false;
+    svg.classList.remove("arrastando");
+    setTimeout(() => { moveu = 0; }, 0);
+  });
+  svg.addEventListener("click", e => { if (moveu > 6) e.stopPropagation(); }, true);
+}
+
+/* ---------- tabela de limites ---------- */
+function montarLimites(){
+  const t = document.getElementById("tab-limites");
+  LIMITES.forEach(([lado, quem, sep]) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td><b>${lado}</b></td><td>${quem}</td><td>${sep}</td>`;
+    t.appendChild(tr);
+  });
+}
+
+/* ---------- tabela: água ou terra ---------- */
+function montarTravessias(){
+  const t = document.getElementById("tab-travessias");
+  const cor = { "Água":"#1273AF", "Terra":"#2B1D0E", "Água + terra":"#7B4FA8" };
+  TRAVESSIAS.forEach(v => {
+    const m = VIZINHOS.find(x => x.id === v.vizinho);
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td><b style="color:${m.cor}">${m.nome}</b><br><small>${m.dir}</small></td>` +
+      `<td><span class="pilula" style="background:${cor[v.natureza]}">${v.natureza}</span></td>` +
+      `<td>${v.como}</td><td>${v.ponte}</td>`;
+    tr.style.cursor = "pointer";
+    tr.addEventListener("click", () => abrirModal(REGISTRO[m.id] || m));
+    t.appendChild(tr);
+  });
+}
+
+/* ---------- rosa dos ventos ---------- */
+function montarRosa(){
+  const cx = document.getElementById("rosa");
+  const V = id => VIZINHOS.find(v => v.id === id);
+  const mar = AGUAS.find(a => a.id === "oceano");
+  const cel = (ponto, dados, quem, sep) => {
+    const d = document.createElement("button");
+    d.type = "button";
+    d.className = "cel";
+    d.style.setProperty("--cor", dados ? dados.cor : "#888");
+    d.innerHTML = `<span class="ponto">${ponto}</span>${quem}<small>${sep}</small>`;
+    if (dados) d.addEventListener("click", () => abrirModal(REGISTRO[dados.id] || dados));
+    cx.appendChild(d);
+  };
+  const vazio = txt => {
+    const d = document.createElement("div");
+    d.className = "cel vazio"; d.textContent = txt; cx.appendChild(d);
+  };
+
+  vazio("NO");
+  cel("NORTE", V("socorro"), "N. S. do Socorro<br>Santo Amaro das Brotas", "rio do Sal");
+  cel("NORDESTE", V("barra-dos-coqueiros"), "Barra dos Coqueiros", "rio Sergipe");
+
+  cel("OESTE", V("sao-cristovao"), "São Cristóvão<br>N. S. do Socorro", "divisa em terra");
+  const meio = document.createElement("div");
+  meio.className = "cel miolo"; meio.textContent = "ARACAJU"; cx.appendChild(meio);
+  cel("LESTE", mar, "Oceano Atlântico", "faixa litorânea");
+
+  vazio("SO");
+  cel("SUL", V("itaporanga"), "São Cristóvão<br>Itaporanga d'Ajuda", "rio Vaza-Barris");
+  vazio("SE");
+}
+
+/* ---------- início ---------- */
+desenhar();
+aplicarView();
+montarLegenda();
+montarBusca();
+ligarNavegacao();
+montarLimites();
+montarRosa();
+montarTravessias();
+
+</script>
+</body>
+</html>

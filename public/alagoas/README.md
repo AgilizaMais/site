@@ -59,3 +59,18 @@ divisas secas ficam em `DIVISAS`.
 IBGE Cidades (área, população, municípios), IPHAN (tombamentos), Assembleia
 Legislativa de Alagoas (27 deputados), literatura acadêmica sobre a Capitania
 das Alagoas (Carta Régia de 16/09/1817; províncias em 28/02/1821).
+
+## Versão de arquivo único
+
+A pasta `_arquivo-unico/` traz as mesmas páginas com o CSS e o JS **embutidos
+no próprio HTML**. Cada arquivo funciona sozinho, sem precisar de `estilo.css`,
+`dados.js` ou `mapa.js` ao lado — útil quando a hospedagem não entrega os `.js`
+ou quando só os `.html` são enviados. Sintoma que isso resolve: a moldura do
+mapa aparece azul e vazia.
+
+Esses arquivos são **gerados**, não editados à mão. Depois de mexer no código,
+rode na pasta `public/`:
+
+```
+python3 gerar-arquivo-unico.py
+```
