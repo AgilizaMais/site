@@ -73,3 +73,18 @@ rode na pasta `public/`:
 ```
 python3 gerar-arquivo-unico.py
 ```
+
+## Ícone e atalho na tela de início
+
+O ícone é a própria silhueta do mapa, gerada a partir das mesmas coordenadas
+de `dados.js` (veja `icone.svg`). Arquivos: `icone-512.png`, `icone-192.png`,
+`icone-180.png`, `icone-64.png` e `site.webmanifest`.
+
+Na versão de arquivo único, o favicon e o manifest (com os PNGs dentro dele)
+são **embutidos como data URI** pelo `gerar-arquivo-unico.py` — o atalho no
+Android funciona mesmo que só os `.html` sejam enviados ao servidor.
+
+A exceção é o iPhone: o iOS **não aceita data URI** em `apple-touch-icon`, então
+esse link continua apontando para o arquivo. Para o ícone aparecer no atalho do
+iPhone, `icone-180.png` precisa estar na mesma pasta dos HTML. Sem ele, o iOS
+usa uma miniatura da página — o atalho funciona, só fica sem o desenho.

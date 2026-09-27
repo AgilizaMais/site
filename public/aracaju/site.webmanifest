@@ -1,0 +1,15 @@
+{
+  "name": "Geografia de Aracaju",
+  "short_name": "Aracaju",
+  "description": "Mapa interativo da geografia de Aracaju para concurso.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFF8EF",
+  "theme_color": "#0B3C5D",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

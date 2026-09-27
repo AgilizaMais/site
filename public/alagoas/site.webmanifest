@@ -1,0 +1,15 @@
+{
+  "name": "Alagoas para a PM-AL",
+  "short_name": "Alagoas PM",
+  "description": "Mapa interativo e resumos de Conhecimentos do Estado de Alagoas.",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#FFF8EF",
+  "theme_color": "#0E4A58",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
