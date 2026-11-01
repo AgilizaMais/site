@@ -5,22 +5,28 @@ import {
   InstancedBufferAttribute,
   InstancedBufferGeometry,
   Float32BufferAttribute,
+  LinearFilter,
+  LinearMipmapLinearFilter,
   Mesh,
   NearestFilter,
+  NoBlending,
+  OrthographicCamera,
   PerspectiveCamera,
   PlaneGeometry,
   RGBAFormat,
   Scene,
   ShaderMaterial,
   SRGBColorSpace,
-  LinearFilter,
   Texture,
   TextureLoader,
   Vector3,
+  WebGLRenderTarget,
   WebGLRenderer,
 } from 'three';
 import { sampleCurve, writeFrames } from './spine';
 import {
+  bakedFragment,
+  bakedVertex,
   doilyFragment,
   doilyVertex,
   photoFragment,
@@ -55,11 +61,17 @@ export type EngineOptions = {
 
 const CAM_Z = 14;
 const FOV = 30;
+/** duração da entrada dos fios (ms, relógio real — não desacelera se o fps cair) */
+const INTRO_MS = 1350;
 
+/**
+ * Qualidade por aparelho. A amostragem é adaptativa (spine.ts), então o laço do
+ * coração continua redondo mesmo com menos amostras no total.
+ */
 const QUALITY: Record<Tier, { samples: number; along: number; radial: number; dpr: number; aa: boolean }> = {
-  high: { samples: 380, along: 900, radial: 16, dpr: 2, aa: true },
-  mid: { samples: 320, along: 720, radial: 14, dpr: 1.6, aa: true },
-  low: { samples: 240, along: 480, radial: 10, dpr: 1.25, aa: false },
+  high: { samples: 280, along: 560, radial: 14, dpr: 1.5, aa: true },
+  mid: { samples: 240, along: 460, radial: 12, dpr: 1.5, aa: true },
+  low: { samples: 180, along: 340, radial: 10, dpr: 1.15, aa: false },
 };
 
 type ThreadState = {
@@ -73,7 +85,16 @@ type ThreadState = {
   init: boolean;
 };
 
+type Doily = {
+  mesh: Mesh<PlaneGeometry, ShaderMaterial>;
+  def: DoilyDef;
+  rt: WebGLRenderTarget;
+  bx: number;
+  by: number;
+};
+
 const tmpColor = new Color();
+const tmpVec = new Vector3();
 
 export class YarnEngine {
   private renderer: WebGLRenderer;
@@ -87,6 +108,7 @@ export class YarnEngine {
   private visH = 1;
   private visW = 1;
   private wide = true;
+  private dpr = 1;
 
   private threads: ThreadState[] = [];
   private spineData: Float32Array<ArrayBuffer> = new Float32Array(4);
@@ -94,28 +116,37 @@ export class YarnEngine {
   private yarnMesh: Mesh<InstancedBufferGeometry, ShaderMaterial> | null = null;
   private yarnMat: ShaderMaterial;
 
-  private doilies: { mesh: Mesh<PlaneGeometry, ShaderMaterial>; def: DoilyDef }[] = [];
+  private doilies: Doily[] = [];
   private photo: Mesh<PlaneGeometry, ShaderMaterial> | null = null;
   private photoTex: Texture | null = null;
   private photoAlpha = 0;
   private photoTarget = 0;
+  /** caixa da foto em coordenadas normalizadas do canvas (medida só quando muda) */
+  private photoBox = { cx: 0.5, cy: 0.5, w: 0, h: 0 };
 
   private time = 0;
   private last = 0;
   private raf = 0;
   private running = false;
+  private ready = false;
   private visible = true;
   private disposed = false;
 
-  private pointer = { x: 0, y: 0, vx: 0, vy: 0, active: 0, has: false };
+  private pointer = { vx: 0, vy: 0, active: 0, has: false };
   private ndc = { x: 0, y: 0 };
+  private rect = { left: 0, top: 0, width: 1, height: 1 };
+  private rectDirty = true;
   private scrollBoost = 0;
   private progress = 0;
   private progressTarget = 0;
   private draw = 0;
-  private drawTarget = 1;
+  private introAt = 0;
   private camOffsetY = 0;
   private skipIntro = false;
+
+  // resolução adaptativa
+  private frameEma = 16.7;
+  private slowFrames = 0;
 
   private ro: ResizeObserver;
   private io: IntersectionObserver;
@@ -133,7 +164,8 @@ export class YarnEngine {
       stencil: false,
     });
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.q.dpr));
+    this.dpr = Math.min(window.devicePixelRatio || 1, this.q.dpr);
+    this.renderer.setPixelRatio(this.dpr);
     this.camera.position.set(0, 0, CAM_Z);
 
     this.yarnMat = new ShaderMaterial({
@@ -151,20 +183,23 @@ export class YarnEngine {
 
     // ?nointro: pula a entrada (útil para capturas de tela e QA)
     this.skipIntro = opts.reduced || new URLSearchParams(window.location.search).has('nointro');
-    if (this.skipIntro) this.draw = this.drawTarget = 1;
+    this.draw = this.skipIntro ? 1 : 0;
+    this.introAt = performance.now();
 
     this.ro = new ResizeObserver(() => this.resize());
     this.ro.observe(canvas);
     this.io = new IntersectionObserver(
       ([entry]) => {
         this.visible = !!entry?.isIntersecting;
+        this.rectDirty = true;
         this.updateLoop();
       },
-      { rootMargin: '120px' },
+      { rootMargin: '80px' },
     );
     this.io.observe(canvas);
 
     document.addEventListener('visibilitychange', this.onVisibility);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
     if (opts.interactive !== false && !opts.reduced) {
       window.addEventListener('pointermove', this.onPointer, { passive: true });
       window.addEventListener('pointerdown', this.onPointer, { passive: true });
@@ -172,6 +207,15 @@ export class YarnEngine {
 
     this.resize();
     if (opts.photo) this.loadPhoto(opts.photo);
+
+    // compila os shaders antes do primeiro quadro animado (sem engasgo na entrada)
+    const done = () => {
+      if (this.disposed) return;
+      this.ready = true;
+      this.introAt = performance.now();
+      this.updateLoop();
+    };
+    this.renderer.compileAsync(this.scene, this.camera).then(done, done);
   }
 
   /* ---------------------------------------------------------------- */
@@ -192,9 +236,9 @@ export class YarnEngine {
     }
   }
 
-  /** Velocidade de scroll em px/s — agita os fios. */
+  /** Velocidade de scroll em px/s — agita os fios de leve. */
   setScrollVelocity(v: number) {
-    this.scrollBoost = Math.max(this.scrollBoost, Math.min(Math.abs(v) / 1800, 1.4));
+    this.scrollBoost = Math.max(this.scrollBoost, Math.min(Math.abs(v) / 2400, 0.7));
   }
 
   /** Paralaxe: desloca a câmera (fração da altura visível). */
@@ -206,12 +250,12 @@ export class YarnEngine {
   playIntro() {
     if (this.skipIntro) return;
     this.draw = 0;
-    this.drawTarget = 1;
+    this.introAt = performance.now();
   }
 
-  /** Ajusta a foto 3D à caixa atual do <img> (após layout/animações do DOM). */
+  /** Mede de novo a caixa do <img> (chamar quando o layout/paralaxe do DOM mudar). */
   syncPhoto() {
-    this.layoutPhoto();
+    this.measurePhoto();
   }
 
   showPhoto() {
@@ -224,15 +268,13 @@ export class YarnEngine {
     this.ro.disconnect();
     this.io.disconnect();
     document.removeEventListener('visibilitychange', this.onVisibility);
+    window.removeEventListener('scroll', this.onScroll);
     window.removeEventListener('pointermove', this.onPointer);
     window.removeEventListener('pointerdown', this.onPointer);
     this.yarnMesh?.geometry.dispose();
     this.yarnMat.dispose();
     this.spineTex?.dispose();
-    this.doilies.forEach((d) => {
-      d.mesh.geometry.dispose();
-      d.mesh.material.dispose();
-    });
+    this.disposeDoilies();
     this.photo?.geometry.dispose();
     this.photo?.material.dispose();
     this.photoTex?.dispose();
@@ -247,6 +289,7 @@ export class YarnEngine {
     const rect = this.canvas.getBoundingClientRect();
     const w = Math.max(1, Math.round(rect.width));
     const h = Math.max(1, Math.round(rect.height));
+    this.rectDirty = true;
     if (w === this.width && h === this.height && this.threads.length) return;
     this.width = w;
     this.height = h;
@@ -257,7 +300,7 @@ export class YarnEngine {
     this.visW = this.visH * this.camera.aspect;
     this.wide = w / h >= 0.95;
     this.build();
-    this.layoutPhoto();
+    this.measurePhoto();
     this.renderOnce();
   }
 
@@ -270,7 +313,6 @@ export class YarnEngine {
     const def = this.opts.scene(this.width / this.height);
     const S = this.q.samples;
 
-    // fios
     this.threads = def.threads.map((t) => {
       const K = t.pts.length;
       return {
@@ -335,34 +377,7 @@ export class YarnEngine {
     this.yarnMesh.frustumCulled = false;
     this.scene.add(this.yarnMesh);
 
-    // toalhinhas
-    this.doilies.forEach((d) => {
-      this.scene.remove(d.mesh);
-      d.mesh.geometry.dispose();
-      d.mesh.material.dispose();
-    });
-    this.doilies = def.doilies.map((d) => {
-      const mat = new ShaderMaterial({
-        vertexShader: doilyVertex,
-        fragmentShader: doilyFragment,
-        transparent: true,
-        premultipliedAlpha: true,
-        depthWrite: false,
-        uniforms: {
-          uColA: { value: new Color(d.colA) },
-          uColB: { value: new Color(d.colB) },
-          uOpacity: { value: d.opacity },
-          uSpin: { value: 0 },
-          ...lightUniforms(),
-        },
-      });
-      const mesh = new Mesh(new PlaneGeometry(1, 1), mat);
-      mesh.frustumCulled = false;
-      mesh.renderOrder = -1;
-      this.scene.add(mesh);
-      return { mesh, def: d };
-    });
-    this.layoutDoilies();
+    this.buildDoilies(def.doilies);
   }
 
   private buildTubeGeometry() {
@@ -377,27 +392,102 @@ export class YarnEngine {
         verts[o++] = 0;
       }
     }
-    const idx: number[] = [];
+    const idx = new Uint32Array(L * R * 6);
+    let k = 0;
     for (let i = 0; i < L; i++) {
       for (let j = 0; j < R; j++) {
         const a = i * (R + 1) + j;
         const b = a + R + 1;
-        idx.push(a, b, a + 1, b, b + 1, a + 1);
+        idx[k++] = a;
+        idx[k++] = b;
+        idx[k++] = a + 1;
+        idx[k++] = b;
+        idx[k++] = b + 1;
+        idx[k++] = a + 1;
       }
     }
     const geo = new InstancedBufferGeometry();
     geo.setAttribute('position', new Float32BufferAttribute(verts, 3));
-    geo.setIndex(idx);
+    geo.setIndex(Array.from(idx));
     return geo;
   }
 
-  private layoutDoilies() {
-    for (const d of this.doilies) {
-      const scale = d.def.size * this.visH * ((CAM_Z - d.def.z) / CAM_Z);
-      d.mesh.scale.set(scale, scale, 1);
-      const p = this.toWorld(d.def.nx, d.def.ny, d.def.z);
-      d.mesh.position.copy(p);
-    }
+  /**
+   * As toalhinhas são procedurais e caras de calcular — então são desenhadas UMA
+   * vez numa textura. Depois disso só giram (rotação do plano), custo quase zero.
+   */
+  private buildDoilies(defs: DoilyDef[]) {
+    this.disposeDoilies();
+    if (!defs.length) return;
+
+    const bakeScene = new Scene();
+    const bakeCam = new OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 10);
+    bakeCam.position.set(0, 0, 5);
+    const quad = new Mesh(new PlaneGeometry(1, 1));
+    bakeScene.add(quad);
+
+    this.doilies = defs.map((d) => {
+      const px = d.size * this.height * this.dpr;
+      const size = Math.min(1024, Math.max(256, 2 ** Math.ceil(Math.log2(px))));
+      const rt = new WebGLRenderTarget(size, size, {
+        generateMipmaps: true,
+        minFilter: LinearMipmapLinearFilter,
+        magFilter: LinearFilter,
+      });
+      const bakeMat = new ShaderMaterial({
+        vertexShader: doilyVertex,
+        fragmentShader: doilyFragment,
+        blending: NoBlending,
+        depthTest: false,
+        depthWrite: false,
+        uniforms: {
+          uColA: { value: new Color(d.colA) },
+          uColB: { value: new Color(d.colB) },
+          uOpacity: { value: 1 },
+          uSpin: { value: 0 },
+          ...lightUniforms(),
+        },
+      });
+      quad.material = bakeMat;
+      this.renderer.setRenderTarget(rt);
+      this.renderer.setClearColor(0x000000, 0);
+      this.renderer.clear();
+      this.renderer.render(bakeScene, bakeCam);
+      this.renderer.setRenderTarget(null);
+      bakeMat.dispose();
+
+      const mat = new ShaderMaterial({
+        vertexShader: bakedVertex,
+        fragmentShader: bakedFragment,
+        transparent: true,
+        premultipliedAlpha: true,
+        depthWrite: false,
+        uniforms: { uMap: { value: rt.texture }, uOpacity: { value: d.opacity } },
+      });
+      const mesh = new Mesh(new PlaneGeometry(1, 1), mat);
+      mesh.frustumCulled = false;
+      mesh.renderOrder = -1;
+      const scale = d.size * this.visH * ((CAM_Z - d.z) / CAM_Z);
+      mesh.scale.set(scale, scale, 1);
+      const k = (CAM_Z - d.z) / CAM_Z;
+      const bx = (d.nx - 0.5) * this.visW * k;
+      const by = (0.5 - d.ny) * this.visH * k;
+      mesh.position.set(bx, by, d.z);
+      this.scene.add(mesh);
+      return { mesh, def: d, rt, bx, by };
+    });
+
+    quad.geometry.dispose();
+  }
+
+  private disposeDoilies() {
+    this.doilies.forEach((d) => {
+      this.scene.remove(d.mesh);
+      d.mesh.geometry.dispose();
+      d.mesh.material.dispose();
+      d.rt.dispose();
+    });
+    this.doilies = [];
   }
 
   private loadPhoto(p: PhotoOptions) {
@@ -406,7 +496,6 @@ export class YarnEngine {
       tex.colorSpace = SRGBColorSpace;
       tex.minFilter = LinearFilter;
       tex.generateMipmaps = false;
-      tex.anisotropy = 4;
       this.photoTex = tex;
       const mat = new ShaderMaterial({
         vertexShader: photoVertex,
@@ -426,15 +515,20 @@ export class YarnEngine {
       this.photo = new Mesh(new PlaneGeometry(1, 1), mat);
       this.photo.frustumCulled = false;
       this.scene.add(this.photo);
-      this.layoutPhoto();
-      this.renderOnce();
-      this.opts.onPhotoReady?.();
+      // sobe a textura e compila o shader agora, fora do quadro animado
+      this.renderer.initTexture(tex);
+      this.renderer.compileAsync(this.scene, this.camera).finally(() => {
+        if (this.disposed) return;
+        this.measurePhoto();
+        this.opts.onPhotoReady?.();
+      });
     });
   }
 
-  private layoutPhoto() {
+  /** Lê o layout do <img> — só em resize, handoff e scroll; nunca a cada quadro. */
+  private measurePhoto() {
     const p = this.opts.photo;
-    if (!p || !this.photo) return;
+    if (!p) return;
     const c = this.canvas.getBoundingClientRect();
     const r = p.el.getBoundingClientRect();
     if (!r.width || !c.width) return;
@@ -446,17 +540,10 @@ export class YarnEngine {
     else h = w / ar;
     const left = r.left + (r.width - w) / 2 - c.left;
     const top = r.top + (r.height - h) - c.top; // ancorada na base (object-position: bottom)
-    const cx = (left + w / 2) / c.width;
-    const cy = (top + h / 2) / c.height;
-    const pos = this.toWorld(cx, cy, 0);
-    this.photo.position.set(pos.x, pos.y + this.camera.position.y, 0);
-    this.photo.scale.set((w / c.width) * this.visW, (h / c.height) * this.visH, 1);
-  }
-
-  private toWorld(nx: number, ny: number, z: number) {
-    // mantém o enquadramento: pontos com z ≠ 0 são escalados pela perspectiva
-    const k = (CAM_Z - z) / CAM_Z;
-    return new Vector3((nx - 0.5) * this.visW * k, (0.5 - ny) * this.visH * k, z);
+    this.photoBox.cx = (left + w / 2) / c.width;
+    this.photoBox.cy = (top + h / 2) / c.height;
+    this.photoBox.w = w / c.width;
+    this.photoBox.h = h / c.height;
   }
 
   /* ---------------------------------------------------------------- */
@@ -465,10 +552,22 @@ export class YarnEngine {
 
   private onVisibility = () => this.updateLoop();
 
+  private onScroll = () => {
+    this.rectDirty = true;
+  };
+
   private onPointer = (e: PointerEvent) => {
-    const c = this.canvas.getBoundingClientRect();
-    const x = ((e.clientX - c.left) / c.width) * 2 - 1;
-    const y = -(((e.clientY - c.top) / c.height) * 2 - 1);
+    if (!this.visible) return;
+    if (this.rectDirty) {
+      const c = this.canvas.getBoundingClientRect();
+      this.rect.left = c.left;
+      this.rect.top = c.top;
+      this.rect.width = c.width || 1;
+      this.rect.height = c.height || 1;
+      this.rectDirty = false;
+    }
+    const x = ((e.clientX - this.rect.left) / this.rect.width) * 2 - 1;
+    const y = -(((e.clientY - this.rect.top) / this.rect.height) * 2 - 1);
     if (this.pointer.has) {
       this.pointer.vx += (x - this.ndc.x) * 0.5;
       this.pointer.vy += (y - this.ndc.y) * 0.5;
@@ -480,7 +579,8 @@ export class YarnEngine {
   };
 
   private updateLoop() {
-    const should = this.running && this.visible && !document.hidden && !this.opts.reduced && !this.disposed;
+    const should =
+      this.ready && this.running && this.visible && !document.hidden && !this.opts.reduced && !this.disposed;
     if (should && !this.raf) {
       this.last = performance.now();
       this.raf = requestAnimationFrame(this.tick);
@@ -492,41 +592,60 @@ export class YarnEngine {
 
   private tick = (now: number) => {
     this.raf = requestAnimationFrame(this.tick);
-    const dt = Math.min(0.05, (now - this.last) / 1000);
+    const ms = now - this.last;
     this.last = now;
-    this.step(dt);
+    this.adapt(ms);
+    this.step(Math.min(0.05, ms / 1000), now);
     this.renderer.render(this.scene, this.camera);
   };
 
+  /** Resolução adaptativa: se o aparelho não acompanha, reduz o DPR do canvas. */
+  private adapt(ms: number) {
+    if (ms > 200) return; // aba voltou do segundo plano etc.
+    this.frameEma += (ms - this.frameEma) * 0.08;
+    if (this.frameEma > 21 && this.dpr > 1) {
+      if (++this.slowFrames > 40) {
+        this.dpr = Math.max(1, this.dpr - 0.25);
+        this.renderer.setPixelRatio(this.dpr);
+        this.renderer.setSize(this.width, this.height, false);
+        this.slowFrames = 0;
+        this.frameEma = 16.7;
+      }
+    } else {
+      this.slowFrames = Math.max(0, this.slowFrames - 1);
+    }
+  }
+
   renderOnce() {
     if (this.disposed) return;
-    this.step(0);
+    this.step(0, performance.now());
     this.renderer.render(this.scene, this.camera);
   }
 
-  private step(dt: number) {
+  private step(dt: number, now: number) {
     this.time += dt;
     const t = this.time;
 
-    // entradas suavizadas
-    this.draw = Math.min(this.drawTarget, this.draw + dt / 2.6);
-    if (this.opts.reduced) this.draw = 1;
-    this.progress += (this.progressTarget - this.progress) * Math.min(1, dt * 3.2);
-    this.scrollBoost *= Math.pow(0.12, dt);
+    // entrada pelo relógio real: mesma duração em qualquer aparelho
+    if (!this.skipIntro && this.ready) this.draw = Math.min(1, (now - this.introAt) / INTRO_MS);
+    if (this.skipIntro) this.draw = 1;
+    this.progress += (this.progressTarget - this.progress) * Math.min(1, dt * 4);
+    this.scrollBoost *= Math.pow(0.08, dt);
     this.pointer.vx *= Math.pow(0.02, dt);
     this.pointer.vy *= Math.pow(0.02, dt);
     this.pointer.active *= Math.pow(0.6, dt);
 
     this.camera.position.y = -this.camOffsetY * this.visH;
+    this.camera.updateMatrixWorld();
 
     this.yarnMat.uniforms.uTime!.value = t;
     this.yarnMat.uniforms.uDraw!.value = this.draw;
 
     // posição do ponteiro no mundo, por profundidade
-    const ray = new Vector3(this.ndc.x, this.ndc.y, 0.5).unproject(this.camera).sub(this.camera.position).normalize();
+    const ray = tmpVec.set(this.ndc.x, this.ndc.y, 0.5).unproject(this.camera).sub(this.camera.position).normalize();
 
     const S = this.q.samples;
-    const amp = 1 + this.scrollBoost * 2.2;
+    const amp = 1 + this.scrollBoost * 1.3;
 
     for (let k = 0; k < this.threads.length; k++) {
       const th = this.threads[k]!;
@@ -567,24 +686,25 @@ export class YarnEngine {
 
       sampleCurve(th.ctrl, th.K, th.target, S);
 
-      // molas: cada amostra persegue o alvo; o ponteiro empurra e arrasta os fios
+      // molas firmes: o fio acompanha o desenho sem "arrastar";
+      // o ponteiro empurra e puxa, e o fio volta com um leve balanço
       const ptr = this.pointer;
-      const tz = (th.zMean - this.camera.position.z) / ray.z;
-      const cxw = this.camera.position.x + ray.x * tz;
-      const cyw = this.camera.position.y + ray.y * tz;
-      const R = this.visH * (this.wide ? 0.11 : 0.09);
-      const R2 = R * R;
-      const strength = ptr.has ? 20 * ptr.active : 0;
-      const dragX = ptr.vx * this.visW * 6;
-      const dragY = ptr.vy * this.visH * 6;
+      const strength = ptr.has ? 26 * ptr.active : 0;
 
       if (!th.init || dt === 0) {
         th.pos.set(th.target);
         th.vel.fill(0);
         th.init = true;
       } else {
-        const kS = 46;
-        const kD = 8.5;
+        const tz = (th.zMean - this.camera.position.z) / ray.z;
+        const cxw = this.camera.position.x + ray.x * tz;
+        const cyw = this.camera.position.y + ray.y * tz;
+        const R = this.visH * (this.wide ? 0.11 : 0.09);
+        const R2 = R * R;
+        const dragX = ptr.vx * this.visW * 6;
+        const dragY = ptr.vy * this.visH * 6;
+        const kS = 110;
+        const kD = 16;
         for (let i = 0; i < S; i++) {
           const o = i * 3;
           let fx = (th.target[o]! - th.pos[o]!) * kS - th.vel[o]! * kD;
@@ -616,20 +736,23 @@ export class YarnEngine {
 
     // toalhinhas: giro lento + leve paralaxe com o ponteiro
     for (const dl of this.doilies) {
-      const u = dl.mesh.material.uniforms;
-      u.uSpin!.value = t * dl.def.spin;
-      const base = this.toWorld(dl.def.nx, dl.def.ny, dl.def.z);
-      dl.mesh.position.set(base.x - this.ndc.x * 0.12, base.y - this.ndc.y * 0.08, dl.def.z);
+      dl.mesh.rotation.z = t * dl.def.spin;
+      dl.mesh.position.x = dl.bx - this.ndc.x * 0.12;
+      dl.mesh.position.y = dl.by - this.ndc.y * 0.08;
     }
 
-    if (this.photo) {
-      this.photoAlpha += (this.photoTarget - this.photoAlpha) * Math.min(1, dt * 4 + (this.opts.reduced ? 1 : 0));
+    if (this.photo && this.photoBox.w > 0) {
+      this.photoAlpha += (this.photoTarget - this.photoAlpha) * Math.min(1, dt * 5 + (this.opts.reduced ? 1 : 0));
       const u = this.photo.material.uniforms;
       u.uTime!.value = t;
       u.uAlpha!.value = this.photoAlpha;
-      this.layoutPhoto();
+      this.photo.visible = this.photoAlpha > 0.002;
+      const b = this.photoBox;
+      this.photo.position.set((b.cx - 0.5) * this.visW, (0.5 - b.cy) * this.visH + this.camera.position.y, 0);
+      this.photo.scale.set(b.w * this.visW, b.h * this.visH, 1);
     }
   }
+
 }
 
 function lightUniforms() {

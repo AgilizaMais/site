@@ -38,7 +38,7 @@
   stroke: rgba(120, 30, 70, 0.18);
   stroke-width: 7;
   transform: translateY(4px);
-  filter: blur(2px);
+  opacity: 0.6;
 }
 .threadBase {
   stroke: var(--pink);

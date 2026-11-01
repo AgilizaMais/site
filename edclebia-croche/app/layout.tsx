@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Fraunces, Outfit, Allura } from 'next/font/google';
+import { DM_Serif_Display, Outfit, Allura } from 'next/font/google';
 import './globals.css';
 import { brand } from '@/lib/content';
 import { SmoothScroll } from '@/lib/motion/SmoothScroll';
@@ -7,10 +7,12 @@ import { Header } from '@/components/Header';
 import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
 import { Preloader } from '@/components/Preloader';
 
-const display = Fraunces({
+// Fonte de títulos estática (não variável): desenho limpo em qualquer navegador,
+// sem as emendas internas que fontes variáveis mostram em alguns renderizadores.
+const display = DM_Serif_Display({
   subsets: ['latin'],
+  weight: '400',
   style: ['normal', 'italic'],
-  axes: ['opsz', 'SOFT'],
   variable: '--font-display',
   display: 'swap',
 });

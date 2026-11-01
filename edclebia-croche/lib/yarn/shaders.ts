@@ -137,7 +137,7 @@ export const yarnVertex = /* glsl */ `
     }
 
     // entrada: o fio "é puxado" da esquerda para a direita
-    float rv = clamp(uDraw * 1.5 - iDelay, 0.0, 1.0);
+    float rv = clamp((uDraw - iDelay * 0.5) / 0.72, 0.0, 1.0);
     rv = (1.0 - pow(1.0 - rv, 3.0)) * 1.06;
     r *= smoothstep(rv, rv - 0.035, position.x);
 
@@ -499,5 +499,28 @@ export const photoFragment = /* glsl */ `
     float fade = 1.0 - smoothstep(1.0 - uFade, 1.0, 1.0 - uv.y);
     float a = c.a * fade * uAlpha;
     gl_FragColor = vec4(toSRGB(c.rgb) * a, a);
+  }
+`;
+
+/* ------------------------------------------------------------------ */
+/* TOALHINHA PRÉ-RENDERIZADA (textura) — só gira, custo quase zero     */
+/* ------------------------------------------------------------------ */
+
+export const bakedVertex = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+  }
+`;
+
+export const bakedFragment = /* glsl */ `
+  precision mediump float;
+  varying vec2 vUv;
+  uniform sampler2D uMap;
+  uniform float uOpacity;
+  void main() {
+    // a textura já guarda cor sRGB pré-multiplicada pelo alfa
+    gl_FragColor = texture2D(uMap, vUv) * uOpacity;
   }
 `;

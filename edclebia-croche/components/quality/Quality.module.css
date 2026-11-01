@@ -21,6 +21,7 @@
   display: flex;
   width: max-content;
   animation: marquee 38s linear infinite;
+  will-change: transform;
 }
 .marqueeGroup {
   display: flex;
@@ -32,17 +33,19 @@
   padding-right: clamp(1.2rem, 2.6vw, 2.4rem);
   font-family: var(--font-display), serif;
   font-style: italic;
-  font-size: clamp(2.4rem, 6vw, 5.6rem);
-  font-variation-settings: 'opsz' 144, 'SOFT' 100;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(46, 18, 41, 0.35);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 5.6vw, 5.2rem);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--ink);
   white-space: nowrap;
 }
+/* três tons cheios, nada de contorno vazado */
 .word:nth-child(3n + 2) {
   color: var(--pink);
-  -webkit-text-stroke: 0;
+}
+.word:nth-child(3n) {
+  color: #c99aae;
 }
 .sep {
   width: 0.42em;

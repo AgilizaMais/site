@@ -127,7 +127,7 @@ function heroDesktop(aspect: number): SceneDef {
       // fio rosa com o coração, passando por trás da modelo
       {
         ...h,
-        radius: 2.8, colA: C.pink, colB: C.pinkDeep, kind: 'ply', plies: 3, amp: 0.01, speed: 0.5, phase: 0.2, flow: 0.1, delay: 0.05,
+        radius: 2.8, colA: C.pink, colB: C.pinkDeep, kind: 'ply', plies: 3, amp: 0.007, speed: 0.5, phase: 0.2, flow: 0.1, delay: 0.05,
       },
       // lilás fino, cruza pela frente (entre o subtítulo e os botões)
       {

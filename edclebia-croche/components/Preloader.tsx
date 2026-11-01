@@ -28,15 +28,15 @@ export function Preloader() {
         })
       : Promise.resolve();
     const fonts = (document as Document & { fonts?: FontFaceSet }).fonts?.ready ?? Promise.resolve();
-    const cap = new Promise<void>((r) => setTimeout(r, 2600));
+    const cap = new Promise<void>((r) => setTimeout(r, 1800));
     let t1 = 0;
     let t2 = 0;
     Promise.race([Promise.all([imgReady, fonts]), cap]).then(() => {
-      const wait = Math.max(0, 1150 - (performance.now() - start));
+      const wait = Math.max(0, 750 - (performance.now() - start));
       t1 = window.setTimeout(() => {
         setPhase('out');
         introBus.done();
-        t2 = window.setTimeout(() => setPhase('gone'), 1100);
+        t2 = window.setTimeout(() => setPhase('gone'), 900);
       }, wait);
     });
     return () => {

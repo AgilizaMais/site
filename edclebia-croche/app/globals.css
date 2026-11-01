@@ -175,19 +175,18 @@ ol {
 .display {
   font-family: var(--font-display), 'Times New Roman', serif;
   font-weight: 400;
-  font-variation-settings: 'opsz' 144, 'SOFT' 30;
   color: var(--ink);
-  letter-spacing: -0.035em;
-  line-height: 0.95;
+  letter-spacing: -0.015em;
+  line-height: 1;
+  font-kerning: normal;
 }
 
 .accent {
   font-family: var(--font-display), serif;
   font-style: italic;
   font-weight: 400;
-  font-variation-settings: 'opsz' 144, 'SOFT' 100;
   color: var(--pink);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
 }
 
 .on-dark .display {
@@ -303,10 +302,8 @@ ol {
 
 .btn-ghost {
   color: var(--ink);
-  background: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 251, 249, 0.72);
   box-shadow: 0 0 0 1px rgba(46, 18, 41, 0.16) inset;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.7);
@@ -344,20 +341,20 @@ ol {
   padding-inline: var(--gutter);
 }
 
+/* vidro "falso": sem backdrop-filter, que obrigaria o navegador a redesfocar o
+   canvas animado a cada quadro */
 .glass {
-  background: var(--glass);
-  border: 1px solid rgba(255, 255, 255, 0.55);
+  background: linear-gradient(140deg, rgba(255, 252, 250, 0.82), rgba(255, 243, 238, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow:
     0 20px 50px -20px rgba(110, 30, 70, 0.28),
-    0 1px 0 rgba(255, 255, 255, 0.8) inset;
-  backdrop-filter: blur(18px) saturate(1.2);
-  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
 }
 
 /* grão sutil de papel/tecido sobre todo o site */
 .grain {
   position: fixed;
-  inset: -50%;
+  inset: 0;
   z-index: 90;
   pointer-events: none;
   opacity: 0.05;
@@ -396,16 +393,13 @@ html.reduced [data-reveal] {
   }
 }
 
-/* folhas do coqueiro balançando (sombras do hero) */
-.palm-sway {
-  transform-origin: 0 0;
-  animation: palm-sway 10s ease-in-out infinite alternate;
-}
+/* folhas do coqueiro balançando (sombras do hero): o SVG desfocado é rasterizado
+   uma vez e só a camada se move — o desfoque não é recalculado a cada quadro */
 @keyframes palm-sway {
   from {
-    transform: rotate(-2.2deg);
+    transform: rotate(-1.2deg) translate3d(0, 0, 0);
   }
   to {
-    transform: rotate(2.8deg) scale(1.01);
+    transform: rotate(1.4deg) translate3d(-0.6%, 0.8%, 0);
   }
 }

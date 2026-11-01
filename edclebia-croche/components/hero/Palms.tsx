@@ -66,11 +66,7 @@ export function Palms({ className }: { className?: string }) {
       <g filter="url(#palm-blur)" fill="currentColor" stroke="currentColor" strokeWidth="4" strokeLinejoin="round">
         {FRONDS.map((f, i) => (
           <g key={i} transform={`translate(${f.x} ${f.y}) rotate(${f.rot})`}>
-            <path
-              d={f.d}
-              className="palm-sway"
-              style={{ animationDuration: `${f.dur}s`, animationDelay: `${f.delay}s` }}
-            />
+            <path d={f.d} />
           </g>
         ))}
       </g>

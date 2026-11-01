@@ -68,6 +68,22 @@ Cada fio é um tubo 3D desenhado inteiramente na GPU, num único *draw call* ins
 - Qualidade adaptada ao aparelho, pausa fora da tela / aba oculta, e modo estático para
   quem prefere menos movimento. Sem WebGL2, fica a foto do DOM e o site segue completo.
 
+### Desempenho (regras para não quebrar)
+
+- **Nada de leitura de layout por quadro**: a caixa da foto é medida só em resize, no handoff
+  e no scroll (`syncPhoto`); o retângulo do canvas fica em cache para o ponteiro.
+- **Toalhinhas pré-renderizadas**: o shader procedural roda uma vez numa textura; depois só giram.
+- **Amostragem adaptativa** (`spine.ts`): mais pontos nas curvas fechadas (coração), menos nas retas.
+- **Resolução adaptativa**: se o aparelho cai abaixo de ~48 fps, o canvas reduz o DPR sozinho.
+- **Entrada pelo relógio real** e shaders compilados antes do 1º quadro (`compileAsync`).
+- **Sem `backdrop-filter` sobre o canvas animado** e sem animar elementos dentro de filtros SVG
+  (o coqueiro anima a camada inteira) — ambos obrigam o navegador a redesenhar tudo a cada quadro.
+
+### Tipografia
+
+Títulos em **DM Serif Display** (fonte estática). Evite fontes variáveis em tamanhos grandes e
+`-webkit-text-stroke`: alguns navegadores mostram as emendas internas dos contornos.
+
 ## Pendências com a cliente
 
 - [ ] **Fotos originais** das peças: as atuais foram recortadas de prints do Instagram (≈390 px)

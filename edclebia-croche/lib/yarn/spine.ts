@@ -8,20 +8,27 @@ const EPS = 1e-6;
 
 /**
  * Amostra uma curva Catmull-Rom centrípeta (α = 0.5) que passa por `ctrl`
- * (K pontos xyz) e escreve S pontos em `out`. As amostras são distribuídas
- * proporcionalmente ao comprimento de cada segmento → espaçamento quase uniforme.
+ * (K pontos xyz) e escreve S pontos em `out`.
+ * Distribuição adaptativa: cada segmento recebe amostras proporcionais a
+ * √(comprimento × média). Trechos curtos e densos de pontos (o laço do coração)
+ * ganham proporcionalmente mais resolução; retas longas, menos.
  */
 export function sampleCurve(ctrl: Float32Array, K: number, out: Float32Array, S: number) {
-  // comprimento das cordas para distribuir as amostras
+  // peso de cada segmento para distribuir as amostras
   let total = 0;
   const seg = segScratch(K);
   for (let i = 0; i < K - 1; i++) {
     const dx = ctrl[(i + 1) * 3]! - ctrl[i * 3]!;
     const dy = ctrl[(i + 1) * 3 + 1]! - ctrl[i * 3 + 1]!;
     const dz = ctrl[(i + 1) * 3 + 2]! - ctrl[i * 3 + 2]!;
-    const l = Math.sqrt(dx * dx + dy * dy + dz * dz) + EPS;
-    seg[i] = l;
-    total += l;
+    seg[i] = Math.sqrt(dx * dx + dy * dy + dz * dz) + EPS;
+    total += seg[i]!;
+  }
+  const mean = total / (K - 1);
+  total = 0;
+  for (let i = 0; i < K - 1; i++) {
+    seg[i] = Math.sqrt(seg[i]! * mean);
+    total += seg[i]!;
   }
 
   let written = 0;

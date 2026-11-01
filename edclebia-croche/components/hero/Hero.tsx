@@ -62,14 +62,14 @@ export function Hero() {
       gsap.set(band, { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
-      tl.to(photo, { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 1.8, ease: 'expo.inOut' }, 0)
-        .to(lines, { yPercent: 0, duration: 1.4, stagger: 0.09 }, 0.35)
-        .to(fades, { opacity: 1, y: 0, duration: 1.1, stagger: 0.07 }, 0.8)
-        .to(band, { opacity: 1, y: 0, duration: 1.2, stagger: 0.08 }, 0.9)
+      tl.to(photo, { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: 1.3, ease: 'expo.inOut' }, 0)
+        .to(lines, { yPercent: 0, duration: 1.2, stagger: 0.08 }, 0.2)
+        .to(fades, { opacity: 1, y: 0, duration: 1, stagger: 0.06 }, 0.5)
+        .to(band, { opacity: 1, y: 0, duration: 1, stagger: 0.07 }, 0.6)
         .add(() => {
           introDone.current = true;
           handoff();
-        }, 1.85);
+        }, 1.35);
 
       const off = introBus.on(() => {
         tl.play(0);
@@ -84,6 +84,7 @@ export function Hero() {
         scrub: true,
         onUpdate: (st) => {
           engineRef.current?.setCameraOffset(st.progress * 0.12);
+          engineRef.current?.syncPhoto();
         },
       });
       gsap.to('[data-hero-parallax]', {
