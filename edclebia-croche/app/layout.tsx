@@ -79,7 +79,7 @@ const jsonLd = {
   url: `${brand.siteUrl}/`,
   telephone: `+${brand.whatsapp.number}`,
   image: `${brand.siteUrl}/og.jpg`,
-  logo: `${brand.siteUrl}/img/logo.webp`,
+  logo: `${brand.siteUrl}/img/logo-edclebia-v2.webp`,
   sameAs: [brand.instagram.url],
   address: { '@type': 'PostalAddress', addressRegion: 'AL', addressCountry: 'BR' },
   priceRange: '$$',

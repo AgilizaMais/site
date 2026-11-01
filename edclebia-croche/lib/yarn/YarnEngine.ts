@@ -464,6 +464,7 @@ export class YarnEngine {
         transparent: true,
         premultipliedAlpha: true,
         depthWrite: false,
+        depthTest: false, // decoração de fundo: nunca recortada pela silhueta da modelo
         uniforms: { uMap: { value: rt.texture }, uOpacity: { value: d.opacity } },
       });
       const mesh = new Mesh(new PlaneGeometry(1, 1), mat);

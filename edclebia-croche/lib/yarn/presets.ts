@@ -156,7 +156,8 @@ function heroDesktop(aspect: number): SceneDef {
     ],
     doilies: [
       { nx: -0.08, ny: 0.74, size: 0.32, z: -2.4, colA: C.lilac, colB: C.violet, opacity: 0.85, spin: 0.03 },
-      { nx: 1.0, ny: 0.9, size: 0.6, z: -2.6, colA: C.pink, colB: C.hot, opacity: 0.9, spin: -0.02 },
+      // longe da modelo: nunca fica recortada pela silhueta
+      { nx: 1.09, ny: 0.92, size: 0.5, z: -2.6, colA: C.pink, colB: C.hot, opacity: 0.9, spin: -0.02 },
     ],
   };
 }
@@ -190,7 +191,8 @@ function heroMobile(aspect: number): SceneDef {
         radius: 9, colA: C.pink, colB: C.hot, kind: 'cord', plies: 5, amp: 0.005, speed: 0.3, phase: 1.1, flow: 0.05, delay: 0.4,
       },
     ],
-    doilies: [{ nx: 1.08, ny: 0.8, size: 0.24, z: -2.6, colA: C.pink, colB: C.hot, opacity: 0.85, spin: -0.02 }],
+    // no celular não sobra espaço livre da modelo e dos textos: sem toalhinha
+    doilies: [],
   };
 }
 

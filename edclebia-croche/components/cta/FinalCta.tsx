@@ -49,7 +49,7 @@ export function FinalCta() {
         <div className={`container ${s.footGrid}`}>
           <div className={s.brandCol}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={asset('/img/logo.webp')} alt={brand.name} width={600} height={386} className={s.logo} loading="lazy" />
+            <img src={asset('/img/logo-edclebia-v2.webp')} alt={brand.name} width={600} height={386} className={s.logo} loading="lazy" />
             <p>Crochê autoral feito à mão em {brand.region}.</p>
           </div>
           <nav aria-label="Rodapé">
