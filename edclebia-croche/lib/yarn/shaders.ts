@@ -524,3 +524,22 @@ export const bakedFragment = /* glsl */ `
     gl_FragColor = texture2D(uMap, vUv) * uOpacity;
   }
 `;
+
+/* ------------------------------------------------------------------ */
+/* SILHUETA DA MODELO (só profundidade)                                */
+/* A foto de verdade fica no DOM, nítida na resolução da tela; aqui só  */
+/* escrevemos a profundidade da silhueta para esconder os fios de trás. */
+/* ------------------------------------------------------------------ */
+
+export const occluderFragment = /* glsl */ `
+  precision mediump float;
+  varying vec2 vUv;
+  uniform sampler2D uMap;
+  uniform float uFade;
+  void main() {
+    float a = texture2D(uMap, vUv).a;
+    float fade = 1.0 - smoothstep(1.0 - uFade, 1.0, 1.0 - vUv.y);
+    if (a * fade < 0.5) discard;
+    gl_FragColor = vec4(0.0);
+  }
+`;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import type { YarnEngine } from '@/lib/yarn/YarnEngine';
 import { YarnCanvas } from '@/components/yarn/YarnCanvas';
 import { Palms } from './Palms';
@@ -25,7 +25,6 @@ export function Hero() {
   const root = useRef<HTMLElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const engineRef = useRef<YarnEngine | null>(null);
-  const [glReady, setGlReady] = useState(false);
   const introDone = useRef(false);
   const photoReady = useRef(false);
 
@@ -34,7 +33,6 @@ export function Hero() {
     if (!introDone.current || !photoReady.current || !engineRef.current) return;
     engineRef.current.syncPhoto();
     engineRef.current.showPhoto();
-    setGlReady(true);
   }, []);
 
   useEffect(() => {
@@ -157,7 +155,7 @@ export function Hero() {
           width={853}
           height={1536}
           alt={hero.modelAlt}
-          className={`${s.photo} ${glReady ? s.photoHidden : ''}`}
+          className={s.photo}
           fetchPriority="high"
           decoding="async"
         />

@@ -29,7 +29,7 @@ import {
   bakedVertex,
   doilyFragment,
   doilyVertex,
-  photoFragment,
+  occluderFragment,
   photoVertex,
   yarnFragment,
   yarnVertex,
@@ -69,9 +69,9 @@ const INTRO_MS = 1350;
  * coração continua redondo mesmo com menos amostras no total.
  */
 const QUALITY: Record<Tier, { samples: number; along: number; radial: number; dpr: number; aa: boolean }> = {
-  high: { samples: 280, along: 560, radial: 14, dpr: 1.5, aa: true },
-  mid: { samples: 240, along: 460, radial: 12, dpr: 1.5, aa: true },
-  low: { samples: 180, along: 340, radial: 10, dpr: 1.15, aa: false },
+  high: { samples: 280, along: 560, radial: 14, dpr: 2, aa: true },
+  mid: { samples: 240, along: 460, radial: 12, dpr: 2, aa: true },
+  low: { samples: 180, along: 340, radial: 10, dpr: 1.5, aa: true },
 };
 
 type ThreadState = {
@@ -119,7 +119,6 @@ export class YarnEngine {
   private doilies: Doily[] = [];
   private photo: Mesh<PlaneGeometry, ShaderMaterial> | null = null;
   private photoTex: Texture | null = null;
-  private photoAlpha = 0;
   private photoTarget = 0;
   /** caixa da foto em coordenadas normalizadas do canvas (medida só quando muda) */
   private photoBox = { cx: 0.5, cy: 0.5, w: 0, h: 0 };
@@ -147,6 +146,8 @@ export class YarnEngine {
   // resolução adaptativa
   private frameEma = 16.7;
   private slowFrames = 0;
+  /** piso da resolução adaptativa: em tela retina nunca cai abaixo de 1.5 (fio serrilhado) */
+  private minDpr = 1;
 
   private ro: ResizeObserver;
   private io: IntersectionObserver;
@@ -165,6 +166,7 @@ export class YarnEngine {
     });
     this.renderer.setClearColor(0x000000, 0);
     this.dpr = Math.min(window.devicePixelRatio || 1, this.q.dpr);
+    this.minDpr = Math.min(this.dpr, 1.5);
     this.renderer.setPixelRatio(this.dpr);
     this.camera.position.set(0, 0, CAM_Z);
 
@@ -499,21 +501,14 @@ export class YarnEngine {
       this.photoTex = tex;
       const mat = new ShaderMaterial({
         vertexShader: photoVertex,
-        fragmentShader: photoFragment,
-        transparent: true,
-        premultipliedAlpha: true,
-        depthWrite: false,
-        uniforms: {
-          uMap: { value: tex },
-          uTime: { value: 0 },
-          uSway: { value: this.opts.reduced ? 0 : 1 },
-          uFade: { value: p.fade },
-          uAlpha: { value: 0 },
-          uFringe: { value: p.fringe },
-        },
+        fragmentShader: occluderFragment,
+        colorWrite: false,
+        depthWrite: true,
+        uniforms: { uMap: { value: tex }, uFade: { value: p.fade } },
       });
       this.photo = new Mesh(new PlaneGeometry(1, 1), mat);
       this.photo.frustumCulled = false;
+      this.photo.renderOrder = -2; // antes dos fios: a profundidade já está lá quando eles chegam
       this.scene.add(this.photo);
       // sobe a textura e compila o shader agora, fora do quadro animado
       this.renderer.initTexture(tex);
@@ -603,9 +598,9 @@ export class YarnEngine {
   private adapt(ms: number) {
     if (ms > 200) return; // aba voltou do segundo plano etc.
     this.frameEma += (ms - this.frameEma) * 0.08;
-    if (this.frameEma > 21 && this.dpr > 1) {
+    if (this.frameEma > 21 && this.dpr > this.minDpr) {
       if (++this.slowFrames > 40) {
-        this.dpr = Math.max(1, this.dpr - 0.25);
+        this.dpr = Math.max(this.minDpr, this.dpr - 0.25);
         this.renderer.setPixelRatio(this.dpr);
         this.renderer.setSize(this.width, this.height, false);
         this.slowFrames = 0;
@@ -742,11 +737,7 @@ export class YarnEngine {
     }
 
     if (this.photo && this.photoBox.w > 0) {
-      this.photoAlpha += (this.photoTarget - this.photoAlpha) * Math.min(1, dt * 5 + (this.opts.reduced ? 1 : 0));
-      const u = this.photo.material.uniforms;
-      u.uTime!.value = t;
-      u.uAlpha!.value = this.photoAlpha;
-      this.photo.visible = this.photoAlpha > 0.002;
+      this.photo.visible = this.photoTarget > 0;
       const b = this.photoBox;
       this.photo.position.set((b.cx - 0.5) * this.visW, (0.5 - b.cy) * this.visH + this.camera.position.y, 0);
       this.photo.scale.set(b.w * this.visW, b.h * this.visH, 1);

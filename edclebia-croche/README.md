@@ -60,8 +60,8 @@ Cada fio é um tubo 3D desenhado inteiramente na GPU, num único *draw call* ins
     fibras em torção contrária e brilho anisotrópico (Kajiya-Kay) ao longo da fibra;
   - *cordão* — colunas de pontos em "V" (tricotin), cada perna com sua própria torção;
   - *toalhinhas* — mandalas de crochê procedurais (anel mágico, varetas, rede, leques, piquinhos).
-- **Foto da modelo** entra na mesma cena 3D: os fios passam por trás e pela frente dela, e as
-  franjas do vestido balançam (a pele é protegida da ondulação).
+- **Foto da modelo** fica no DOM, nítida na resolução nativa da tela. Na cena 3D entra só a
+  **silhueta** dela (profundidade, sem cor), então os fios passam por trás e pela frente.
 - Composições em `presets.ts` (desktop e mobile separados; coordenadas normalizadas).
   O **coração** é um único fio contínuo — sobe, faz um laço pendurado no topo, desce e cruza
   sobre si mesmo na ponta — e ondula em bloco, sem deformar.
@@ -74,7 +74,8 @@ Cada fio é um tubo 3D desenhado inteiramente na GPU, num único *draw call* ins
   e no scroll (`syncPhoto`); o retângulo do canvas fica em cache para o ponteiro.
 - **Toalhinhas pré-renderizadas**: o shader procedural roda uma vez numa textura; depois só giram.
 - **Amostragem adaptativa** (`spine.ts`): mais pontos nas curvas fechadas (coração), menos nas retas.
-- **Resolução adaptativa**: se o aparelho cai abaixo de ~48 fps, o canvas reduz o DPR sozinho.
+- **Resolução adaptativa**: se o aparelho cai abaixo de ~48 fps, o canvas reduz o DPR sozinho —
+  nunca abaixo de 1.5 em telas retina, e sempre com antisserrilhado (senão o fio serrilha).
 - **Entrada pelo relógio real** e shaders compilados antes do 1º quadro (`compileAsync`).
 - **Sem `backdrop-filter` sobre o canvas animado** e sem animar elementos dentro de filtros SVG
   (o coqueiro anima a camada inteira) — ambos obrigam o navegador a redesenhar tudo a cada quadro.

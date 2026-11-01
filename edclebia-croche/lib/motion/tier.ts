@@ -19,7 +19,8 @@ export function detectTier(): Tier | null {
   const cores = navigator.hardwareConcurrency ?? 4;
   const mem = nav.deviceMemory ?? 4;
   const coarse = window.matchMedia('(pointer: coarse)').matches;
-  if (coarse) return cores >= 6 && mem >= 4 ? 'mid' : 'low';
+  // iOS/Safari não expõem memória e limitam hardwareConcurrency: celular é 'mid' por padrão
+  if (coarse) return cores <= 2 ? 'low' : 'mid';
   if (cores >= 8 && mem >= 8) return 'high';
   return cores <= 2 ? 'low' : 'mid';
 }
