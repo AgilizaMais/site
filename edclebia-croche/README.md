@@ -13,7 +13,7 @@ GSAP + ScrollTrigger · Lenis · CSS Modules.
 ```bash
 cd edclebia-croche
 npm install
-npm run dev        # http://localhost:3001
+npm run dev        # http://localhost:3001/edclebiacroche/
 npm run build      # gera o site estático em out/
 npm run typecheck
 npm run lint
@@ -21,11 +21,17 @@ npm run lint
 
 `?nointro` na URL pula o preloader e a entrada dos fios (útil para prints e QA).
 
-## Publicação
+## Publicação — useagilizai.com/edclebiacroche
 
-O build gera HTML/CSS/JS puros em `out/` — sobe em qualquer hospedagem.
-Na Vercel/Netlify, aponte o **Root Directory** para `edclebia-croche`.
-Antes de publicar, ajuste o domínio em `brand.siteUrl` (`lib/content.ts`).
+O site é publicado numa **subpasta**. Por isso o `next.config.mjs` define
+`basePath: '/edclebiacroche'` e todo caminho de imagem passa por `asset()` (`lib/asset.ts`).
+
+1. `npm run build` → gera `out/`.
+2. Envie **o conteúdo de `out/`** para a pasta `edclebiacroche/` na raiz pública do domínio
+   (ex.: `public_html/edclebiacroche/`). O `index.html` precisa ficar dentro dela.
+
+Para mudar de endereço: ajuste `basePath` em `next.config.mjs` e `brand.siteUrl` em
+`lib/content.ts` (use `''` no basePath se o site for para a raiz de um domínio).
 
 ## Estrutura
 
@@ -57,6 +63,8 @@ Cada fio é um tubo 3D desenhado inteiramente na GPU, num único *draw call* ins
 - **Foto da modelo** entra na mesma cena 3D: os fios passam por trás e pela frente dela, e as
   franjas do vestido balançam (a pele é protegida da ondulação).
 - Composições em `presets.ts` (desktop e mobile separados; coordenadas normalizadas).
+  O **coração** é um único fio contínuo — sobe, faz um laço pendurado no topo, desce e cruza
+  sobre si mesmo na ponta — e ondula em bloco, sem deformar.
 - Qualidade adaptada ao aparelho, pausa fora da tela / aba oculta, e modo estático para
   quem prefere menos movimento. Sem WebGL2, fica a foto do DOM e o site segue completo.
 
@@ -64,9 +72,6 @@ Cada fio é um tubo 3D desenhado inteiramente na GPU, num único *draw call* ins
 
 - [ ] **Fotos originais** das peças: as atuais foram recortadas de prints do Instagram (≈390 px)
       e ampliadas — funcionam, mas os originais deixam a vitrine muito mais nítida.
-- [ ] **PNG da modelo com transparência real**: o arquivo recebido tinha o "xadrez" gravado na
-      imagem; o fundo foi removido aqui, mas sobram imperfeições discretas nas franjas.
 - [ ] Confirmar **nomes das peças** (são descritivos, criados para o site), cidade/estado
       (inferido pelo DDD 82 — Alagoas) e como funciona a **entrega**.
 - [ ] Autorização das clientes que aparecem em "Na vida real".
-- [ ] Domínio definitivo (`brand.siteUrl`).

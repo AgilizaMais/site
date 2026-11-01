@@ -5,6 +5,7 @@ import { brand, defaultWaMessage, nav, waLink } from '@/lib/content';
 import { scrollBus } from '@/lib/motion/bus';
 import { CloseIcon, InstagramIcon, MenuIcon, WhatsAppIcon } from './Icons';
 import s from './Header.module.css';
+import { asset } from '@/lib/asset';
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,7 +66,7 @@ export function Header() {
 
           <a href="#inicio" className={s.logo} aria-label={`${brand.name} — início`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/img/logo.webp" alt={brand.name} width={600} height={401} />
+            <img src={asset('/img/logo.webp')} alt={brand.name} width={600} height={401} />
           </a>
 
           <nav className={s.nav} aria-label="Principal">

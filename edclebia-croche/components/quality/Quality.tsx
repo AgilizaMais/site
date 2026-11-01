@@ -2,6 +2,7 @@ import { quality } from '@/lib/content';
 import { SectionTitle } from '@/components/SectionTitle';
 import { PillarIcon } from '@/components/Icons';
 import s from './Quality.module.css';
+import { asset } from '@/lib/asset';
 
 const words = ['feito à mão', 'sob medida', 'peça única', 'ponto a ponto', 'com amor', 'identidade'];
 
@@ -30,7 +31,7 @@ export function Quality() {
           <div className={s.arch}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/img/colecao/vestido-sereia.webp"
+              src={asset('/img/colecao/vestido-sereia.webp')}
               alt="Vestido sereia de manga longa em crochê off-white, com barra em leque"
               loading="lazy"
               decoding="async"
@@ -49,7 +50,7 @@ export function Quality() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className={s.detail}
-            src="/img/colecao/top-gotas-douradas.webp"
+            src={asset('/img/colecao/top-gotas-douradas.webp')}
             alt="Detalhe de top em crochê com paetês dourados"
             loading="lazy"
             decoding="async"

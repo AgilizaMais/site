@@ -9,10 +9,11 @@ import { brand, collection, defaultWaMessage, hero, products, waLink } from '@/l
 import { gsap, registerGsap, ScrollTrigger } from '@/lib/motion/gsap';
 import { introBus } from '@/lib/motion/bus';
 import s from './Hero.module.css';
+import { asset } from '@/lib/asset';
 
 const PHOTO = {
-  src: '/img/modelo-hero.webp',
-  fringe: [0.12, 0.92, 0.76, 1.0] as [number, number, number, number],
+  src: asset('/img/modelo-hero.webp'),
+  fringe: [0.05, 0.86, 0.76, 0.99] as [number, number, number, number],
   fade: 0.16,
 };
 
@@ -150,10 +151,10 @@ export function Hero() {
           ref={imgRef}
           data-hero-photo
           src={PHOTO.src}
-          srcSet="/img/modelo-hero-sm.webp 596w, /img/modelo-hero.webp 894w"
+          srcSet={`${asset('/img/modelo-hero-sm.webp')} 568w, ${PHOTO.src} 853w`}
           sizes="(max-width: 760px) 80vw, 40vw"
-          width={894}
-          height={1534}
+          width={853}
+          height={1536}
           alt={hero.modelAlt}
           className={`${s.photo} ${glReady ? s.photoHidden : ''}`}
           fetchPriority="high"

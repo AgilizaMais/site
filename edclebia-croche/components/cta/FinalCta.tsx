@@ -1,6 +1,7 @@
 import { brand, defaultWaMessage, finalCta, nav, waLink } from '@/lib/content';
 import { InstagramIcon, WhatsAppIcon } from '@/components/Icons';
 import s from './FinalCta.module.css';
+import { asset } from '@/lib/asset';
 
 const WAVES = [
   { d: 'M-50 120 C 200 40, 420 200, 720 110 S 1180 30, 1500 120', c: '#e8447c', dark: '#b8255b', w: 6 },
@@ -48,7 +49,7 @@ export function FinalCta() {
         <div className={`container ${s.footGrid}`}>
           <div className={s.brandCol}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/img/logo.webp" alt={brand.name} width={600} height={401} className={s.logo} loading="lazy" />
+            <img src={asset('/img/logo.webp')} alt={brand.name} width={600} height={401} className={s.logo} loading="lazy" />
             <p>Crochê autoral feito à mão em {brand.region}.</p>
           </div>
           <nav aria-label="Rodapé">

@@ -34,7 +34,7 @@ const description =
   'Vestidos, moda praia, tops e peças especiais em crochê, feitos à mão e sob medida pela artesã Edclebia. Encomende pelo WhatsApp.';
 
 export const metadata: Metadata = {
-  metadataBase: new URL(brand.siteUrl),
+  metadataBase: new URL(`${brand.siteUrl}/`),
   title,
   description,
   keywords: [
@@ -53,10 +53,11 @@ export const metadata: Metadata = {
     title,
     description,
     siteName: brand.name,
-    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: brand.name }],
+    url: `${brand.siteUrl}/`,
+    images: [{ url: `${brand.siteUrl}/og.jpg`, width: 1200, height: 630, alt: brand.name }],
   },
-  twitter: { card: 'summary_large_image', title, description, images: ['/og.jpg'] },
-  alternates: { canonical: '/' },
+  twitter: { card: 'summary_large_image', title, description, images: [`${brand.siteUrl}/og.jpg`] },
+  alternates: { canonical: `${brand.siteUrl}/` },
   robots: { index: true, follow: true },
 };
 
@@ -73,7 +74,7 @@ const jsonLd = {
   '@type': 'ClothingStore',
   name: brand.name,
   description,
-  url: brand.siteUrl,
+  url: `${brand.siteUrl}/`,
   telephone: `+${brand.whatsapp.number}`,
   image: `${brand.siteUrl}/og.jpg`,
   logo: `${brand.siteUrl}/img/logo.webp`,

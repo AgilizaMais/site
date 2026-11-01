@@ -57,9 +57,9 @@ const CAM_Z = 14;
 const FOV = 30;
 
 const QUALITY: Record<Tier, { samples: number; along: number; radial: number; dpr: number; aa: boolean }> = {
-  high: { samples: 240, along: 560, radial: 16, dpr: 2, aa: true },
-  mid: { samples: 200, along: 420, radial: 14, dpr: 1.6, aa: true },
-  low: { samples: 150, along: 280, radial: 10, dpr: 1.25, aa: false },
+  high: { samples: 380, along: 900, radial: 16, dpr: 2, aa: true },
+  mid: { samples: 320, along: 720, radial: 14, dpr: 1.6, aa: true },
+  low: { samples: 240, along: 480, radial: 10, dpr: 1.25, aa: false },
 };
 
 type ThreadState = {
@@ -439,7 +439,7 @@ export class YarnEngine {
     const r = p.el.getBoundingClientRect();
     if (!r.width || !c.width) return;
     // object-fit: contain → caixa real da imagem dentro do elemento
-    const ar = (p.el.naturalWidth || 894) / (p.el.naturalHeight || 1534);
+    const ar = (p.el.naturalWidth || 853) / (p.el.naturalHeight || 1536);
     let w = r.width;
     let h = r.height;
     if (w / h > ar) w = h * ar;
@@ -551,7 +551,9 @@ export class YarnEngine {
           ny += (pb[1] - ny) * local;
           z += (pb[2] - z) * local;
         }
-        const wv = t * sp + i * 0.85 + ph;
+        // o laço do coração ondula em bloco (mesma fase), sem se deformar
+        const wi = d.rigid && i >= d.rigid[0] && i <= d.rigid[1] ? d.rigid[0] : i;
+        const wv = t * sp + wi * 0.85 + ph;
         // ondas viajando ao longo do fio + respiração lenta
         const damp = pB ? 1 - pk * 0.75 : 1;
         ny += Math.sin(wv) * a * damp + Math.sin(t * 0.21 + ph) * a * 0.5 * damp;

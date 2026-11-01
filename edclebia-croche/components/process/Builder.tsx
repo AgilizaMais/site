@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { brand, builder, waLink } from '@/lib/content';
 import { WhatsAppIcon } from '@/components/Icons';
 import s from './Builder.module.css';
+import { asset } from '@/lib/asset';
 
 type ColorId = (typeof builder.colors)[number]['id'];
 
@@ -118,7 +119,7 @@ export function Builder() {
           <div className={s.phone}>
             <div className={s.chatHead}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/img/logo.webp" alt="" width={600} height={401} />
+              <img src={asset('/img/logo.webp')} alt="" width={600} height={401} />
               <div>
                 <strong>{brand.name}</strong>
                 <span>{brand.whatsapp.display}</span>

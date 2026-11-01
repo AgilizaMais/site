@@ -1,3 +1,5 @@
+import { asset } from './asset';
+
 /**
  * Fonte única de conteúdo do site. Toda copy, contato e catálogo vivem aqui.
  *
@@ -21,7 +23,7 @@ export const brand = {
     number: '5582993399005',
     display: '(82) 99339-9005',
   },
-  siteUrl: 'https://edclebiacroche.com.br',
+  siteUrl: 'https://useagilizai.com/edclebiacroche',
 } as const;
 
 /** Link de WhatsApp com mensagem pré-preenchida. */
@@ -51,7 +53,7 @@ export const hero = {
   proof: ['Sob medida', 'Peças únicas', 'Direto com a artesã'],
   scroll: 'role para sentir a textura',
   modelAlt:
-    'Modelo usando vestido frente única em crochê off-white, com pontos vazados e franjas longas na barra.',
+    'Modelo usando saída de praia frente única em crochê cru, com trama aberta e franjas longas na barra.',
 } as const;
 
 export type Category = 'vestidos' | 'praia' | 'tops' | 'especiais';
@@ -81,7 +83,7 @@ export const products: Product[] = [
     category: 'vestidos',
     note: 'Frente única com franjas longas que dançam a cada passo.',
     tone: '#efe9e2',
-    image: '/img/colecao/vestido-franjas-perola.webp',
+    image: asset('/img/colecao/vestido-franjas-perola.webp'),
   },
   {
     slug: 'vestido-esmeralda',
@@ -89,7 +91,7 @@ export const products: Product[] = [
     category: 'vestidos',
     note: 'Decote em V, losango central rendado e barra em franjas.',
     tone: '#1f8a78',
-    image: '/img/colecao/vestido-esmeralda.webp',
+    image: asset('/img/colecao/vestido-esmeralda.webp'),
   },
   {
     slug: 'conjunto-dourado-sol',
@@ -97,7 +99,7 @@ export const products: Product[] = [
     category: 'praia',
     note: 'Top e saia em fio dourado, cintura marcada e rede aberta.',
     tone: '#b88a2c',
-    image: '/img/colecao/conjunto-dourado-sol.webp',
+    image: asset('/img/colecao/conjunto-dourado-sol.webp'),
   },
   {
     slug: 'vestido-longo-aurora',
@@ -105,7 +107,7 @@ export const products: Product[] = [
     category: 'especiais',
     note: 'Top de biquíni, recortes laterais e saia longa rendada.',
     tone: '#f2efea',
-    image: '/img/colecao/vestido-longo-aurora.webp',
+    image: asset('/img/colecao/vestido-longo-aurora.webp'),
   },
   {
     slug: 'vestido-mosaico-espelhado',
@@ -113,7 +115,7 @@ export const products: Product[] = [
     category: 'especiais',
     note: 'Quadrados vazados com espelhos aplicados que refletem a luz.',
     tone: '#a06a35',
-    image: '/img/colecao/vestido-mosaico-espelhado.webp',
+    image: asset('/img/colecao/vestido-mosaico-espelhado.webp'),
   },
   {
     slug: 'top-brisa-paetes',
@@ -121,7 +123,7 @@ export const products: Product[] = [
     category: 'tops',
     note: 'Frente única com barra em ponta e paetês que brilham ao sol.',
     tone: '#e9e4dc',
-    image: '/img/colecao/top-brisa-paetes.webp',
+    image: asset('/img/colecao/top-brisa-paetes.webp'),
   },
   {
     slug: 'vestido-sereia',
@@ -129,7 +131,7 @@ export const products: Product[] = [
     category: 'especiais',
     note: 'Manga longa e silhueta sereia — para casar, celebrar, marcar.',
     tone: '#f4f2ee',
-    image: '/img/colecao/vestido-sereia.webp',
+    image: asset('/img/colecao/vestido-sereia.webp'),
   },
   {
     slug: 'vestido-granny-vitral',
@@ -137,7 +139,7 @@ export const products: Product[] = [
     category: 'vestidos',
     note: 'Quadradinhos granny em cores vibrantes, do decote à barra.',
     tone: '#d2333f',
-    image: '/img/colecao/vestido-granny-vitral.webp',
+    image: asset('/img/colecao/vestido-granny-vitral.webp'),
   },
   {
     slug: 'biquini-morango',
@@ -145,7 +147,7 @@ export const products: Product[] = [
     category: 'praia',
     note: 'Bojo em formato de morango com sementinhas bordadas.',
     tone: '#d42a2a',
-    image: '/img/colecao/biquini-morango.webp',
+    image: asset('/img/colecao/biquini-morango.webp'),
   },
   {
     slug: 'top-gotas-douradas',
@@ -153,7 +155,7 @@ export const products: Product[] = [
     category: 'tops',
     note: 'Rede off-white com paetês dourados e amarração nas costas.',
     tone: '#e8dcc0',
-    image: '/img/colecao/top-gotas-douradas.webp',
+    image: asset('/img/colecao/top-gotas-douradas.webp'),
   },
   {
     slug: 'vestido-noite',
@@ -161,7 +163,7 @@ export const products: Product[] = [
     category: 'especiais',
     note: 'Longo preto em ponto aberto com aplicações em gota.',
     tone: '#2a2a2a',
-    image: '/img/colecao/vestido-noite.webp',
+    image: asset('/img/colecao/vestido-noite.webp'),
   },
   {
     slug: 'camisa-granny',
@@ -169,7 +171,7 @@ export const products: Product[] = [
     category: 'tops',
     note: 'Camisa masculina em quadradinhos — crochê também é para eles.',
     tone: '#6d8f3d',
-    image: '/img/colecao/camisa-granny.webp',
+    image: asset('/img/colecao/camisa-granny.webp'),
   },
 ];
 
@@ -286,12 +288,12 @@ export const realLife = {
   accent: 'marca presença.',
   cta: 'Ver mais no Instagram',
   photos: [
-    { src: '/img/vida-real/vestido-pink.webp', alt: 'Cliente com vestido pink de franjas em crochê' },
-    { src: '/img/vida-real/top-dourado-cruzeiro.webp', alt: 'Cliente com top dourado em crochê a bordo de um navio' },
-    { src: '/img/vida-real/amigas.webp', alt: 'Duas amigas com top de rosas azuis e top dourado em crochê' },
-    { src: '/img/vida-real/franjas-festa.webp', alt: 'Cliente com vestido branco de franjas em uma festa' },
-    { src: '/img/vida-real/touca.webp', alt: 'Cliente usando touca de crochê em tom areia' },
-    { src: '/img/vida-real/dourado-noite.webp', alt: 'Cliente com conjunto dourado de crochê à noite' },
+    { src: asset('/img/vida-real/vestido-pink.webp'), alt: 'Cliente com vestido pink de franjas em crochê' },
+    { src: asset('/img/vida-real/top-dourado-cruzeiro.webp'), alt: 'Cliente com top dourado em crochê a bordo de um navio' },
+    { src: asset('/img/vida-real/amigas.webp'), alt: 'Duas amigas com top de rosas azuis e top dourado em crochê' },
+    { src: asset('/img/vida-real/franjas-festa.webp'), alt: 'Cliente com vestido branco de franjas em uma festa' },
+    { src: asset('/img/vida-real/touca.webp'), alt: 'Cliente usando touca de crochê em tom areia' },
+    { src: asset('/img/vida-real/dourado-noite.webp'), alt: 'Cliente com conjunto dourado de crochê à noite' },
   ],
 } as const;
 

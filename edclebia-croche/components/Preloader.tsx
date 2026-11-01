@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { introBus } from '@/lib/motion/bus';
 import s from './Preloader.module.css';
+import { asset } from '@/lib/asset';
 
 /**
  * Abertura curta (≤ 1,6 s): o logo aparece enquanto um fio "torcido" corre por baixo.
@@ -49,7 +50,7 @@ export function Preloader() {
     <div className={`${s.pre} ${phase === 'out' ? s.out : ''}`} aria-hidden>
       <div className={s.center}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/img/logo.webp" alt="" width={600} height={401} className={s.logo} />
+        <img src={asset('/img/logo.webp')} alt="" width={600} height={401} className={s.logo} />
         <span className={s.thread} />
       </div>
     </div>

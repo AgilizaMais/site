@@ -111,7 +111,7 @@
   right: clamp(1rem, 9vw, 11rem);
   bottom: 0;
   height: 95%;
-  aspect-ratio: 894 / 1534;
+  aspect-ratio: 853 / 1536;
   pointer-events: none;
   will-change: transform;
 }
