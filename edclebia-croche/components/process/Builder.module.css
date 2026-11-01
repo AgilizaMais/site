@@ -115,6 +115,21 @@
 .swatch:hover {
   transform: scale(1.1);
 }
+.swatchOther {
+  background: #fff;
+  box-shadow: 0 0 0 1.5px rgba(46, 18, 41, 0.35) inset;
+  border: 0;
+}
+.swatchOther::after {
+  content: '+';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: var(--pink-deep);
+}
 .swatchOn {
   transform: scale(1.1);
   box-shadow:

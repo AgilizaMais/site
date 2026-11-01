@@ -184,7 +184,7 @@ export const collection = {
   title: 'Texturas que contam',
   accent: 'histórias.',
   intro:
-    'Cada peça é feita sob encomenda, ponto a ponto. Escolha um modelo, a cor do fio e as suas medidas — o resto é com as mãos da Edclebia.',
+    'Cada peça é feita sob encomenda, ponto a ponto. Escolha um modelo, a cor da linha e as suas medidas — o resto é com as mãos da Edclebia.',
   cardCta: 'Quero essa',
 } as const;
 
@@ -232,7 +232,7 @@ export const processSteps = {
     {
       n: '02',
       title: 'Conversa no WhatsApp',
-      text: 'Cor do fio, medidas, detalhes e prazo — tudo alinhado antes do primeiro ponto.',
+      text: 'Cor da linha, medidas, detalhes e prazo — tudo alinhado antes do primeiro ponto.',
     },
     {
       n: '03',
@@ -254,7 +254,7 @@ export const builder = {
   intro:
     'Escolha as opções e envie direto para o WhatsApp da Edclebia. Ela responde para fechar os detalhes com você.',
   pieces: ['Vestido', 'Saída de praia', 'Conjunto', 'Top / Cropped', 'Biquíni', 'Peça masculina', 'Outra ideia'],
-  occasions: ['Praia & verão', 'Festa', 'Casamento & eventos', 'São João', 'Dia a dia'],
+  occasions: ['Praia & verão', 'Festa', 'Casamento & eventos', 'São João', 'Dia a dia', 'Outra'],
   sizes: ['PP', 'P', 'M', 'G', 'GG', 'Sob medida'],
   colors: [
     { id: 'off-white', label: 'Off-white', hex: '#F1E8DA' },
@@ -265,6 +265,12 @@ export const builder = {
     { id: 'esmeralda', label: 'Esmeralda', hex: '#1F8A78' },
     { id: 'terracota', label: 'Terracota', hex: '#B4593A' },
     { id: 'preto', label: 'Preto', hex: '#1E1A1D' },
+    {
+      id: 'colorido',
+      label: 'Colorido',
+      hex: 'conic-gradient(from 20deg, #E9447A, #F2B33D, #3FBF8F, #4F8FE0, #7B63C6, #E9447A)',
+    },
+    { id: 'outra', label: 'Outra', hex: '#FFFFFF' },
   ],
   send: 'Enviar pedido no WhatsApp',
   preview: 'Prévia da mensagem',
@@ -312,7 +318,7 @@ export const faq = {
     },
     {
       q: 'Posso escolher a cor e o tamanho?',
-      a: 'Sim! As peças são feitas sob encomenda, então você escolhe a cor do fio e envia suas medidas para a peça vestir do jeito certo.',
+      a: 'Sim! As peças são feitas sob encomenda, então você escolhe a cor da linha e envia suas medidas para a peça vestir do jeito certo.',
     },
     {
       q: 'Como tiro minhas medidas?',

@@ -23,14 +23,14 @@ export function Builder() {
       '',
       `• Peça: ${piece}`,
       `• Ocasião: ${occasion}`,
-      `• Cor do fio: ${colorLabel}`,
+      `• Cor da linha: ${color === 'outra' ? 'outra (vamos combinar)' : colorLabel}`,
       `• Tamanho: ${size}`,
     ];
     if (notes.trim()) lines.push(`• Detalhes: ${notes.trim()}`);
     lines.push('');
     lines.push(name.trim() ? `Meu nome é ${name.trim()}. Aguardo seu retorno!` : 'Aguardo seu retorno!');
     return lines.join('\n');
-  }, [piece, occasion, colorLabel, size, notes, name]);
+  }, [piece, occasion, color, colorLabel, size, notes, name]);
 
   return (
     <div className={`container ${s.wrap}`} id="encomenda">
@@ -67,14 +67,14 @@ export function Builder() {
           <div className={s.row}>
             <fieldset className={s.group}>
               <legend>
-                Cor do fio <span className={s.legendValue}>· {colorLabel}</span>
+                Cor da linha <span className={s.legendValue}>· {colorLabel}</span>
               </legend>
               <div className={s.swatches}>
                 {builder.colors.map((c) => (
                   <button
                     key={c.id}
                     type="button"
-                    className={`${s.swatch} ${color === c.id ? s.swatchOn : ''}`}
+                    className={`${s.swatch} ${c.id === 'outra' ? s.swatchOther : ''} ${color === c.id ? s.swatchOn : ''}`}
                     style={{ ['--c' as string]: c.hex }}
                     aria-pressed={color === c.id}
                     aria-label={c.label}
