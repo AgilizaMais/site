@@ -1,0 +1,92 @@
+.section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding: clamp(6rem, 12vw, 9rem) 0;
+  background:
+    radial-gradient(70% 70% at 28% 50%, #5a1f50 0%, rgba(90, 31, 80, 0) 65%),
+    linear-gradient(160deg, #2e0f29 0%, #1d0819 100%);
+  overflow: hidden;
+  isolation: isolate;
+}
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(30% 40% at 30% 50%, rgba(232, 68, 124, 0.28), transparent 70%),
+    radial-gradient(40% 40% at 100% 100%, rgba(122, 91, 201, 0.25), transparent 70%);
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+.heartSpace {
+  position: relative;
+  min-height: 60vh;
+}
+.caption {
+  position: absolute;
+  left: 50%;
+  bottom: -1rem;
+  transform: translateX(-50%);
+  font-family: var(--font-script), cursive;
+  font-size: 1.9rem;
+  color: rgba(255, 210, 228, 0.6);
+  white-space: nowrap;
+}
+.copy {
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.sign {
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0 2.2rem;
+}
+.signature {
+  font-size: 3.6rem;
+  line-height: 1;
+  color: var(--pink-soft);
+}
+.role {
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 228, 238, 0.6);
+  margin-top: 0.4rem;
+}
+
+@media (max-width: 960px) {
+  .section {
+    align-items: flex-start;
+    padding-top: 0;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .heartSpace {
+    min-height: 0;
+    height: 54svh;
+  }
+  .caption {
+    bottom: 1.4rem;
+    font-size: 1.6rem;
+  }
+}

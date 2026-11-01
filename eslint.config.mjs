@@ -4,5 +4,5 @@ import next from 'eslint-config-next';
 export default [
   js.configs.recommended,
   ...next,
-  { ignores: ['.next/**', 'node_modules/**', 'out/**'] },
+  { ignores: ['.next/**', 'node_modules/**', 'out/**', 'edclebia-croche/**'] },
 ];

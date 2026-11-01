@@ -1,0 +1,143 @@
+.section {
+  position: relative;
+  padding: clamp(9rem, 18vw, 15rem) 0 clamp(5rem, 10vw, 8rem);
+  background:
+    radial-gradient(60% 70% at 50% 100%, rgba(232, 68, 124, 0.32), transparent 70%),
+    linear-gradient(180deg, #2a0f25 0%, #3d1436 100%);
+  overflow: hidden;
+  text-align: center;
+}
+.waves {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: clamp(140px, 22vw, 280px);
+  overflow: visible;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.waves path {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.wave {
+  animation: drift 9s ease-in-out infinite alternate;
+}
+.twist {
+  animation: slide 1.6s linear infinite;
+}
+@keyframes drift {
+  to {
+    transform: translateY(14px);
+  }
+}
+@keyframes slide {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+.inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+.title {
+  font-size: clamp(2.6rem, 6.4vw, 6rem);
+  max-width: 18ch;
+}
+.title :global(.accent) {
+  font-size: 1.15em;
+  line-height: 0.8;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.big {
+  min-height: 66px;
+  padding: 0 2.4rem;
+  font-size: 1.1rem;
+}
+.phone {
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 228, 238, 0.7);
+}
+.phone:hover {
+  color: #fff;
+}
+
+.footer {
+  background: var(--plum-950);
+  color: rgba(255, 228, 238, 0.7);
+  padding: clamp(3.5rem, 6vw, 5rem) 0 2rem;
+  font-size: 0.92rem;
+}
+.footGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 2.5rem;
+  align-items: start;
+}
+.brandCol p {
+  margin-top: 1rem;
+  max-width: 30ch;
+}
+.logo {
+  width: 170px;
+  height: auto;
+  background: rgba(255, 248, 243, 0.96);
+  border-radius: 22px;
+  padding: 10px 14px;
+}
+.links {
+  display: grid;
+  gap: 0.7rem;
+}
+.links a:hover,
+.contact a:hover {
+  color: #fff;
+}
+.contact {
+  display: grid;
+  gap: 0.8rem;
+}
+.contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem 2rem;
+  margin-top: 3rem;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgba(255, 220, 234, 0.1);
+  font-size: 0.8rem;
+  color: rgba(255, 228, 238, 0.5);
+}
+@media (max-width: 760px) {
+  .footGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .brandCol {
+    grid-column: 1 / -1;
+  }
+  .big {
+    width: 100%;
+    padding: 0 1.4rem;
+  }
+  .actions {
+    width: 100%;
+  }
+}

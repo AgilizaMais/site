@@ -1,0 +1,327 @@
+.section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1rem, 2.6vh, 2.2rem);
+  padding: calc(var(--header-h) + 1.2rem) 0 clamp(1.6rem, 4vh, 3rem);
+  background: linear-gradient(90deg, #3a1433 0%, #2a0f25 55%, #3d1436 100%);
+  overflow: hidden;
+  isolation: isolate;
+  color: #fff;
+}
+
+.glow {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(50% 60% at 85% 20%, rgba(232, 68, 124, 0.22), transparent 70%),
+    radial-gradient(40% 50% at 10% 90%, rgba(122, 91, 201, 0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.head {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 1.4rem 4rem;
+  align-items: end;
+}
+.head :global(.h2) {
+  font-size: clamp(2.4rem, 4.2vw, 4.2rem);
+}
+.head > * {
+  min-width: 0;
+}
+.headRight {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+.headRight :global(.lead) {
+  font-size: 1rem;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+.chip {
+  height: 38px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  color: rgba(255, 236, 244, 0.85);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 0 1px rgba(255, 200, 222, 0.22) inset;
+  transition:
+    background-color 0.3s,
+    color 0.3s,
+    box-shadow 0.3s,
+    transform 0.4s var(--e-out);
+}
+.chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.chipOn {
+  color: #2e1229;
+  background: linear-gradient(135deg, #ffd3e2, #f59bb8);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 10px 24px -10px rgba(245, 155, 184, 0.8);
+}
+
+/* ---------- vitrine ---------- */
+.viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 0.6rem 0 1rem;
+}
+.track {
+  display: flex;
+  gap: clamp(1rem, 1.8vw, 1.75rem);
+  padding-inline: var(--gutter);
+  width: max-content;
+  will-change: transform;
+}
+.item {
+  /* o card inteiro cabe na altura da tela enquanto a vitrine está "pinada" */
+  width: clamp(230px, min(22vw, calc((100svh - 540px) * 0.8)), 350px);
+  flex: none;
+  perspective: 1000px;
+}
+
+.card {
+  --rx: 0deg;
+  --ry: 0deg;
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  height: 100%;
+  border-radius: var(--radius-l);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  box-shadow:
+    0 0 0 1px rgba(255, 210, 228, 0.14) inset,
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition:
+    transform 0.6s var(--e-out),
+    box-shadow 0.5s;
+  overflow: hidden;
+}
+.card:hover {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--tone) 60%, #fff 0%) inset,
+    0 40px 80px -30px color-mix(in srgb, var(--tone) 55%, transparent),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+}
+
+.media {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: calc(var(--radius-l) - 6px);
+  margin: 7px;
+  background: #4a2042;
+}
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 1.2s var(--e-out);
+}
+.card:hover .media img {
+  transform: scale(1.08);
+}
+.glare {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.28), transparent 45%);
+  opacity: 0;
+  mix-blend-mode: soft-light;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.card:hover .glare {
+  opacity: 1;
+}
+.num {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-family: var(--font-display), serif;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
+}
+
+.meta {
+  padding: 0.4rem 1.15rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.cat {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--pink-soft);
+}
+.name {
+  font-family: var(--font-display), serif;
+  font-weight: 400;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #fff4f8;
+}
+.note {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: rgba(255, 236, 244, 0.68);
+  min-height: 2.9em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.cta {
+  margin-top: 0.55rem;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 40px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #fff;
+  background: rgba(37, 211, 102, 0.14);
+  box-shadow: 0 0 0 1px rgba(37, 211, 102, 0.45) inset;
+  transition:
+    background-color 0.3s,
+    transform 0.4s var(--e-out);
+}
+.cta:hover {
+  background: #1fb85a;
+}
+.ctaArrow {
+  transition: transform 0.4s var(--e-out);
+}
+.cta:hover .ctaArrow {
+  transform: translateX(4px);
+}
+
+.endItem {
+  display: flex;
+}
+.endCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.6rem;
+  width: 100%;
+  padding: 2rem;
+  border-radius: var(--radius-l);
+  border: 1px dashed rgba(245, 155, 184, 0.45);
+  background: radial-gradient(120% 80% at 50% 0%, rgba(232, 68, 124, 0.18), transparent 70%);
+}
+.endCard p {
+  font-size: 2.2rem;
+  line-height: 1.05;
+}
+
+/* ---------- progresso ---------- */
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.progressTrack {
+  position: relative;
+  flex: 1;
+  max-width: 320px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 220, 234, 0.16);
+  overflow: hidden;
+}
+.progressBar {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--pink), var(--lilac-soft));
+  transform-origin: left;
+  transform: scaleX(0);
+}
+.progressHint {
+  font-size: 0.74rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 228, 238, 0.55);
+}
+
+@media (max-width: 1024px) {
+  .section {
+    min-height: auto;
+    padding-top: clamp(4rem, 10vw, 6rem);
+  }
+  .head :global(.h2) {
+    font-size: clamp(2.4rem, 9vw, 3.6rem);
+  }
+  .media {
+    aspect-ratio: 3 / 4;
+  }
+  .head {
+    grid-template-columns: 1fr;
+  }
+  .viewport {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-padding-inline: var(--gutter);
+  }
+  .viewport::-webkit-scrollbar {
+    display: none;
+  }
+  .item {
+    scroll-snap-align: start;
+    width: min(74vw, 330px);
+  }
+  .progressHint {
+    font-size: 0;
+  }
+  .progressHint::after {
+    content: 'deslize para ver mais';
+    font-size: 0.66rem;
+  }
+}
+
+@media (max-width: 760px) {
+  .filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .chip {
+    flex: none;
+  }
+  .name {
+    font-size: 1.4rem;
+  }
+  .endCard p {
+    font-size: 1.8rem;
+  }
+}
