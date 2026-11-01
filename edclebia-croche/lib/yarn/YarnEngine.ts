@@ -119,7 +119,6 @@ export class YarnEngine {
   private doilies: Doily[] = [];
   private photo: Mesh<PlaneGeometry, ShaderMaterial> | null = null;
   private photoTex: Texture | null = null;
-  private photoTarget = 0;
   /** caixa da foto em coordenadas normalizadas do canvas (medida só quando muda) */
   private photoBox = { cx: 0.5, cy: 0.5, w: 0, h: 0 };
 
@@ -260,8 +259,9 @@ export class YarnEngine {
     this.measurePhoto();
   }
 
+  /** Fim da intro do DOM: remede a foto já na escala final. */
   showPhoto() {
-    this.photoTarget = 1;
+    this.measurePhoto();
   }
 
   dispose() {
@@ -737,7 +737,7 @@ export class YarnEngine {
     }
 
     if (this.photo && this.photoBox.w > 0) {
-      this.photo.visible = this.photoTarget > 0;
+      this.photo.visible = true; // silhueta ativa desde o carregamento: o fio nunca "pula" para trás
       const b = this.photoBox;
       this.photo.position.set((b.cx - 0.5) * this.visW, (0.5 - b.cy) * this.visH + this.camera.position.y, 0);
       this.photo.scale.set(b.w * this.visW, b.h * this.visH, 1);

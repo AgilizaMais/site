@@ -115,17 +115,15 @@
   height: 95%;
   aspect-ratio: 853 / 1536;
   pointer-events: none;
-  will-change: transform;
 }
 .photo {
   width: 100%;
   height: 100%;
   object-fit: contain;
   object-position: 50% 100%;
+  /* sem filter/drop-shadow: no Safari, filtro + máscara vira uma "caixa" em volta da foto */
   -webkit-mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 84%, transparent 100%);
-  transition: opacity 0.7s var(--e-soft);
-  filter: drop-shadow(0 30px 40px rgba(90, 30, 60, 0.18));
 }
 .photoHidden {
   opacity: 0;
