@@ -119,7 +119,7 @@ export function Builder() {
           <div className={s.phone}>
             <div className={s.chatHead}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={asset('/img/logo.webp')} alt="" width={600} height={383} />
+              <img src={asset('/img/logo.webp')} alt="" width={600} height={386} />
               <div>
                 <strong>{brand.name}</strong>
                 <span>{brand.whatsapp.display}</span>
