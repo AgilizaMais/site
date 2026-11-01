@@ -66,7 +66,7 @@ export function Header() {
 
           <a href="#inicio" className={s.logo} aria-label={`${brand.name} — início`}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={asset('/img/logo.webp')} alt={brand.name} width={600} height={401} />
+            <img src={asset('/img/logo.webp')} alt={brand.name} width={600} height={383} />
           </a>
 
           <nav className={s.nav} aria-label="Principal">
